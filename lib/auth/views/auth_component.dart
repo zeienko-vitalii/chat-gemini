@@ -35,6 +35,7 @@ class _AuthComponentState extends State<AuthComponent> {
       appBar: customAppBar(
         context,
         title: 'Sign In',
+        leading: const SizedBox(),
       ),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: _onAuthListener,
