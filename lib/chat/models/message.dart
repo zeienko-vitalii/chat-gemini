@@ -1,11 +1,20 @@
-class Message {
-  final String text;
-  final String authorId;
-  final DateTime createdAt;
+import 'package:chat_gemini/chat/models/media.dart';
+import 'package:chat_gemini/types/json_type.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  Message(
-    this.text,
-    this.createdAt,
-    this.authorId,
-  );
+part 'message.freezed.dart';
+part 'message.g.dart';
+
+@freezed
+class Message with _$Message {
+  const factory Message(
+    String text,
+    String? authorId,
+    DateTime? createdAt,
+    Media? media,
+  ) = _Message;
+
+  const Message._();
+
+  factory Message.fromJson(JsonType json) => _$MessageFromJson(json);
 }

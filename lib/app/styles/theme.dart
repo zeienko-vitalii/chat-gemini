@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-const _borderRadius = BorderRadius.all(Radius.circular(32));
+const borderRadius32 = BorderRadius.all(Radius.circular(32));
 
 const _border = OutlineInputBorder(
-  borderRadius: _borderRadius,
+  borderRadius: borderRadius32,
   borderSide: BorderSide(color: Colors.grey),
 );
 
@@ -23,14 +23,31 @@ final themeData = ThemeData(
     surface: Colors.white,
     onSurface: Colors.white,
   ),
-  iconTheme: const IconThemeData(
-    color: Colors.black,
+  iconTheme: const IconThemeData(color: Colors.black),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all(Colors.black87),
+      foregroundColor: MaterialStateProperty.all(Colors.white),
+      textStyle: MaterialStateProperty.all(
+        const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      shape: MaterialStateProperty.all(
+        const RoundedRectangleBorder(
+          borderRadius: borderRadius32,
+        ),
+      ),
+    ),
   ),
   drawerTheme: const DrawerThemeData(
     elevation: 0,
     backgroundColor: Colors.white,
   ),
   inputDecorationTheme: const InputDecorationTheme(
+    labelStyle: TextStyle(color: Colors.black87),
     focusedBorder: _border,
     disabledBorder: _border,
     border: _border,
@@ -40,12 +57,21 @@ final themeData = ThemeData(
     suffixIconColor: Color(0xFF0a0a0a),
   ),
   textTheme: const TextTheme(
-    bodySmall: TextStyle(color: Colors.black),
-    bodyMedium: TextStyle(color: Colors.black),
-    bodyLarge: TextStyle(color: Colors.black),
-    headlineSmall: TextStyle(color: Colors.black),
-    headlineMedium: TextStyle(color: Colors.black),
-    headlineLarge: TextStyle(color: Colors.black),
+    bodySmall: TextStyle(color: Colors.black, fontSize: 14),
+    bodyMedium: TextStyle(color: Colors.black, fontSize: 16),
+    bodyLarge: TextStyle(color: Colors.black, fontSize: 18),
+    headlineSmall: TextStyle(color: Colors.black, fontSize: 20),
+    headlineMedium: TextStyle(color: Colors.black, fontSize: 24),
+    headlineLarge: TextStyle(color: Colors.black, fontSize: 28),
+    labelSmall: TextStyle(color: Colors.black, fontSize: 12),
+    labelMedium: TextStyle(color: Colors.black, fontSize: 16),
+    labelLarge: TextStyle(color: Colors.black, fontSize: 18),
+    titleSmall: TextStyle(color: Colors.black, fontSize: 20),
+    titleMedium: TextStyle(color: Colors.black, fontSize: 24),
+    titleLarge: TextStyle(color: Colors.black, fontSize: 28),
+    displaySmall: TextStyle(color: Colors.black, fontSize: 20),
+    displayMedium: TextStyle(color: Colors.black, fontSize: 24),
+    displayLarge: TextStyle(color: Colors.black, fontSize: 28),
   ),
   useMaterial3: true,
 );
@@ -58,19 +84,38 @@ final themeDataDark = ThemeData(
     inversePrimary: Color(0xFF0a0a0a),
     background: Color(0xFF1d1d1d),
     onBackground: Color(0xFF1d1d1d),
-    secondary: Colors.white10,
-    onSecondary: Colors.white10,
+    secondary: Colors.white,
+    onSecondary: Colors.white,
     error: Colors.redAccent,
     onError: Colors.redAccent,
     surface: Colors.white,
     onSurface: Colors.white,
   ),
-  iconTheme: const IconThemeData(color: Colors.black),
+  iconTheme: const IconThemeData(color: Colors.white),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all(Colors.white),
+      foregroundColor: MaterialStateProperty.all(Colors.black87),
+      textStyle: MaterialStateProperty.all(
+        const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+      shape: MaterialStateProperty.all(
+        const RoundedRectangleBorder(
+          borderRadius: borderRadius32,
+        ),
+      ),
+    ),
+  ),
   drawerTheme: const DrawerThemeData(
     elevation: 0,
     backgroundColor: Color(0xFF1d1d1d),
   ),
   inputDecorationTheme: const InputDecorationTheme(
+    labelStyle: TextStyle(color: Colors.white),
     focusedBorder: _border,
     disabledBorder: _border,
     border: _border,
@@ -80,12 +125,21 @@ final themeDataDark = ThemeData(
     suffixIconColor: Colors.white,
   ),
   textTheme: const TextTheme(
-    bodySmall: TextStyle(color: Colors.white),
-    bodyMedium: TextStyle(color: Colors.white),
-    bodyLarge: TextStyle(color: Colors.white),
-    headlineSmall: TextStyle(color: Colors.white),
-    headlineMedium: TextStyle(color: Colors.white),
-    headlineLarge: TextStyle(color: Colors.white),
+    bodySmall: TextStyle(color: Colors.white, fontSize: 14),
+    bodyMedium: TextStyle(color: Colors.white, fontSize: 16),
+    bodyLarge: TextStyle(color: Colors.white, fontSize: 18),
+    headlineSmall: TextStyle(color: Colors.white, fontSize: 20),
+    headlineMedium: TextStyle(color: Colors.white, fontSize: 24),
+    headlineLarge: TextStyle(color: Colors.white, fontSize: 28),
+    labelSmall: TextStyle(color: Colors.white, fontSize: 12),
+    labelMedium: TextStyle(color: Colors.white, fontSize: 16),
+    labelLarge: TextStyle(color: Colors.white, fontSize: 18),
+    titleSmall: TextStyle(color: Colors.white, fontSize: 20),
+    titleMedium: TextStyle(color: Colors.white, fontSize: 24),
+    titleLarge: TextStyle(color: Colors.white, fontSize: 28),
+    displaySmall: TextStyle(color: Colors.white, fontSize: 20),
+    displayMedium: TextStyle(color: Colors.white, fontSize: 24),
+    displayLarge: TextStyle(color: Colors.white, fontSize: 28),
   ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Colors.black,
