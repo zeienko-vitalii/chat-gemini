@@ -8,19 +8,30 @@
 			"name": "chat_gemini",
 			"request": "launch",
 			"type": "dart",
-			"args": ["GEMINI_API_KEY=AIzaSyA1I_AJiZs1vMMBjsLjYcf4b_PCPleR4Tk"]
+			"args": [
+				"--dart-define",
+				"GEMINI_API_KEY=AIzaSyA1I_AJiZs1vMMBjsLjYcf4b_PCPleR4Tk"
+			]
 		},
 		{
 			"name": "chat_gemini (profile mode)",
 			"request": "launch",
 			"type": "dart",
-			"flutterMode": "profile"
+			"flutterMode": "profile",
+			"args": [
+				"--dart-define",
+				"GEMINI_API_KEY=AIzaSyA1I_AJiZs1vMMBjsLjYcf4b_PCPleR4Tk"
+			]
 		},
 		{
 			"name": "chat_gemini (release mode)",
 			"request": "launch",
 			"type": "dart",
-			"flutterMode": "release"
+			"flutterMode": "release",
+			"args": [
+				"--dart-define",
+				"GEMINI_API_KEY=AIzaSyA1I_AJiZs1vMMBjsLjYcf4b_PCPleR4Tk"
+			]
 		}
 	]
 }

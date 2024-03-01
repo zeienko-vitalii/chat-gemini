@@ -1,5 +1,6 @@
 import 'package:chat_gemini/chat/models/message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class MessageWidget extends StatelessWidget {
   const MessageWidget({
@@ -56,7 +57,8 @@ class MessageWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                SelectableText(_message),
+                MarkdownBody(data: _message),
+                // SelectableText(_message),
               ],
             ),
           ),

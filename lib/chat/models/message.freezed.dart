@@ -145,7 +145,10 @@ class __$$MessageImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MessageImpl extends _Message {
   const _$MessageImpl(
-      {required this.text, required this.authorId, this.createdAt, this.media})
+      {required this.text,
+      this.authorId = botAuthorId,
+      this.createdAt,
+      this.media})
       : super._();
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
@@ -154,6 +157,7 @@ class _$MessageImpl extends _Message {
   @override
   final String text;
   @override
+  @JsonKey()
   final String authorId;
   @override
   final DateTime? createdAt;
@@ -200,7 +204,7 @@ class _$MessageImpl extends _Message {
 abstract class _Message extends Message {
   const factory _Message(
       {required final String text,
-      required final String authorId,
+      final String authorId,
       final DateTime? createdAt,
       final Media? media}) = _$MessageImpl;
   const _Message._() : super._();

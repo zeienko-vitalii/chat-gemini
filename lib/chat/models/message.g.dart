@@ -9,7 +9,7 @@ part of 'message.dart';
 _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
     _$MessageImpl(
       text: json['text'] as String,
-      authorId: json['authorId'] as String,
+      authorId: json['authorId'] as String? ?? botAuthorId,
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),

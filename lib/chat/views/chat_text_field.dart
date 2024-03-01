@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 typedef OnMessageSend = void Function(String message);
@@ -6,8 +7,10 @@ class ChatTextField extends StatelessWidget {
   ChatTextField({
     super.key,
     this.onSend,
+    required this.isLoading,
   }) : _controller = TextEditingController();
 
+  final bool isLoading;
   final OnMessageSend? onSend;
   final TextEditingController _controller;
 
@@ -27,18 +30,21 @@ class ChatTextField extends StatelessWidget {
                   .color!
                   .withOpacity(0.5),
             ),
-        suffixIcon: IconButton(
-          icon: const Icon(Icons.send),
-          onPressed: () {
-            final text = _controller.text.trim();
-            if (text.isNotEmpty) {
-              onSend?.call(text);
-              _controller.clear();
-            }
-          },
-        ),
+        suffixIcon: isLoading
+            ? const _Loader()
+            : _SendButton(
+                onPressed: () {
+                  final text = _controller.text.trim();
+                  if (text.isNotEmpty) {
+                    onSend?.call(text);
+                    _controller.clear();
+                  }
+                },
+              ),
       ),
       onSubmitted: (text) {
+        if (isLoading) return;
+
         if (text.trim().isNotEmpty) {
           onSend?.call(text);
           _controller.clear();
@@ -46,4 +52,24 @@ class ChatTextField extends StatelessWidget {
       },
     );
   }
+}
+
+class _SendButton extends StatelessWidget {
+  const _SendButton({
+    required this.onPressed,
+  });
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.send),
+      onPressed: onPressed,
+    );
+  }
+}
+
+class _Loader extends CupertinoActivityIndicator {
+  const _Loader();
 }

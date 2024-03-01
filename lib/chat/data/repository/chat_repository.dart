@@ -26,9 +26,28 @@ class ChatRepository with FirestoreMixin {
 
   Future<Chat> getChatByUserId(String userId) async {
     try {
-      final res =
-          await _getCollectionRef().where('authorId', isEqualTo: userId).get();
-      return res.docs.first.data();
+      final chats = await getChatsByUserId(userId);
+      if (chats.isEmpty) return const Chat();
+      return chats.first;
+    } catch (e, stk) {
+      Log().e(e, stk);
+      rethrow;
+    }
+  }
+
+  Future<List<Chat>> getChatsByUserId(String userId) async {
+    try {
+      final res = await _getCollectionRef()
+          .where(
+            'authorId',
+            isEqualTo: userId,
+          )
+          .get();
+
+      final chats = res.docs;
+      return [
+        ...chats.map((e) => e.data()),
+      ];
     } catch (e, stk) {
       Log().e(e, stk);
       rethrow;

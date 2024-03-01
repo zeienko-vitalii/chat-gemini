@@ -28,6 +28,7 @@ dependencies:
   gap: ^3.0.1
   cloud_firestore: ^4.14.0
   collection: ^1.18.0
+  flutter_markdown: ^0.6.20+1
 
 dev_dependencies:
   flutter_test:

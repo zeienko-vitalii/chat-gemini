@@ -5,6 +5,7 @@ import 'package:chat_gemini/app/views/custom_app_bar.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:chat_gemini/auth/views/email_auth_form.dart';
 import 'package:chat_gemini/auth/views/horizontal_divider.dart';
+import 'package:chat_gemini/utils/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
@@ -93,12 +94,7 @@ class _AuthComponentState extends State<AuthComponent> {
 
   void _onAuthListener(BuildContext context, AuthState state) {
     if (state is AuthError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(state.message ?? 'An error occurred'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      showErrorSnackBar(context, state.message);
     } else if (state is SignIn) {
       context.router.replace(const HomeScreenRoute());
     }
