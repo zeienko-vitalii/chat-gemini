@@ -67,6 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '760830767299',
     projectId: 'chat-gemini-8fef0',
     storageBucket: 'chat-gemini-8fef0.appspot.com',
+    androidClientId: '760830767299-3betak98lrnqik65eke43np8hij3cu1m.apps.googleusercontent.com',
+    iosClientId: '760830767299-tsn4bk5do2hnnhkl69gefslpsf3mgi68.apps.googleusercontent.com',
     iosBundleId: 'com.zeenko.chatGemini',
   );
 
@@ -76,6 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '760830767299',
     projectId: 'chat-gemini-8fef0',
     storageBucket: 'chat-gemini-8fef0.appspot.com',
+    androidClientId: '760830767299-3betak98lrnqik65eke43np8hij3cu1m.apps.googleusercontent.com',
+    iosClientId: '760830767299-4sluuqf45lma8aqaee2fkqbtb04b6mj9.apps.googleusercontent.com',
     iosBundleId: 'com.example.chatGemini.RunnerTests',
   );
 }
