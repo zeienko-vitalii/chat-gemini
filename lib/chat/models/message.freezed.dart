@@ -21,7 +21,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Message {
   String get text => throw _privateConstructorUsedError;
-  String? get authorId => throw _privateConstructorUsedError;
+  String get authorId => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   Media? get media => throw _privateConstructorUsedError;
 
@@ -35,7 +35,7 @@ abstract class $MessageCopyWith<$Res> {
   factory $MessageCopyWith(Message value, $Res Function(Message) then) =
       _$MessageCopyWithImpl<$Res, Message>;
   @useResult
-  $Res call({String text, String? authorId, DateTime? createdAt, Media? media});
+  $Res call({String text, String authorId, DateTime? createdAt, Media? media});
 
   $MediaCopyWith<$Res>? get media;
 }
@@ -54,7 +54,7 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
   @override
   $Res call({
     Object? text = null,
-    Object? authorId = freezed,
+    Object? authorId = null,
     Object? createdAt = freezed,
     Object? media = freezed,
   }) {
@@ -63,10 +63,10 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
               as String,
-      authorId: freezed == authorId
+      authorId: null == authorId
           ? _value.authorId
           : authorId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -98,7 +98,7 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       __$$MessageImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String text, String? authorId, DateTime? createdAt, Media? media});
+  $Res call({String text, String authorId, DateTime? createdAt, Media? media});
 
   @override
   $MediaCopyWith<$Res>? get media;
@@ -116,24 +116,24 @@ class __$$MessageImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? text = null,
-    Object? authorId = freezed,
+    Object? authorId = null,
     Object? createdAt = freezed,
     Object? media = freezed,
   }) {
     return _then(_$MessageImpl(
-      null == text
+      text: null == text
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
               as String,
-      freezed == authorId
+      authorId: null == authorId
           ? _value.authorId
           : authorId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      freezed == createdAt
+              as String,
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      freezed == media
+      media: freezed == media
           ? _value.media
           : media // ignore: cast_nullable_to_non_nullable
               as Media?,
@@ -144,7 +144,11 @@ class __$$MessageImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$MessageImpl extends _Message {
-  const _$MessageImpl(this.text, this.authorId, this.createdAt, this.media)
+  const _$MessageImpl(
+      {required this.text,
+      this.authorId = botAuthorId,
+      this.createdAt,
+      this.media})
       : super._();
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
@@ -153,7 +157,8 @@ class _$MessageImpl extends _Message {
   @override
   final String text;
   @override
-  final String? authorId;
+  @JsonKey()
+  final String authorId;
   @override
   final DateTime? createdAt;
   @override
@@ -197,8 +202,11 @@ class _$MessageImpl extends _Message {
 }
 
 abstract class _Message extends Message {
-  const factory _Message(final String text, final String? authorId,
-      final DateTime? createdAt, final Media? media) = _$MessageImpl;
+  const factory _Message(
+      {required final String text,
+      final String authorId,
+      final DateTime? createdAt,
+      final Media? media}) = _$MessageImpl;
   const _Message._() : super._();
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
@@ -206,7 +214,7 @@ abstract class _Message extends Message {
   @override
   String get text;
   @override
-  String? get authorId;
+  String get authorId;
   @override
   DateTime? get createdAt;
   @override

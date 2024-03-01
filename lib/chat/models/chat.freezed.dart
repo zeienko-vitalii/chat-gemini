@@ -20,10 +20,12 @@ Chat _$ChatFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Chat {
-  String get name => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String get id => throw _privateConstructorUsedError;
   String get authorId => throw _privateConstructorUsedError;
-  List<String> get messages => throw _privateConstructorUsedError;
-  List<Message> get sharedWithIds => throw _privateConstructorUsedError;
+  String get title => throw _privateConstructorUsedError;
+  List<Message> get messages => throw _privateConstructorUsedError;
+  List<String> get sharedWithIds => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
@@ -38,10 +40,11 @@ abstract class $ChatCopyWith<$Res> {
       _$ChatCopyWithImpl<$Res, Chat>;
   @useResult
   $Res call(
-      {String name,
+      {@JsonKey(includeFromJson: false, includeToJson: false) String id,
       String authorId,
-      List<String> messages,
-      List<Message> sharedWithIds,
+      String title,
+      List<Message> messages,
+      List<String> sharedWithIds,
       DateTime? createdAt,
       DateTime? updatedAt});
 }
@@ -59,30 +62,35 @@ class _$ChatCopyWithImpl<$Res, $Val extends Chat>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = null,
+    Object? id = null,
     Object? authorId = null,
+    Object? title = null,
     Object? messages = null,
     Object? sharedWithIds = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
               as String,
       authorId: null == authorId
           ? _value.authorId
           : authorId // ignore: cast_nullable_to_non_nullable
               as String,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
       messages: null == messages
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<Message>,
       sharedWithIds: null == sharedWithIds
           ? _value.sharedWithIds
           : sharedWithIds // ignore: cast_nullable_to_non_nullable
-              as List<Message>,
+              as List<String>,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -103,10 +111,11 @@ abstract class _$$ChatImplCopyWith<$Res> implements $ChatCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {String name,
+      {@JsonKey(includeFromJson: false, includeToJson: false) String id,
       String authorId,
-      List<String> messages,
-      List<Message> sharedWithIds,
+      String title,
+      List<Message> messages,
+      List<String> sharedWithIds,
       DateTime? createdAt,
       DateTime? updatedAt});
 }
@@ -121,30 +130,35 @@ class __$$ChatImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = null,
+    Object? id = null,
     Object? authorId = null,
+    Object? title = null,
     Object? messages = null,
     Object? sharedWithIds = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
     return _then(_$ChatImpl(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
               as String,
       authorId: null == authorId
           ? _value.authorId
           : authorId // ignore: cast_nullable_to_non_nullable
               as String,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
       messages: null == messages
           ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<Message>,
       sharedWithIds: null == sharedWithIds
           ? _value._sharedWithIds
           : sharedWithIds // ignore: cast_nullable_to_non_nullable
-              as List<Message>,
+              as List<String>,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -161,10 +175,11 @@ class __$$ChatImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ChatImpl extends _Chat {
   const _$ChatImpl(
-      {this.name = 'Undefined',
-      required this.authorId,
-      final List<String> messages = const [],
-      final List<Message> sharedWithIds = const [],
+      {@JsonKey(includeFromJson: false, includeToJson: false) this.id = '',
+      this.authorId = '',
+      this.title = 'Untitled',
+      final List<Message> messages = const [],
+      final List<String> sharedWithIds = const [],
       this.createdAt,
       this.updatedAt})
       : _messages = messages,
@@ -175,23 +190,27 @@ class _$ChatImpl extends _Chat {
       _$$ChatImplFromJson(json);
 
   @override
-  @JsonKey()
-  final String name;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final String id;
   @override
+  @JsonKey()
   final String authorId;
-  final List<String> _messages;
   @override
   @JsonKey()
-  List<String> get messages {
+  final String title;
+  final List<Message> _messages;
+  @override
+  @JsonKey()
+  List<Message> get messages {
     if (_messages is EqualUnmodifiableListView) return _messages;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_messages);
   }
 
-  final List<Message> _sharedWithIds;
+  final List<String> _sharedWithIds;
   @override
   @JsonKey()
-  List<Message> get sharedWithIds {
+  List<String> get sharedWithIds {
     if (_sharedWithIds is EqualUnmodifiableListView) return _sharedWithIds;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_sharedWithIds);
@@ -204,7 +223,7 @@ class _$ChatImpl extends _Chat {
 
   @override
   String toString() {
-    return 'Chat(name: $name, authorId: $authorId, messages: $messages, sharedWithIds: $sharedWithIds, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Chat(id: $id, authorId: $authorId, title: $title, messages: $messages, sharedWithIds: $sharedWithIds, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -212,9 +231,10 @@ class _$ChatImpl extends _Chat {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ChatImpl &&
-            (identical(other.name, name) || other.name == name) &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.authorId, authorId) ||
                 other.authorId == authorId) &&
+            (identical(other.title, title) || other.title == title) &&
             const DeepCollectionEquality().equals(other._messages, _messages) &&
             const DeepCollectionEquality()
                 .equals(other._sharedWithIds, _sharedWithIds) &&
@@ -228,8 +248,9 @@ class _$ChatImpl extends _Chat {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      name,
+      id,
       authorId,
+      title,
       const DeepCollectionEquality().hash(_messages),
       const DeepCollectionEquality().hash(_sharedWithIds),
       createdAt,
@@ -251,10 +272,11 @@ class _$ChatImpl extends _Chat {
 
 abstract class _Chat extends Chat {
   const factory _Chat(
-      {final String name,
-      required final String authorId,
-      final List<String> messages,
-      final List<Message> sharedWithIds,
+      {@JsonKey(includeFromJson: false, includeToJson: false) final String id,
+      final String authorId,
+      final String title,
+      final List<Message> messages,
+      final List<String> sharedWithIds,
       final DateTime? createdAt,
       final DateTime? updatedAt}) = _$ChatImpl;
   const _Chat._() : super._();
@@ -262,13 +284,16 @@ abstract class _Chat extends Chat {
   factory _Chat.fromJson(Map<String, dynamic> json) = _$ChatImpl.fromJson;
 
   @override
-  String get name;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String get id;
   @override
   String get authorId;
   @override
-  List<String> get messages;
+  String get title;
   @override
-  List<Message> get sharedWithIds;
+  List<Message> get messages;
+  @override
+  List<String> get sharedWithIds;
   @override
   DateTime? get createdAt;
   @override

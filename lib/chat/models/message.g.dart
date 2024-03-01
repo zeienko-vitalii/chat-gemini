@@ -8,12 +8,12 @@ part of 'message.dart';
 
 _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
     _$MessageImpl(
-      json['text'] as String,
-      json['authorId'] as String?,
-      json['createdAt'] == null
+      text: json['text'] as String,
+      authorId: json['authorId'] as String? ?? botAuthorId,
+      createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),
-      json['media'] == null
+      media: json['media'] == null
           ? null
           : Media.fromJson(json['media'] as Map<String, dynamic>),
     );
@@ -23,5 +23,5 @@ Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
       'text': instance.text,
       'authorId': instance.authorId,
       'createdAt': instance.createdAt?.toIso8601String(),
-      'media': instance.media,
+      'media': instance.media?.toJson(),
     };

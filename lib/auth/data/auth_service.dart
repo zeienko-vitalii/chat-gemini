@@ -17,7 +17,7 @@ class AuthService {
   bool get isAuthenticated => currentUser != null;
 
   // sign in with email and password
-  Future<User?> authWithEmailAndPassword(
+  Future<User> authWithEmailAndPassword(
     String email,
     String password, {
     bool shouldCreate = true,
@@ -25,7 +25,6 @@ class AuthService {
     try {
       late final UserCredential userCreds;
 
-      Log().i('shouldCreate: $shouldCreate, email: $email, password: $password');
       if (shouldCreate) {
         userCreds = await _auth.createUserWithEmailAndPassword(
           email: email,
@@ -38,7 +37,11 @@ class AuthService {
         );
       }
 
-      return userCreds.user;
+      if (userCreds.user != null) {
+        return userCreds.user!;
+      } else {
+        throw Exception('User is null');
+      }
     } catch (e) {
       Log().e('$e');
       rethrow;
@@ -58,7 +61,7 @@ class AuthService {
   //   }
   // }
 
-  Future<User?> signInWithGoogle() async {
+  Future<User> signInWithGoogle() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
 
@@ -72,7 +75,12 @@ class AuthService {
       final userCreds = await FirebaseAuth.instance.signInWithCredential(
         credential,
       );
-      return userCreds.user;
+
+      if (userCreds.user != null) {
+        return userCreds.user!;
+      } else {
+        throw Exception('User is null');
+      }
     } on Exception catch (e, stk) {
       Log().e('$e', stk);
       rethrow;

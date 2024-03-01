@@ -26,11 +26,14 @@ dependencies:
   google_sign_in: ^6.2.1
   flutter_signin_button: ^2.0.0 # provides GoogleSignInButton
   gap: ^3.0.1
+  cloud_firestore: ^4.14.0
+  collection: ^1.18.0
+  flutter_markdown: ^0.6.20+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^3.0.0
   json_serializable: ^6.7.1
   freezed: ^2.4.7
@@ -47,3 +50,26 @@ fonts:
   - family: SocialIcons
     fonts:
       - asset: packages/firebase_ui_auth/fonts/SocialIcons.ttf
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/images/launcher_icon.png"
+  adaptive_icon_background: "#00022A"
+  adaptive_icon_foreground: "assets/images/launcher_icon.png"
+  web:
+    generate: true
+    image_path: "assets/images/launcher_icon.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/images/launcher_icon.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/images/launcher_icon.png"
+
+flutter_icons: flutter_icons_gen.yaml
+scripts: scripts.yaml

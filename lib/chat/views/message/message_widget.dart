@@ -1,16 +1,20 @@
+import 'package:chat_gemini/chat/models/message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class MessageWidget extends StatelessWidget {
   const MessageWidget({
     super.key,
-    this.avatar,
-    required this.username,
     required this.message,
+    required this.username,
+    this.avatar,
   });
 
+  final Message message;
   final String? avatar;
   final String username;
-  final String message;
+
+  String get _message => message.text;
 
   bool get hasAvatar => avatar != null;
   bool get assetAvatar => avatar != null && avatar!.startsWith('assets');
@@ -53,9 +57,8 @@ class MessageWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                SelectableText(
-                  message,
-                ),
+                MarkdownBody(data: _message),
+                // SelectableText(_message),
               ],
             ),
           ),

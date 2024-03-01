@@ -17,7 +17,7 @@ AppBar customAppBar(
   return AppBar(
     backgroundColor: Theme.of(context).colorScheme.primary,
     title: Text(title),
-    leading: leading ?? const SizedBox(),
+    leading: leading,
     actions: [
       BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) => switch (state) {
