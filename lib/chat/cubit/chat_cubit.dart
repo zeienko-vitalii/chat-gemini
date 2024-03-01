@@ -7,7 +7,7 @@ class ChatCubit extends Cubit<ChatState> {
   ChatCubit()
       : super(
           ChatInitial(
-            chat: Chat(
+            chat: const Chat(
               authorId: '',
             ),
           ),
