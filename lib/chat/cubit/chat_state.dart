@@ -5,10 +5,19 @@ sealed class ChatState {
   final Chat chat;
 }
 
-final class ChatInitial extends ChatState {
-  ChatInitial({required super.chat});
+final class ChatLoading extends ChatState {
+  ChatLoading({required super.chat});
 }
 
 final class ChatUpdated extends ChatState {
   ChatUpdated({required super.chat});
+}
+
+final class ChatError extends ChatState {
+  ChatError({
+    required super.chat,
+    this.message,
+  });
+
+  final String? message;
 }

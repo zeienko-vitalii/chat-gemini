@@ -26,6 +26,7 @@ dependencies:
   google_sign_in: ^6.2.1
   flutter_signin_button: ^2.0.0 # provides GoogleSignInButton
   gap: ^3.0.1
+  cloud_firestore: ^4.14.0
 
 dev_dependencies:
   flutter_test:

@@ -7,12 +7,12 @@ part 'message.g.dart';
 
 @freezed
 class Message with _$Message {
-  const factory Message(
-    String text,
-    String? authorId,
+  const factory Message({
+    required String text,
+    required String authorId,
     DateTime? createdAt,
     Media? media,
-  ) = _Message;
+  }) = _Message;
 
   const Message._();
 

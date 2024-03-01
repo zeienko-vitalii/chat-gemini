@@ -1,20 +1,22 @@
-import 'package:chat_gemini/chat/views/message/user_message.dart';
+import 'package:chat_gemini/chat/models/message.dart';
+import 'package:chat_gemini/chat/views/message/message_widget.dart';
 import 'package:flutter/material.dart';
 
 class ChatWidget extends StatelessWidget {
-  const ChatWidget({super.key});
+  const ChatWidget({
+    super.key,
+    required this.messages,
+  });
+
+  final List<Message> messages;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 10,
+      itemCount: messages.length,
       itemBuilder: (context, index) {
-        return UserMessage(
-          avatar: index % 2 == 0
-              ? 'assets/images/icon_1_no_bg.png'
-              : 'https://via.placeholder.com/150',
-          username: 'User',
-          message: 'Hello, Gemini!',
+        return MessageWidget(
+          message: messages[index],
         );
       },
     );

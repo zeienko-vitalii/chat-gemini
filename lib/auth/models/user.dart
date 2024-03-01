@@ -8,6 +8,9 @@ part 'user.g.dart';
 class User with _$User {
   const factory User({
     required String uid,
+    required String email,
+    required String name,
+    String? photoUrl,
     @Default(10) int credits,
   }) = _User;
 
