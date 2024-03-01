@@ -29,7 +29,7 @@ class ChatWidget extends StatelessWidget {
           return MessageWidget(
             message: messages[index],
             username: 'Gemini',
-            avatar: 'assets/images/icon_1_no_bg.png',
+            avatar: 'assets/images/launcher_icon.png',
           );
         }
 
