@@ -59,6 +59,10 @@ class _ChatComponentState extends State<ChatComponent> {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: ChatWidget(
                             messages: chat.messages,
+                            authors: [
+                              state.author,
+                              ...state.guests,
+                            ],
                           ),
                         ),
                       ),

@@ -38,6 +38,12 @@ class ChatTextField extends StatelessWidget {
           },
         ),
       ),
+      onSubmitted: (text) {
+        if (text.trim().isNotEmpty) {
+          onSend?.call(text);
+          _controller.clear();
+        }
+      },
     );
   }
 }

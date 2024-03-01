@@ -35,8 +35,8 @@ class UserRepository with FirestoreMixin {
 
   Future<User> addUser(User user) async {
     try {
-      final res = await _getCollectionRef().add(user);
-      return user.copyWith(uid: res.id);
+      await _getCollectionRef().doc(user.uid).set(user);
+      return user;
     } catch (e, stk) {
       Log().e(e, stk);
       rethrow;

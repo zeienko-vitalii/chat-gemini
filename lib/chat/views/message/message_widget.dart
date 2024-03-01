@@ -5,12 +5,14 @@ class MessageWidget extends StatelessWidget {
   const MessageWidget({
     super.key,
     required this.message,
+    required this.username,
+    this.avatar,
   });
 
   final Message message;
+  final String? avatar;
+  final String username;
 
-  String? get avatar => '';
-  String get username => '';
   String get _message => message.text;
 
   bool get hasAvatar => avatar != null;

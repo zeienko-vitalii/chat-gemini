@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:chat_gemini/auth/data/auth_service.dart';
+import 'package:chat_gemini/auth/data/repository/user_repository.dart';
+import 'package:chat_gemini/auth/models/user.dart';
 import 'package:chat_gemini/chat/data/repository/chat_repository.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chat/models/message.dart';
@@ -11,29 +13,56 @@ class ChatCubit extends Cubit<ChatState> {
   ChatCubit()
       : super(
           ChatLoading(
-            chat: const Chat(
-              id: '',
-              authorId: '',
+            chat: const Chat(),
+            author: const User(
+              uid: '',
+              name: '',
+              email: '',
             ),
           ),
         );
 
   final _repository = ChatRepository();
   final _authService = AuthService();
+  final _userRepository = UserRepository();
 
   Future<void> loadChat() async {
     try {
-      emit(ChatLoading(chat: state.chat));
+      emit(
+        ChatLoading(
+          chat: state.chat,
+          author: state.author,
+          guests: state.guests,
+        ),
+      );
       if (_authService.currentUser?.uid case final id?) {
         final chat = await _repository.getChatByUserId(id);
-        emit(ChatUpdated(chat: chat));
+
+        final author = await _userRepository.getUser(id);
+
+        final guests = await Future.wait(
+          chat.sharedWithIds.map(_userRepository.getUser),
+        );
+
+        emit(
+          ChatUpdated(
+            chat: chat,
+            author: author,
+            guests: guests,
+          ),
+        );
       } else {
         throw Exception('User not found');
       }
     } catch (e, stk) {
       Log().e(e, stk);
       emit(
-        ChatError(chat: state.chat, message: '$e'),
+        ChatError(
+          chat: state.chat,
+          message: '$e',
+          author: state.author,
+          guests: state.guests,
+        ),
       );
     }
   }
@@ -50,14 +79,25 @@ class ChatCubit extends Cubit<ChatState> {
       }
     } catch (e) {
       emit(
-        ChatError(chat: state.chat, message: '$e'),
+        ChatError(
+          chat: state.chat,
+          message: '$e',
+          author: state.author,
+          guests: state.guests,
+        ),
       );
     }
   }
 
   Future<void> sendMessage(Message message) async {
     try {
-      emit(ChatLoading(chat: state.chat));
+      emit(
+        ChatLoading(
+          chat: state.chat,
+          author: state.author,
+          guests: state.guests,
+        ),
+      );
       final chat = state.chat;
       final chatId = chat.id;
 
@@ -81,10 +121,21 @@ class ChatCubit extends Cubit<ChatState> {
         );
       }
 
-      emit(ChatUpdated(chat: updatedChat));
+      emit(
+        ChatUpdated(
+          chat: updatedChat,
+          author: state.author,
+          guests: state.guests,
+        ),
+      );
     } catch (e) {
       emit(
-        ChatError(chat: state.chat, message: '$e'),
+        ChatError(
+          chat: state.chat,
+          message: '$e',
+          author: state.author,
+          guests: state.guests,
+        ),
       );
     }
   }
