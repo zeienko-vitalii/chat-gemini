@@ -30,6 +30,7 @@ dependencies:
   collection: ^1.18.0
   flutter_markdown: ^0.6.20+1
   share_plus: ^7.2.2
+  rive: ^0.12.4
 
 dev_dependencies:
   flutter_test:
@@ -46,6 +47,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/animations/
 
 fonts:
   - family: SocialIcons

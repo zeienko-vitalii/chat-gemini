@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+const borderRadius82 = BorderRadius.all(Radius.circular(82));
 const borderRadius32 = BorderRadius.all(Radius.circular(32));
 const borderRadius16 = BorderRadius.all(Radius.circular(16));
 

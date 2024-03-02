@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/app/navigation/app_router.dart';
 import 'package:chat_gemini/app/views/custom_app_bar.dart';
@@ -185,6 +187,8 @@ class _ChatBody extends StatelessWidget {
       return const Center(child: CupertinoActivityIndicator());
     }
 
+    final isAndroid = Platform.isAndroid;
+    final bottomPadding = isAndroid ? 16.0 : 0.0;
     return Container(
       color: Colors.transparent,
       child: Column(
@@ -204,7 +208,7 @@ class _ChatBody extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
-            ).copyWith(top: 8),
+            ).copyWith(top: 8, bottom: bottomPadding),
             child: ChatTextField(
               isLoading: isLoading,
               onSend: onSend,
