@@ -1,24 +1,27 @@
+import 'package:chat_gemini/chat/views/animated_bot.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class EmptyChatWidget extends StatelessWidget {
-  const EmptyChatWidget({
-    super.key,
-  });
+  const EmptyChatWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(
-            'assets/images/launcher_icon.png',
-            height: 164,
-          ),
-          const Gap(20),
+          const Spacer(),
+          if (!isKeyboardVisible) ...[
+            const Expanded(
+              flex: 2,
+              child: Center(child: AnimatedBot()),
+            ),
+            const Gap(20),
+          ],
           Text(
             'No messages yet',
             style: Theme.of(context).textTheme.headlineLarge,
@@ -30,6 +33,7 @@ class EmptyChatWidget extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
+          const Spacer(),
         ],
       ),
     );

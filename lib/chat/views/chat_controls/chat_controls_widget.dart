@@ -38,7 +38,7 @@ class ChatControlsWidget extends StatelessWidget {
           width: 0.5,
         ),
       ),
-      color: Theme.of(context).colorScheme.primary,
+      color: Theme.of(context).colorScheme.background,
       onSelected: (ChatControlsAction action) => _onActionPressedByType(
         context,
         action,
@@ -92,8 +92,8 @@ class ChatControlsWidget extends StatelessWidget {
 
   TextStyle _styleByType(BuildContext context, ChatControlsAction type) {
     final isDelete = type == ChatControlsAction.delete;
-    final onSecondary = Theme.of(context).colorScheme.background;
-    final color = isDelete ? Colors.redAccent : onSecondary;
+    final bodyTextColor = Theme.of(context).textTheme.bodyLarge!.color;
+    final color = isDelete ? Colors.redAccent : bodyTextColor;
     return TextStyle(
       color: color,
       fontWeight: FontWeight.bold,
