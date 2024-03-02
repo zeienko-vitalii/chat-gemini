@@ -33,7 +33,7 @@ class _AuthComponentState extends State<AuthComponent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppBar(
+      appBar: CustomAppBar(
         context,
         title: 'Sign In',
         leading: const SizedBox(),

@@ -10,6 +10,8 @@ import 'package:chat_gemini/utils/logger.dart';
 
 part 'chat_state.dart';
 
+bool isGeminiApiKeyEmpty = geminiApiKey.isEmpty;
+
 class ChatCubit extends Cubit<ChatState> {
   ChatCubit()
       : super(
@@ -47,7 +49,7 @@ class ChatCubit extends Cubit<ChatState> {
           ChatUpdated(
             chat: chat,
             author: author,
-            guests: state.guests,
+            guests: [],
           ),
         );
       } else {
@@ -205,6 +207,70 @@ class ChatCubit extends Cubit<ChatState> {
           message: '$e',
           author: state.author,
           guests: state.guests,
+        ),
+      );
+    }
+  }
+
+  Future<void> deleteChat() async {
+    try {
+      emit(
+        ChatLoading(
+          chat: state.chat,
+          author: state.author,
+          guests: state.guests,
+        ),
+      );
+
+      await _repository.deleteChat(state.chat.id);
+
+      // start new chat
+      await loadChat(const Chat());
+    } catch (e) {
+      Log().e(e);
+      emit(
+        ChatError(
+          chat: state.chat,
+          author: state.author,
+          guests: state.guests,
+          message: '$e',
+        ),
+      );
+    }
+  }
+
+  Future<void> renameChat(String title) async {
+    try {
+      emit(
+        ChatLoading(
+          chat: state.chat,
+          author: state.author,
+          guests: state.guests,
+        ),
+      );
+
+      final chat = await _repository.updateChat(
+        state.chat.copyWith(
+          title: title,
+          updatedAt: DateTime.now(),
+        ),
+      );
+
+      emit(
+        ChatUpdated(
+          chat: chat,
+          author: state.author,
+          guests: state.guests,
+        ),
+      );
+    } catch (e) {
+      Log().e(e);
+      emit(
+        ChatError(
+          chat: state.chat,
+          author: state.author,
+          guests: state.guests,
+          message: '$e',
         ),
       );
     }

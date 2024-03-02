@@ -1,3 +1,4 @@
+import 'package:chat_gemini/app/theme/theme_cubit.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chats/chat_list_widget.dart';
@@ -102,8 +103,21 @@ class _ProfileItem extends StatelessWidget {
                     ),
             ),
           ),
+          const Spacer(),
+          BlocBuilder<ThemeCubit, ThemeState>(
+            builder: (context, state) => switch (state) {
+              ThemeLight() => _iconButton(context, Icons.nightlight_round),
+              ThemeDark() => _iconButton(context, Icons.wb_sunny_rounded),
+              ThemeSystem() => _iconButton(context, Icons.auto_awesome_rounded),
+            },
+          ),
         ],
       ),
     );
   }
+
+  IconButton _iconButton(BuildContext context, IconData data) => IconButton(
+        icon: Icon(data),
+        onPressed: context.read<ThemeCubit>().changeTheme,
+      );
 }

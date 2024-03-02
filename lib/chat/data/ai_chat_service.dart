@@ -3,6 +3,7 @@ import 'package:chat_gemini/utils/logger.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 const _supportedModels = ['gemini-pro', 'gemini-pro-vision'];
+const geminiApiKey = String.fromEnvironment('GEMENI_API_KEY');
 
 enum _ContentSupportedRoles { user, model }
 
@@ -12,16 +13,14 @@ class AiChatService {
 
   static final AiChatService instance = AiChatService._();
 
-  static const _apiKey = String.fromEnvironment('GEMINI_API_KEY');
-
   final GenerativeModel _model = GenerativeModel(
     model: _supportedModels[0],
-    apiKey: _apiKey,
+    apiKey: geminiApiKey,
   );
   // ignore: unused_field
   final GenerativeModel _visionModel = GenerativeModel(
     model: _supportedModels[1],
-    apiKey: _apiKey,
+    apiKey: geminiApiKey,
   );
 
   ChatSession? _chat;
@@ -52,7 +51,7 @@ class AiChatService {
       if (_chat == null) {
         throw Exception('Chat not initialized. Run init() first.');
       }
-      if (_apiKey.isEmpty) throw Exception('API key is empty');
+      if (geminiApiKey.isEmpty) throw Exception('API key is empty');
 
       final response = await _chat!.sendMessage(
         Content.text(message),

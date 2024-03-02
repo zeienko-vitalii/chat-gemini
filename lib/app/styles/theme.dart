@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const borderRadius32 = BorderRadius.all(Radius.circular(32));
+const borderRadius16 = BorderRadius.all(Radius.circular(16));
 
 const _border = OutlineInputBorder(
   borderRadius: borderRadius32,

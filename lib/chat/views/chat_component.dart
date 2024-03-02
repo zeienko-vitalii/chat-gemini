@@ -6,6 +6,8 @@ import 'package:chat_gemini/auth/models/user.dart';
 import 'package:chat_gemini/chat/cubit/chat_cubit.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chat/models/message.dart';
+import 'package:chat_gemini/chat/views/chat_controls/chat_controls_widget.dart';
+import 'package:chat_gemini/chat/views/chat_controls/dialogs/rename_alert_chat_dialog.dart';
 import 'package:chat_gemini/chat/views/chat_text_field.dart';
 import 'package:chat_gemini/chat/views/chat_widget.dart';
 import 'package:chat_gemini/chat/views/empty_chat_widget.dart';
@@ -56,14 +58,25 @@ class _ChatComponentState extends State<ChatComponent> {
           final chat = state.chat;
           final isLoading = state is ChatLoading;
 
-          final apiKeyError =
-              state is ChatError && (state.message?.contains('API') ?? false);
-          const noApiKey = String.fromEnvironment('GEMINI_API_KEY') == '';
+          final apiKeyError = _isApiKeyError(state);
+          final isApiKeyError = _isApiKeyNotValid(
+            apiKeyError,
+            isGeminiApiKeyEmpty,
+          );
           return Scaffold(
             drawer: CustomDrawer(chat: chat),
-            appBar: customAppBar(
+            appBar: CustomAppBar(
               context,
-              title: chat.title,
+              title: _getAppBarTitle(
+                title: chat.title,
+                isNewChat: chat.isNewChat,
+              ),
+              action: _getChatControls(
+                isNewChat: chat.isNewChat,
+                chatTitle: chat.title,
+                onConfirmDelete: _confirmDelete,
+                onConfirmRename: _confirmRename,
+              ),
             ),
             body: SafeArea(
               child: GestureDetector(
@@ -76,7 +89,7 @@ class _ChatComponentState extends State<ChatComponent> {
                     ...state.guests,
                   ],
                   isLoading: isLoading,
-                  hasApiKey: apiKeyError || noApiKey,
+                  hasApiKey: isApiKeyError,
                   onSend: _chatCubit.sendTextMessage,
                 ),
               ),
@@ -85,6 +98,44 @@ class _ChatComponentState extends State<ChatComponent> {
         },
       ),
     );
+  }
+
+  Widget? _getChatControls({
+    required bool isNewChat,
+    required String chatTitle,
+    required VoidCallback onConfirmDelete,
+    required RenameChatAlertDialogCallback onConfirmRename,
+  }) {
+    if (isNewChat) return null;
+
+    return ChatControlsWidget(
+      chatTitle: chatTitle,
+      onConfirmDelete: () {
+        onConfirmDelete();
+        context.router.pop();
+      },
+      onConfirmRename: (newName) {
+        onConfirmRename(newName);
+        context.router.pop();
+      },
+    );
+  }
+
+  void _confirmDelete() {
+    _chatCubit.deleteChat();
+    context.router.pop();
+  }
+
+  void _confirmRename(String newName) {
+    _chatCubit.renameChat(newName);
+    context.router.pop();
+  }
+
+  String _getAppBarTitle({
+    required String title,
+    required bool isNewChat,
+  }) {
+    return isNewChat ? 'New chat' : title;
   }
 
   void _chatStateListener(BuildContext context, ChatState state) {
@@ -111,6 +162,14 @@ class _ChatComponentState extends State<ChatComponent> {
         curve: Curves.easeOutCirc,
       ),
     );
+  }
+
+  bool _isApiKeyNotValid(bool isApiKeyError, bool isGeminiApiKeyEmpty) {
+    return isApiKeyError || isGeminiApiKeyEmpty;
+  }
+
+  bool _isApiKeyError(ChatState state) {
+    return state is ChatError && (state.message?.contains('API') ?? false);
   }
 }
 
