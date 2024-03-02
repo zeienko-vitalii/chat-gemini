@@ -3,7 +3,7 @@ import 'package:chat_gemini/utils/logger.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 const _supportedModels = ['gemini-pro', 'gemini-pro-vision'];
-const geminiApiKey = String.fromEnvironment('GEMENI_API_KEY');
+const geminiApiKey = String.fromEnvironment('GEMINI_API_KEY');
 
 enum _ContentSupportedRoles { user, model }
 

@@ -58,11 +58,6 @@ class _ChatComponentState extends State<ChatComponent> {
           final chat = state.chat;
           final isLoading = state is ChatLoading;
 
-          final apiKeyError = _isApiKeyError(state);
-          final isApiKeyError = _isApiKeyNotValid(
-            apiKeyError,
-            isGeminiApiKeyEmpty,
-          );
           return Scaffold(
             drawer: CustomDrawer(chat: chat),
             appBar: CustomAppBar(
@@ -89,7 +84,7 @@ class _ChatComponentState extends State<ChatComponent> {
                     ...state.guests,
                   ],
                   isLoading: isLoading,
-                  hasApiKey: isApiKeyError,
+                  hasApiKey: isGeminiApiKeyEmpty,
                   onSend: _chatCubit.sendTextMessage,
                 ),
               ),
@@ -162,14 +157,6 @@ class _ChatComponentState extends State<ChatComponent> {
         curve: Curves.easeOutCirc,
       ),
     );
-  }
-
-  bool _isApiKeyNotValid(bool isApiKeyError, bool isGeminiApiKeyEmpty) {
-    return isApiKeyError || isGeminiApiKeyEmpty;
-  }
-
-  bool _isApiKeyError(ChatState state) {
-    return state is ChatError && (state.message?.contains('API') ?? false);
   }
 }
 
