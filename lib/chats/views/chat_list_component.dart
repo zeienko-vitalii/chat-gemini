@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/app/navigation/app_router.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
+import 'package:chat_gemini/chats/styles/chat_list_styles.dart';
 import 'package:chat_gemini/chats/views/chat_list_tile.dart';
 import 'package:chat_gemini/chats/cubit/chats_cubit.dart';
 import 'package:chat_gemini/utils/date_time.utils.dart';
@@ -123,20 +124,25 @@ class _DateDivider extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Divider(
               height: 1,
-              color: Colors.black,
+              color: chatListTileContentColor(context),
             ),
           ),
           const Gap(12),
-          Text(formatDateTime(dateTime)),
+          Text(
+            formatDateTime(dateTime),
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: chatListTileContentColor(context),
+                ),
+          ),
           const Gap(12),
-          const Expanded(
+          Expanded(
             flex: 8,
             child: Divider(
               height: 1,
-              color: Colors.black,
+              color: chatListTileContentColor(context),
             ),
           ),
         ],

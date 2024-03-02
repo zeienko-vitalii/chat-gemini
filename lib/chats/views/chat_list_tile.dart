@@ -1,3 +1,4 @@
+import 'package:chat_gemini/chats/styles/chat_list_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -17,34 +18,27 @@ class ChatListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final secondary = Theme.of(context).colorScheme.secondary;
     return Padding(
       padding: const EdgeInsets.all(12).copyWith(bottom: 0),
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.all(16),
-          backgroundColor: isSelected ? Colors.black87 : Colors.white70,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-              color: secondary,
-            ),
-          ),
-        ),
+        style: chatListButtonStyle(context, isSelected),
         onPressed: onPressed,
         child: Row(
           children: [
             if (isAddButton) ...[
               Icon(
                 Icons.add_rounded,
-                color: isSelected ? Colors.white : secondary,
+                color: chatListTileContentColor(
+                  context,
+                  isSelected,
+                ),
               ),
               const Gap(10),
             ],
             Text(
               title,
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: isSelected ? Colors.white : secondary,
+                    color: chatListTileContentColor(context, isSelected),
                   ),
             ),
           ],
