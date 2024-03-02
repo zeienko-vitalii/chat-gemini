@@ -4,7 +4,10 @@ import 'package:chat_gemini/app/views/custom_app_bar.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:chat_gemini/auth/models/user.dart';
 import 'package:chat_gemini/chat/cubit/chat_cubit.dart';
+import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chat/models/message.dart';
+import 'package:chat_gemini/chat/views/chat_controls/chat_controls_widget.dart';
+import 'package:chat_gemini/chat/views/chat_controls/dialogs/rename_alert_chat_dialog.dart';
 import 'package:chat_gemini/chat/views/chat_text_field.dart';
 import 'package:chat_gemini/chat/views/chat_widget.dart';
 import 'package:chat_gemini/chat/views/empty_chat_widget.dart';
@@ -16,7 +19,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatComponent extends StatefulWidget {
-  const ChatComponent({super.key});
+  const ChatComponent({super.key, required this.chat});
+
+  final Chat chat;
 
   @override
   State<ChatComponent> createState() => _ChatComponentState();
@@ -31,8 +36,16 @@ class _ChatComponentState extends State<ChatComponent> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _chatCubit.loadChat();
+      _chatCubit.loadChat(widget.chat);
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant ChatComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.chat != widget.chat) {
+      _chatCubit.loadChat(widget.chat);
+    }
   }
 
   @override
@@ -45,14 +58,20 @@ class _ChatComponentState extends State<ChatComponent> {
           final chat = state.chat;
           final isLoading = state is ChatLoading;
 
-          final apiKeyError =
-              state is ChatError && (state.message?.contains('API') ?? false);
-          const noApiKey = String.fromEnvironment('GEMINI_API_KEY') == '';
           return Scaffold(
-            drawer: const CustomDrawer(),
-            appBar: customAppBar(
+            drawer: CustomDrawer(chat: chat),
+            appBar: CustomAppBar(
               context,
-              title: chat.title,
+              title: _getAppBarTitle(
+                title: chat.title,
+                isNewChat: chat.isNewChat,
+              ),
+              action: _getChatControls(
+                isNewChat: chat.isNewChat,
+                chatTitle: chat.title,
+                onConfirmDelete: _confirmDelete,
+                onConfirmRename: _confirmRename,
+              ),
             ),
             body: SafeArea(
               child: GestureDetector(
@@ -65,7 +84,7 @@ class _ChatComponentState extends State<ChatComponent> {
                     ...state.guests,
                   ],
                   isLoading: isLoading,
-                  hasApiKey: apiKeyError || noApiKey,
+                  hasApiKey: isGeminiApiKeyEmpty,
                   onSend: _chatCubit.sendTextMessage,
                 ),
               ),
@@ -76,12 +95,47 @@ class _ChatComponentState extends State<ChatComponent> {
     );
   }
 
+  Widget? _getChatControls({
+    required bool isNewChat,
+    required String chatTitle,
+    required VoidCallback onConfirmDelete,
+    required RenameChatAlertDialogCallback onConfirmRename,
+  }) {
+    if (isNewChat) return null;
+
+    return ChatControlsWidget(
+      chatTitle: chatTitle,
+      onConfirmDelete: () {
+        onConfirmDelete();
+        context.router.pop();
+      },
+      onConfirmRename: (newName) {
+        onConfirmRename(newName);
+        context.router.pop();
+      },
+    );
+  }
+
+  void _confirmDelete() {
+    _chatCubit.deleteChat();
+    context.router.pop();
+  }
+
+  void _confirmRename(String newName) {
+    _chatCubit.renameChat(newName);
+    context.router.pop();
+  }
+
+  String _getAppBarTitle({
+    required String title,
+    required bool isNewChat,
+  }) {
+    return isNewChat ? 'New chat' : title;
+  }
+
   void _chatStateListener(BuildContext context, ChatState state) {
     if (state is ChatUpdated && state.chat.messages.isNotEmpty) {
-      // TODO(V): implement scrolling to the bottom
-      // setState(() {
-      //   _scrollDown();
-      // });
+      _scrollDown();
     } else if (state is ChatError) {
       showErrorSnackBar(context, state.message);
     }

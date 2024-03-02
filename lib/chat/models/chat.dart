@@ -26,4 +26,6 @@ class Chat with _$Chat {
   const Chat._();
 
   factory Chat.fromJson(JsonType json) => _$ChatFromJson(json);
+
+  bool get isNewChat => id.isEmpty || authorId.isEmpty;
 }

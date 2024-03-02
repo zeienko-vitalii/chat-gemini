@@ -29,6 +29,7 @@ dependencies:
   cloud_firestore: ^4.14.0
   collection: ^1.18.0
   flutter_markdown: ^0.6.20+1
+  share_plus: ^7.2.2
 
 dev_dependencies:
   flutter_test:

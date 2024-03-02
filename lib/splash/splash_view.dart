@@ -26,10 +26,10 @@ class _SplashViewState extends State<SplashView> {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is! SignIn) {
+        if (state is Logout) {
           context.router.replace(const AuthScreenRoute());
-        } else {
-          context.router.replace(const HomeScreenRoute());
+        } else if (state is SignIn) {
+          context.router.replace(ChatScreenRoute());
         }
       },
       child: const Material(

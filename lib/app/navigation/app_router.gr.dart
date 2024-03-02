@@ -21,6 +21,17 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const AuthScreen(),
       );
     },
+    ChatScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ChatScreenRouteArgs>(
+          orElse: () => const ChatScreenRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ChatScreen(
+          key: args.key,
+          chat: args.chat,
+        ),
+      );
+    },
     HomeScreenRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -48,6 +59,44 @@ class AuthScreenRoute extends PageRouteInfo<void> {
   static const String name = 'AuthScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ChatScreen]
+class ChatScreenRoute extends PageRouteInfo<ChatScreenRouteArgs> {
+  ChatScreenRoute({
+    Key? key,
+    Chat chat = const Chat(),
+    List<PageRouteInfo>? children,
+  }) : super(
+          ChatScreenRoute.name,
+          args: ChatScreenRouteArgs(
+            key: key,
+            chat: chat,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'ChatScreenRoute';
+
+  static const PageInfo<ChatScreenRouteArgs> page =
+      PageInfo<ChatScreenRouteArgs>(name);
+}
+
+class ChatScreenRouteArgs {
+  const ChatScreenRouteArgs({
+    this.key,
+    this.chat = const Chat(),
+  });
+
+  final Key? key;
+
+  final Chat chat;
+
+  @override
+  String toString() {
+    return 'ChatScreenRouteArgs{key: $key, chat: $chat}';
+  }
 }
 
 /// generated route for
