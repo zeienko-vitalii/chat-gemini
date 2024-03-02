@@ -24,6 +24,19 @@ class ChatRepository with FirestoreMixin {
         toFirestore: (Chat model, _) => model.toJson(),
       );
 
+  Future<Chat> getChatById(String chatId) async {
+    try {
+      final result = await _getCollectionRef().doc(chatId).get();
+      final chat = result.data();
+
+      if (chat == null) throw Exception('Chat not found');
+      return chat;
+    } catch (e, stk) {
+      Log().e(e, stk);
+      rethrow;
+    }
+  }
+
   Future<Chat> getChatByUserId(String userId) async {
     try {
       final chats = await getChatsByUserId(userId);

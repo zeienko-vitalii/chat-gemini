@@ -4,6 +4,7 @@ import 'package:chat_gemini/app/views/custom_app_bar.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:chat_gemini/auth/models/user.dart';
 import 'package:chat_gemini/chat/cubit/chat_cubit.dart';
+import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chat/models/message.dart';
 import 'package:chat_gemini/chat/views/chat_text_field.dart';
 import 'package:chat_gemini/chat/views/chat_widget.dart';
@@ -16,7 +17,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatComponent extends StatefulWidget {
-  const ChatComponent({super.key});
+  const ChatComponent({super.key, required this.chat});
+
+  final Chat chat;
 
   @override
   State<ChatComponent> createState() => _ChatComponentState();
@@ -31,8 +34,16 @@ class _ChatComponentState extends State<ChatComponent> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _chatCubit.loadChat();
+      _chatCubit.loadChat(widget.chat);
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant ChatComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.chat != widget.chat) {
+      _chatCubit.loadChat(widget.chat);
+    }
   }
 
   @override
@@ -49,7 +60,7 @@ class _ChatComponentState extends State<ChatComponent> {
               state is ChatError && (state.message?.contains('API') ?? false);
           const noApiKey = String.fromEnvironment('GEMINI_API_KEY') == '';
           return Scaffold(
-            drawer: const CustomDrawer(),
+            drawer: CustomDrawer(chat: chat),
             appBar: customAppBar(
               context,
               title: chat.title,
@@ -78,10 +89,7 @@ class _ChatComponentState extends State<ChatComponent> {
 
   void _chatStateListener(BuildContext context, ChatState state) {
     if (state is ChatUpdated && state.chat.messages.isNotEmpty) {
-      // TODO(V): implement scrolling to the bottom
-      // setState(() {
-      //   _scrollDown();
-      // });
+      _scrollDown();
     } else if (state is ChatError) {
       showErrorSnackBar(context, state.message);
     }

@@ -1,21 +1,24 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/chat/cubit/chat_cubit.dart';
+import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chat/views/chat_component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+@RoutePage()
+class ChatScreen extends StatelessWidget {
+  const ChatScreen({
+    super.key,
+    this.chat = const Chat(),
+  });
 
-  @override
-  State<ChatScreen> createState() => _ChatScreenState();
-}
+  final Chat chat;
 
-class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ChatCubit(),
-      child: const ChatComponent(),
+      child: ChatComponent(chat: chat),
     );
   }
 }

@@ -15,7 +15,7 @@ class EmptyChatWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
-            'assets/images/icon_1_no_bg.png',
+            'assets/images/launcher_icon.png',
             height: 164,
           ),
           const Gap(20),

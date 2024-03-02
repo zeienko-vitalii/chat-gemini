@@ -33,7 +33,9 @@ class MessageWidget extends StatelessWidget {
             // issue: https://github.com/flutter/flutter/issues/77782
             backgroundImage: assetAvatar
                 ? ExactAssetImage(avatar!) as ImageProvider
-                : NetworkImage(avatar!),
+                : hasAvatar
+                    ? NetworkImage(avatar!)
+                    : null,
             child: hasAvatar
                 ? const SizedBox()
                 : Text(

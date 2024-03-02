@@ -1,9 +1,16 @@
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
+import 'package:chat_gemini/chat/models/chat.dart';
+import 'package:chat_gemini/chats/chat_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+  const CustomDrawer({
+    super.key,
+    required this.chat,
+  });
+
+  final Chat chat;
 
   @override
   Widget build(BuildContext context) {
@@ -24,23 +31,8 @@ class CustomDrawer extends StatelessWidget {
                   avatar: avatar,
                   onPressed: () => _logout(context, authCubit),
                 ),
-                ListTile(
-                  title: Text(
-                    'Item 1',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  onTap: null,
-                ),
-                ListTile(
-                  title: Text(
-                    'Item 2',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  onTap: null,
+                Expanded(
+                  child: ChatListWidget(chat: chat),
                 ),
               ],
             ),
@@ -102,10 +94,12 @@ class _ProfileItem extends StatelessWidget {
             child: CircleAvatar(
               radius: 28,
               backgroundImage: hasAvatar ? NetworkImage(avatar!) : null,
-              child: hasAvatar ? null : const Icon(
-                Icons.account_circle,
-                color: Colors.white,
-              ),
+              child: hasAvatar
+                  ? null
+                  : const Icon(
+                      Icons.account_circle,
+                      color: Colors.white,
+                    ),
             ),
           ),
         ],

@@ -3,6 +3,7 @@ import 'package:chat_gemini/app/styles/theme.dart';
 import 'package:chat_gemini/app/theme/theme_cubit.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class App extends StatelessWidget {
@@ -25,12 +26,27 @@ class App extends StatelessWidget {
             ThemeSystem() => ThemeMode.system,
           };
 
-          return MaterialApp.router(
-            title: 'ChatGemini',
-            theme: themeData,
-            darkTheme: themeDataDark,
-            themeMode: themeMode,
-            routerConfig: _appRouter.config(),
+          final Brightness brightness = switch (state) {
+            ThemeLight() => Brightness.light,
+            ThemeDark() => Brightness.dark,
+            ThemeSystem() => MediaQuery.platformBrightnessOf(context),
+          };
+
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              statusBarBrightness: brightness,
+              statusBarIconBrightness: brightness,
+              statusBarColor: Colors.transparent,
+              systemNavigationBarColor: Colors.transparent, // Change Background color
+              systemNavigationBarIconBrightness: brightness,
+            ),
+            child: MaterialApp.router(
+              title: 'ChatGemini',
+              theme: themeData,
+              darkTheme: themeDataDark,
+              themeMode: themeMode,
+              routerConfig: _appRouter.config(),
+            ),
           );
         },
       ),

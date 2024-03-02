@@ -28,25 +28,33 @@ class ChatCubit extends Cubit<ChatState> {
   final _userRepository = UserRepository();
   final _aiChatService = AiChatService();
 
-  Future<void> loadChat() async {
+  Future<void> loadChat(Chat chat) async {
     try {
       emit(
         ChatLoading(
-          chat: state.chat,
+          chat: chat,
           author: state.author,
           guests: state.guests,
         ),
       );
-      if (_authService.currentUser?.uid case final id?) {
-        final chat = await _repository.getChatByUserId(id);
 
-        final author = await _userRepository.getUser(id);
+      _aiChatService.init(messages: chat.messages);
 
-        final guests = await Future.wait(
-          chat.sharedWithIds.map(_userRepository.getUser),
+      final currentUserId = _authService.currentUser?.uid;
+      if (chat.isNewChat) {
+        final (author, _) = await loadAuthors(currentUserId);
+        emit(
+          ChatUpdated(
+            chat: chat,
+            author: author,
+            guests: state.guests,
+          ),
         );
-
-        _aiChatService.init(messages: chat.messages);
+      } else {
+        final (author, guests) = await loadAuthors(
+          currentUserId,
+          chat.sharedWithIds,
+        );
         emit(
           ChatUpdated(
             chat: chat,
@@ -54,20 +62,34 @@ class ChatCubit extends Cubit<ChatState> {
             guests: guests,
           ),
         );
-      } else {
-        throw Exception('User not found');
       }
     } catch (e, stk) {
       Log().e(e, stk);
       emit(
         ChatError(
-          chat: state.chat,
+          chat: chat,
           message: '$e',
           author: state.author,
           guests: state.guests,
         ),
       );
     }
+  }
+
+  Future<(User, List<User>)> loadAuthors(
+    String? currentUserId, [
+    List<String> sharedWithIds = const [],
+  ]) async {
+    if (currentUserId == null) {
+      throw Exception('User not found');
+    }
+
+    final author = await _userRepository.getUser(currentUserId);
+    final guests = await Future.wait(
+      sharedWithIds.map(_userRepository.getUser),
+    );
+
+    return (author, guests);
   }
 
   Future<void> sendTextMessage(String text) async {
@@ -145,6 +167,7 @@ class ChatCubit extends Cubit<ChatState> {
           guests: state.guests,
         ),
       );
+
       final chat = state.chat;
       final chatId = chat.id;
 
