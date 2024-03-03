@@ -21,4 +21,6 @@ class Message with _$Message {
   factory Message.fromJson(JsonType json) => _$MessageFromJson(json);
 
   bool get isBot => authorId == botAuthorId;
+
+  bool get hasMedia => media != null;
 }

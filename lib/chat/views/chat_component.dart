@@ -92,7 +92,16 @@ class _ChatComponentState extends State<ChatComponent> {
                   ],
                   isLoading: isLoading,
                   hasApiKey: isGeminiApiKeyEmpty,
-                  onSend: _chatCubit.sendTextMessage,
+                  onSend: (String text) {
+                    _chatCubit.sendTextMessage(
+                      text,
+                      mimeType: _imageFile?.$1,
+                      filePath: _imageFile?.$2,
+                    );
+
+                    if (_imageFile == null) return;
+                    _removeFile(File(_imageFile!.$2));
+                  },
                   files: [
                     if (_imageFile != null) File(_imageFile!.$2),
                   ],

@@ -1,5 +1,5 @@
 bool isDifferenceMoreThanOneDay(DateTime date1, DateTime date2) {
-  return (date1.day - date2.day).abs() >= 1;
+  return (date1.day - date2.day).abs() > 1;
 }
 
 String formatDateTime(DateTime dateTime) {
