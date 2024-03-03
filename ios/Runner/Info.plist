@@ -2,6 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+		<!-- File picker START  -->
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Chat Gemini would like to access your photo library</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Chat Gemini would like to access your camera</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Chat Gemini would like to access your microphone</string>
+		<key>com.apple.security.files.user-selected.read-only</key>
+		<true />
+		<!-- File picker END  -->
 		<key>GIDClientID</key>
 		<string>760830767299-tsn4bk5do2hnnhkl69gefslpsf3mgi68.apps.googleusercontent.com</string>
 		<key>CFBundleURLTypes</key>

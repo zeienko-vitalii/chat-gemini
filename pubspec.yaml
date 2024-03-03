@@ -31,6 +31,8 @@ dependencies:
   flutter_markdown: ^0.6.20+1
   share_plus: ^7.2.2
   rive: ^0.12.4
+  firebase_storage: ^11.6.7
+  image_picker: ^1.0.7
 
 dev_dependencies:
   flutter_test:

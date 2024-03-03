@@ -37,7 +37,7 @@ class App extends StatelessWidget {
               statusBarBrightness: brightness,
               statusBarIconBrightness: brightness,
               statusBarColor: Colors.transparent,
-              systemNavigationBarColor: Colors.transparent, // Change Background color
+              systemNavigationBarColor: Colors.transparent,
               systemNavigationBarIconBrightness: brightness,
             ),
             child: MaterialApp.router(

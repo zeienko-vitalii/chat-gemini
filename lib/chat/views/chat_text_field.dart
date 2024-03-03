@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:chat_gemini/chat/views/attach_media/attach_media_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -8,48 +11,66 @@ class ChatTextField extends StatelessWidget {
     super.key,
     this.onSend,
     required this.isLoading,
+    required this.files,
+    required this.onRemovePressed,
+    required this.onAttachFilePressed,
   }) : _controller = TextEditingController();
 
   final bool isLoading;
   final OnMessageSend? onSend;
   final TextEditingController _controller;
 
+  final List<File> files;
+  final OnRemovePressed onRemovePressed;
+  final OnAttachFilePressed onAttachFilePressed;
+
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: _controller,
-      cursorColor: Colors.grey.shade500,
-      decoration: InputDecoration(
-        hintText: 'Type a message',
-        contentPadding: const EdgeInsets.all(12),
-        labelStyle: Theme.of(context).textTheme.labelSmall,
-        hintStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
-              color: Theme.of(context)
-                  .textTheme
-                  .labelMedium!
-                  .color!
-                  .withOpacity(0.5),
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: _controller,
+            cursorColor: Colors.grey.shade500,
+            decoration: InputDecoration(
+              hintText: 'Type a message',
+              contentPadding: const EdgeInsets.all(12),
+              labelStyle: Theme.of(context).textTheme.labelSmall,
+              hintStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
+                    color: Theme.of(context)
+                        .textTheme
+                        .labelMedium!
+                        .color!
+                        .withOpacity(0.5),
+                  ),
+              suffixIcon: isLoading
+                  ? const _Loader()
+                  : _SendButton(
+                      onPressed: () {
+                        final text = _controller.text.trim();
+                        if (text.isNotEmpty) {
+                          onSend?.call(text);
+                          _controller.clear();
+                        }
+                      },
+                    ),
             ),
-        suffixIcon: isLoading
-            ? const _Loader()
-            : _SendButton(
-                onPressed: () {
-                  final text = _controller.text.trim();
-                  if (text.isNotEmpty) {
-                    onSend?.call(text);
-                    _controller.clear();
-                  }
-                },
-              ),
-      ),
-      onSubmitted: (text) {
-        if (isLoading) return;
+            onSubmitted: (text) {
+              if (isLoading) return;
 
-        if (text.trim().isNotEmpty) {
-          onSend?.call(text);
-          _controller.clear();
-        }
-      },
+              if (text.trim().isNotEmpty) {
+                onSend?.call(text);
+                _controller.clear();
+              }
+            },
+          ),
+        ),
+        AttachButton(
+          files: files,
+          onRemovePressed: onRemovePressed,
+          onAttachFilePressed: onAttachFilePressed,
+        ),
+      ],
     );
   }
 }
