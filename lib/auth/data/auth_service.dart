@@ -48,19 +48,6 @@ class AuthService {
     }
   }
 
-  // google sign in
-  // Future signInWithGoogle() async {
-  //   try {
-  //     final GoogleAuthProvider googleProvider = GoogleAuthProvider();
-  //     final UserCredential userCredential =
-  //         await _auth.signInWithPopup(googleProvider);
-  //     return userCredential;
-  //   } catch (e) {
-  //     Log().e('$e');
-  //     rethrow;
-  //   }
-  // }
-
   Future<User> signInWithGoogle() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
@@ -91,6 +78,18 @@ class AuthService {
     try {
       await FirebaseAuth.instance.signOut();
       return true;
+    } catch (e, stk) {
+      Log().e('$e', stk);
+      rethrow;
+    }
+  }
+
+  Future<void> deleteUser() {
+    try {
+      final currentUser = _auth.currentUser;
+      final id = currentUser?.uid;
+      if (id == null) throw Exception('User not found');
+      return _auth.currentUser!.delete();
     } catch (e, stk) {
       Log().e('$e', stk);
       rethrow;

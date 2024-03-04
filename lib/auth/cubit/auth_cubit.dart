@@ -15,13 +15,26 @@ class AuthCubit extends Cubit<AuthState> {
   final _userRepository = UserRepository();
   final _authService = AuthService();
 
-  void isUserSignIn() {
-    final user = _authService.currentUser;
-    Log().i('User is: ${user == null ? 'not authenticated' : 'authenticated'}');
-    if (user != null) {
-      emit(AuthState.signIn(user));
-    } else {
-      emit(const AuthState.logOut());
+  Future<void> checkUserAuthStatus() async {
+    try {
+      emit(const AuthState.loading());
+      final currentUser = _authService.currentUser;
+      Log().i(
+        'User is: ${currentUser == null ? 'not authenticated' : 'authenticated'}',
+      );
+      if (currentUser == null) {
+        emit(const AuthState.logOut());
+        return;
+      }
+      final user = await _userRepository.getUser(currentUser.uid);
+
+      if (user.name.isEmpty) {
+        emit(AuthState.signedInIncomplete(user));
+      } else {
+        emit(AuthState.signedInComplete(user));
+      }
+    } catch (e) {
+      emit(AuthState.error('$e'));
     }
   }
 
@@ -37,17 +50,38 @@ class AuthCubit extends Cubit<AuthState> {
         password,
         shouldCreate: shouldCreate,
       );
+
+      late final User profile;
       if (shouldCreate) {
-        await _userRepository.addUser(
+        profile = await _userRepository.addUser(
           User(
             uid: user.uid,
             email: user.email!,
-            name: user.displayName!,
+            name: user.displayName ?? '',
             photoUrl: user.photoURL,
           ),
         );
+      } else {
+        try {
+          // TODO(V): Add custom exceptions
+          // it will fail if user is not present
+          profile = await _userRepository.getUser(user.uid);
+        } catch (e) {
+          profile = await _userRepository.addUser(
+            User(
+              uid: user.uid,
+              email: user.email!,
+              name: user.displayName ?? '',
+              photoUrl: user.photoURL,
+            ),
+          );
+        }
       }
-      emit(AuthState.signIn(user));
+      if (profile.photoUrl?.isEmpty ?? true) {
+        emit(AuthState.signedInIncomplete(profile));
+      } else {
+        emit(AuthState.signedInComplete(profile));
+      }
     } on Exception catch (e) {
       emit(AuthState.error('$e'));
     }
@@ -57,7 +91,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(const AuthState.loading());
       final auth.User user = await _authService.signInWithGoogle();
-      await _userRepository.addUser(
+      final profile = await _userRepository.addUser(
         User(
           uid: user.uid,
           email: user.email!,
@@ -65,7 +99,11 @@ class AuthCubit extends Cubit<AuthState> {
           photoUrl: user.photoURL,
         ),
       );
-      emit(AuthState.signIn(user));
+      if (profile.photoUrl?.isEmpty ?? true) {
+        emit(AuthState.signedInIncomplete(profile));
+      } else {
+        emit(AuthState.signedInComplete(profile));
+      }
     } on Exception catch (e) {
       emit(AuthState.error('$e'));
     }

@@ -1,28 +1,19 @@
-import 'dart:io';
-
-import 'package:chat_gemini/chat/views/attach_media/attach_media_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-typedef OnMessageSend = void Function(String message);
-
-class ChatTextField extends StatelessWidget {
-  ChatTextField({
+class UsernameTextField extends StatelessWidget {
+  UsernameTextField({
     super.key,
-    this.onSend,
-    required this.isLoading,
-    required this.files,
-    required this.onRemovePressed,
-    required this.onAttachFilePressed,
-  }) : _controller = TextEditingController();
+    this.onEdit,
+    this.hint,
+    this.isLoading = false,
+    TextEditingController? controller,
+  }) : _controller = controller ?? TextEditingController();
 
   final bool isLoading;
-  final OnMessageSend? onSend;
+  final ValueChanged<String>? onEdit;
+  final String? hint;
   final TextEditingController _controller;
-
-  final List<File> files;
-  final OnRemovePressed onRemovePressed;
-  final OnAttachFilePressed onAttachFilePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +25,7 @@ class ChatTextField extends StatelessWidget {
             controller: _controller,
             cursorColor: Colors.grey.shade500,
             decoration: InputDecoration(
-              hintText: 'Type a message',
+              hintText: hint ?? 'Enter username',
               contentPadding: const EdgeInsets.all(12),
               labelStyle: Theme.of(context).textTheme.labelSmall,
               hintStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
@@ -45,53 +36,31 @@ class ChatTextField extends StatelessWidget {
                         .withOpacity(0.5),
                   ),
               suffixIcon: isLoading
-                  ? const _Loader()
-                  : _SendButton(
+                  ? const CupertinoActivityIndicator()
+                  : IconButton(
                       onPressed: () {
+                        if (isLoading) return;
                         final text = _controller.text.trim();
+
                         if (text.isNotEmpty) {
-                          onSend?.call(text);
+                          onEdit?.call(text);
                           _controller.clear();
                         }
                       },
+                      icon: const Icon(Icons.edit),
                     ),
             ),
             onSubmitted: (text) {
               if (isLoading) return;
 
               if (text.trim().isNotEmpty) {
-                onSend?.call(text);
+                onEdit?.call(text);
                 _controller.clear();
               }
             },
           ),
         ),
-        AttachButton(
-          files: files,
-          onRemovePressed: onRemovePressed,
-          onAttachFilePressed: onAttachFilePressed,
-        ),
       ],
     );
   }
-}
-
-class _SendButton extends StatelessWidget {
-  const _SendButton({
-    required this.onPressed,
-  });
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.send),
-      onPressed: onPressed,
-    );
-  }
-}
-
-class _Loader extends CupertinoActivityIndicator {
-  const _Loader();
 }

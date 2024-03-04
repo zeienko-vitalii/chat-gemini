@@ -3,6 +3,7 @@ import 'package:chat_gemini/auth/auth_screen.dart';
 import 'package:chat_gemini/chat/chat_screen.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/home/home.dart';
+import 'package:chat_gemini/profile/profile_screen.dart';
 import 'package:chat_gemini/splash/splash_view.dart';
 import 'package:flutter/material.dart';
 
@@ -20,8 +21,10 @@ class AppRouter extends _$AppRouter {
           page: AuthScreenRoute.page,
         ),
         AutoRoute(
-          keepHistory: false,
           page: ChatScreenRoute.page,
+        ),
+        AutoRoute(
+          page: ProfileScreenRoute.page,
         ),
       ];
 }

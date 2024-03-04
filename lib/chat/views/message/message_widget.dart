@@ -1,6 +1,5 @@
 import 'package:chat_gemini/app/styles/theme.dart';
 import 'package:chat_gemini/chat/models/message.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:gap/gap.dart';

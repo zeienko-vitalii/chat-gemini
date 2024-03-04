@@ -34,6 +34,8 @@ class ChatsCubit extends Cubit<ChatsState> {
           ..sort(
             (a, b) => sortByUpdatedAt(a.updatedAt, b.updatedAt),
           );
+
+        if (isClosed) return;
         emit(
           ChatsLoaded(
             chats: chartsSortedByUpdatedAt,
@@ -44,6 +46,7 @@ class ChatsCubit extends Cubit<ChatsState> {
         throw Exception('User not found');
       }
     } catch (e) {
+      if (isClosed) return;
       emit(
         ChatsError(
           message: '$e',

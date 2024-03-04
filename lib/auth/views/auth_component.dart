@@ -26,7 +26,7 @@ class _AuthComponentState extends State<AuthComponent> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _authCubit.isUserSignIn();
+      _authCubit.checkUserAuthStatus();
     });
   }
 
@@ -94,9 +94,11 @@ class _AuthComponentState extends State<AuthComponent> {
 
   void _onAuthListener(BuildContext context, AuthState state) {
     if (state is AuthError) {
-      showErrorSnackBar(context, state.message);
-    } else if (state is SignIn) {
-      context.router.replace(const HomeScreenRoute());
+      showErrorSnackbar(context, state.message);
+    } else if (state is SignedInComplete) {
+      context.router.replace(ChatScreenRoute());
+    } else if (state is SignedInIncomplete) {
+      context.router.replace(ProfileScreenRoute(toCompleteProfile: true));
     }
   }
 

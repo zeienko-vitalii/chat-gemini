@@ -172,12 +172,12 @@ class _ChatComponentState extends State<ChatComponent> {
     if (state is ChatUpdated && state.chat.messages.isNotEmpty) {
       _scrollDown();
     } else if (state is ChatError) {
-      showErrorSnackBar(context, state.message);
+      showErrorSnackbar(context, state.message);
     }
   }
 
   void _authStateListener(BuildContext context, AuthState state) {
-    if (state is Logout) {
+    if (state is LogOut) {
       context.router.replace(const AuthScreenRoute());
     }
   }
