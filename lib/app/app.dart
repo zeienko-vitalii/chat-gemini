@@ -2,6 +2,7 @@ import 'package:chat_gemini/app/navigation/app_router.dart';
 import 'package:chat_gemini/app/styles/theme.dart';
 import 'package:chat_gemini/app/theme/theme_cubit.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
+import 'package:chat_gemini/splash/cubit/splash_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,7 @@ class App extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => ThemeCubit()),
         BlocProvider(create: (context) => AuthCubit()),
+        BlocProvider(create: (context) => SplashCubit()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) {

@@ -1,11 +1,14 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:chat_gemini/app/navigation/app_router.dart';
 import 'package:chat_gemini/app/theme/theme_cubit.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chats/chat_list_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
   const CustomDrawer({
     super.key,
     required this.chat,
@@ -14,58 +17,45 @@ class CustomDrawer extends StatelessWidget {
   final Chat chat;
 
   @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthCubit>().checkUserAuthStatus();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final authCubit = context.read<AuthCubit>();
     return Drawer(
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
-          if (state is! SignIn) {
-            return const SizedBox();
+          if (state is! SignedInComplete) {
+            return const Center(child: CupertinoActivityIndicator());
           }
 
-          final avatar = state.user.photoURL;
+          final avatar = state.user.photoUrl;
 
           return SafeArea(
             child: Column(
               children: <Widget>[
                 _ProfileItem(
                   avatar: avatar,
-                  onPressed: () => _logout(context, authCubit),
+                  onPressed: () {
+                    context.router.push(ProfileScreenRoute());
+                  },
                 ),
                 Expanded(
-                  child: ChatListWidget(chat: chat),
+                  child: ChatListWidget(chat: widget.chat),
                 ),
               ],
             ),
           );
         },
-      ),
-    );
-  }
-
-  void _logout(BuildContext context, AuthCubit authCubit) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Would you like to logout?'),
-        contentPadding: EdgeInsets.zero,
-        buttonPadding: EdgeInsets.zero,
-        insetPadding: EdgeInsets.zero,
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text(
-              'No',
-              style: TextStyle(color: Colors.redAccent),
-            ),
-          ),
-          TextButton(
-            onPressed: authCubit.signOut,
-            child: const Text('Yes'),
-          ),
-        ],
       ),
     );
   }

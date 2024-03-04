@@ -38,6 +38,22 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const HomeScreen(),
       );
     },
+    ProfileScreenRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<ProfileScreenRouteArgs>(
+          orElse: () => ProfileScreenRouteArgs(
+                  toCompleteProfile: pathParams.getBool(
+                'complete-profile',
+                false,
+              )));
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ProfileScreen(
+          key: args.key,
+          toCompleteProfile: args.toCompleteProfile,
+        ),
+      );
+    },
     SplashViewRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -111,6 +127,45 @@ class HomeScreenRoute extends PageRouteInfo<void> {
   static const String name = 'HomeScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ProfileScreen]
+class ProfileScreenRoute extends PageRouteInfo<ProfileScreenRouteArgs> {
+  ProfileScreenRoute({
+    Key? key,
+    bool toCompleteProfile = false,
+    List<PageRouteInfo>? children,
+  }) : super(
+          ProfileScreenRoute.name,
+          args: ProfileScreenRouteArgs(
+            key: key,
+            toCompleteProfile: toCompleteProfile,
+          ),
+          rawPathParams: {'complete-profile': toCompleteProfile},
+          initialChildren: children,
+        );
+
+  static const String name = 'ProfileScreenRoute';
+
+  static const PageInfo<ProfileScreenRouteArgs> page =
+      PageInfo<ProfileScreenRouteArgs>(name);
+}
+
+class ProfileScreenRouteArgs {
+  const ProfileScreenRouteArgs({
+    this.key,
+    this.toCompleteProfile = false,
+  });
+
+  final Key? key;
+
+  final bool toCompleteProfile;
+
+  @override
+  String toString() {
+    return 'ProfileScreenRouteArgs{key: $key, toCompleteProfile: $toCompleteProfile}';
+  }
 }
 
 /// generated route for

@@ -52,4 +52,13 @@ class UserRepository with FirestoreMixin {
       rethrow;
     }
   }
+
+  Future<void> deleteUser(String uid) async {
+    try {
+      await _getCollectionRef().doc(uid).delete();
+    } catch (e, stk) {
+      Log().e(e, stk);
+      rethrow;
+    }
+  }
 }

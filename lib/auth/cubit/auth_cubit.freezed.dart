@@ -19,7 +19,8 @@ mixin _$AuthState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loading,
-    required TResult Function(auth.User user) signIn,
+    required TResult Function(User user) signedInComplete,
+    required TResult Function(User user) signedInIncomplete,
     required TResult Function() logOut,
     required TResult Function(String? message) error,
   }) =>
@@ -27,7 +28,8 @@ mixin _$AuthState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loading,
-    TResult? Function(auth.User user)? signIn,
+    TResult? Function(User user)? signedInComplete,
+    TResult? Function(User user)? signedInIncomplete,
     TResult? Function()? logOut,
     TResult? Function(String? message)? error,
   }) =>
@@ -35,7 +37,8 @@ mixin _$AuthState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loading,
-    TResult Function(auth.User user)? signIn,
+    TResult Function(User user)? signedInComplete,
+    TResult Function(User user)? signedInIncomplete,
     TResult Function()? logOut,
     TResult Function(String? message)? error,
     required TResult orElse(),
@@ -44,24 +47,27 @@ mixin _$AuthState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoading value) loading,
-    required TResult Function(SignIn value) signIn,
-    required TResult Function(Logout value) logOut,
+    required TResult Function(SignedInComplete value) signedInComplete,
+    required TResult Function(SignedInIncomplete value) signedInIncomplete,
+    required TResult Function(LogOut value) logOut,
     required TResult Function(AuthError value) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoading value)? loading,
-    TResult? Function(SignIn value)? signIn,
-    TResult? Function(Logout value)? logOut,
+    TResult? Function(SignedInComplete value)? signedInComplete,
+    TResult? Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult? Function(LogOut value)? logOut,
     TResult? Function(AuthError value)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoading value)? loading,
-    TResult Function(SignIn value)? signIn,
-    TResult Function(Logout value)? logOut,
+    TResult Function(SignedInComplete value)? signedInComplete,
+    TResult Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult Function(LogOut value)? logOut,
     TResult Function(AuthError value)? error,
     required TResult orElse(),
   }) =>
@@ -124,7 +130,8 @@ class _$AuthLoadingImpl implements AuthLoading {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loading,
-    required TResult Function(auth.User user) signIn,
+    required TResult Function(User user) signedInComplete,
+    required TResult Function(User user) signedInIncomplete,
     required TResult Function() logOut,
     required TResult Function(String? message) error,
   }) {
@@ -135,7 +142,8 @@ class _$AuthLoadingImpl implements AuthLoading {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loading,
-    TResult? Function(auth.User user)? signIn,
+    TResult? Function(User user)? signedInComplete,
+    TResult? Function(User user)? signedInIncomplete,
     TResult? Function()? logOut,
     TResult? Function(String? message)? error,
   }) {
@@ -146,7 +154,8 @@ class _$AuthLoadingImpl implements AuthLoading {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loading,
-    TResult Function(auth.User user)? signIn,
+    TResult Function(User user)? signedInComplete,
+    TResult Function(User user)? signedInIncomplete,
     TResult Function()? logOut,
     TResult Function(String? message)? error,
     required TResult orElse(),
@@ -161,8 +170,9 @@ class _$AuthLoadingImpl implements AuthLoading {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoading value) loading,
-    required TResult Function(SignIn value) signIn,
-    required TResult Function(Logout value) logOut,
+    required TResult Function(SignedInComplete value) signedInComplete,
+    required TResult Function(SignedInIncomplete value) signedInIncomplete,
+    required TResult Function(LogOut value) logOut,
     required TResult Function(AuthError value) error,
   }) {
     return loading(this);
@@ -172,8 +182,9 @@ class _$AuthLoadingImpl implements AuthLoading {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoading value)? loading,
-    TResult? Function(SignIn value)? signIn,
-    TResult? Function(Logout value)? logOut,
+    TResult? Function(SignedInComplete value)? signedInComplete,
+    TResult? Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult? Function(LogOut value)? logOut,
     TResult? Function(AuthError value)? error,
   }) {
     return loading?.call(this);
@@ -183,8 +194,9 @@ class _$AuthLoadingImpl implements AuthLoading {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoading value)? loading,
-    TResult Function(SignIn value)? signIn,
-    TResult Function(Logout value)? logOut,
+    TResult Function(SignedInComplete value)? signedInComplete,
+    TResult Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult Function(LogOut value)? logOut,
     TResult Function(AuthError value)? error,
     required TResult orElse(),
   }) {
@@ -200,20 +212,22 @@ abstract class AuthLoading implements AuthState {
 }
 
 /// @nodoc
-abstract class _$$SignInImplCopyWith<$Res> {
-  factory _$$SignInImplCopyWith(
-          _$SignInImpl value, $Res Function(_$SignInImpl) then) =
-      __$$SignInImplCopyWithImpl<$Res>;
+abstract class _$$SignedInCompleteImplCopyWith<$Res> {
+  factory _$$SignedInCompleteImplCopyWith(_$SignedInCompleteImpl value,
+          $Res Function(_$SignedInCompleteImpl) then) =
+      __$$SignedInCompleteImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({auth.User user});
+  $Res call({User user});
+
+  $UserCopyWith<$Res> get user;
 }
 
 /// @nodoc
-class __$$SignInImplCopyWithImpl<$Res>
-    extends _$AuthStateCopyWithImpl<$Res, _$SignInImpl>
-    implements _$$SignInImplCopyWith<$Res> {
-  __$$SignInImplCopyWithImpl(
-      _$SignInImpl _value, $Res Function(_$SignInImpl) _then)
+class __$$SignedInCompleteImplCopyWithImpl<$Res>
+    extends _$AuthStateCopyWithImpl<$Res, _$SignedInCompleteImpl>
+    implements _$$SignedInCompleteImplCopyWith<$Res> {
+  __$$SignedInCompleteImplCopyWithImpl(_$SignedInCompleteImpl _value,
+      $Res Function(_$SignedInCompleteImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -221,33 +235,41 @@ class __$$SignInImplCopyWithImpl<$Res>
   $Res call({
     Object? user = null,
   }) {
-    return _then(_$SignInImpl(
+    return _then(_$SignedInCompleteImpl(
       null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
-              as auth.User,
+              as User,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserCopyWith<$Res> get user {
+    return $UserCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value));
+    });
   }
 }
 
 /// @nodoc
 
-class _$SignInImpl implements SignIn {
-  const _$SignInImpl(this.user);
+class _$SignedInCompleteImpl implements SignedInComplete {
+  const _$SignedInCompleteImpl(this.user);
 
   @override
-  final auth.User user;
+  final User user;
 
   @override
   String toString() {
-    return 'AuthState.signIn(user: $user)';
+    return 'AuthState.signedInComplete(user: $user)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SignInImpl &&
+            other is _$SignedInCompleteImpl &&
             (identical(other.user, user) || other.user == user));
   }
 
@@ -257,42 +279,46 @@ class _$SignInImpl implements SignIn {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SignInImplCopyWith<_$SignInImpl> get copyWith =>
-      __$$SignInImplCopyWithImpl<_$SignInImpl>(this, _$identity);
+  _$$SignedInCompleteImplCopyWith<_$SignedInCompleteImpl> get copyWith =>
+      __$$SignedInCompleteImplCopyWithImpl<_$SignedInCompleteImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loading,
-    required TResult Function(auth.User user) signIn,
+    required TResult Function(User user) signedInComplete,
+    required TResult Function(User user) signedInIncomplete,
     required TResult Function() logOut,
     required TResult Function(String? message) error,
   }) {
-    return signIn(user);
+    return signedInComplete(user);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loading,
-    TResult? Function(auth.User user)? signIn,
+    TResult? Function(User user)? signedInComplete,
+    TResult? Function(User user)? signedInIncomplete,
     TResult? Function()? logOut,
     TResult? Function(String? message)? error,
   }) {
-    return signIn?.call(user);
+    return signedInComplete?.call(user);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loading,
-    TResult Function(auth.User user)? signIn,
+    TResult Function(User user)? signedInComplete,
+    TResult Function(User user)? signedInIncomplete,
     TResult Function()? logOut,
     TResult Function(String? message)? error,
     required TResult orElse(),
   }) {
-    if (signIn != null) {
-      return signIn(user);
+    if (signedInComplete != null) {
+      return signedInComplete(user);
     }
     return orElse();
   }
@@ -301,69 +327,234 @@ class _$SignInImpl implements SignIn {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoading value) loading,
-    required TResult Function(SignIn value) signIn,
-    required TResult Function(Logout value) logOut,
+    required TResult Function(SignedInComplete value) signedInComplete,
+    required TResult Function(SignedInIncomplete value) signedInIncomplete,
+    required TResult Function(LogOut value) logOut,
     required TResult Function(AuthError value) error,
   }) {
-    return signIn(this);
+    return signedInComplete(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoading value)? loading,
-    TResult? Function(SignIn value)? signIn,
-    TResult? Function(Logout value)? logOut,
+    TResult? Function(SignedInComplete value)? signedInComplete,
+    TResult? Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult? Function(LogOut value)? logOut,
     TResult? Function(AuthError value)? error,
   }) {
-    return signIn?.call(this);
+    return signedInComplete?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoading value)? loading,
-    TResult Function(SignIn value)? signIn,
-    TResult Function(Logout value)? logOut,
+    TResult Function(SignedInComplete value)? signedInComplete,
+    TResult Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult Function(LogOut value)? logOut,
     TResult Function(AuthError value)? error,
     required TResult orElse(),
   }) {
-    if (signIn != null) {
-      return signIn(this);
+    if (signedInComplete != null) {
+      return signedInComplete(this);
     }
     return orElse();
   }
 }
 
-abstract class SignIn implements AuthState {
-  const factory SignIn(final auth.User user) = _$SignInImpl;
+abstract class SignedInComplete implements AuthState {
+  const factory SignedInComplete(final User user) = _$SignedInCompleteImpl;
 
-  auth.User get user;
+  User get user;
   @JsonKey(ignore: true)
-  _$$SignInImplCopyWith<_$SignInImpl> get copyWith =>
+  _$$SignedInCompleteImplCopyWith<_$SignedInCompleteImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$LogoutImplCopyWith<$Res> {
-  factory _$$LogoutImplCopyWith(
-          _$LogoutImpl value, $Res Function(_$LogoutImpl) then) =
-      __$$LogoutImplCopyWithImpl<$Res>;
+abstract class _$$SignedInIncompleteImplCopyWith<$Res> {
+  factory _$$SignedInIncompleteImplCopyWith(_$SignedInIncompleteImpl value,
+          $Res Function(_$SignedInIncompleteImpl) then) =
+      __$$SignedInIncompleteImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({User user});
+
+  $UserCopyWith<$Res> get user;
 }
 
 /// @nodoc
-class __$$LogoutImplCopyWithImpl<$Res>
-    extends _$AuthStateCopyWithImpl<$Res, _$LogoutImpl>
-    implements _$$LogoutImplCopyWith<$Res> {
-  __$$LogoutImplCopyWithImpl(
-      _$LogoutImpl _value, $Res Function(_$LogoutImpl) _then)
+class __$$SignedInIncompleteImplCopyWithImpl<$Res>
+    extends _$AuthStateCopyWithImpl<$Res, _$SignedInIncompleteImpl>
+    implements _$$SignedInIncompleteImplCopyWith<$Res> {
+  __$$SignedInIncompleteImplCopyWithImpl(_$SignedInIncompleteImpl _value,
+      $Res Function(_$SignedInIncompleteImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? user = null,
+  }) {
+    return _then(_$SignedInIncompleteImpl(
+      null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as User,
+    ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserCopyWith<$Res> get user {
+    return $UserCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$SignedInIncompleteImpl implements SignedInIncomplete {
+  const _$SignedInIncompleteImpl(this.user);
+
+  @override
+  final User user;
+
+  @override
+  String toString() {
+    return 'AuthState.signedInIncomplete(user: $user)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignedInIncompleteImpl &&
+            (identical(other.user, user) || other.user == user));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, user);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignedInIncompleteImplCopyWith<_$SignedInIncompleteImpl> get copyWith =>
+      __$$SignedInIncompleteImplCopyWithImpl<_$SignedInIncompleteImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loading,
+    required TResult Function(User user) signedInComplete,
+    required TResult Function(User user) signedInIncomplete,
+    required TResult Function() logOut,
+    required TResult Function(String? message) error,
+  }) {
+    return signedInIncomplete(user);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loading,
+    TResult? Function(User user)? signedInComplete,
+    TResult? Function(User user)? signedInIncomplete,
+    TResult? Function()? logOut,
+    TResult? Function(String? message)? error,
+  }) {
+    return signedInIncomplete?.call(user);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loading,
+    TResult Function(User user)? signedInComplete,
+    TResult Function(User user)? signedInIncomplete,
+    TResult Function()? logOut,
+    TResult Function(String? message)? error,
+    required TResult orElse(),
+  }) {
+    if (signedInIncomplete != null) {
+      return signedInIncomplete(user);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AuthLoading value) loading,
+    required TResult Function(SignedInComplete value) signedInComplete,
+    required TResult Function(SignedInIncomplete value) signedInIncomplete,
+    required TResult Function(LogOut value) logOut,
+    required TResult Function(AuthError value) error,
+  }) {
+    return signedInIncomplete(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AuthLoading value)? loading,
+    TResult? Function(SignedInComplete value)? signedInComplete,
+    TResult? Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult? Function(LogOut value)? logOut,
+    TResult? Function(AuthError value)? error,
+  }) {
+    return signedInIncomplete?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(AuthLoading value)? loading,
+    TResult Function(SignedInComplete value)? signedInComplete,
+    TResult Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult Function(LogOut value)? logOut,
+    TResult Function(AuthError value)? error,
+    required TResult orElse(),
+  }) {
+    if (signedInIncomplete != null) {
+      return signedInIncomplete(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SignedInIncomplete implements AuthState {
+  const factory SignedInIncomplete(final User user) = _$SignedInIncompleteImpl;
+
+  User get user;
+  @JsonKey(ignore: true)
+  _$$SignedInIncompleteImplCopyWith<_$SignedInIncompleteImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$LogOutImplCopyWith<$Res> {
+  factory _$$LogOutImplCopyWith(
+          _$LogOutImpl value, $Res Function(_$LogOutImpl) then) =
+      __$$LogOutImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$LogOutImplCopyWithImpl<$Res>
+    extends _$AuthStateCopyWithImpl<$Res, _$LogOutImpl>
+    implements _$$LogOutImplCopyWith<$Res> {
+  __$$LogOutImplCopyWithImpl(
+      _$LogOutImpl _value, $Res Function(_$LogOutImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$LogoutImpl implements Logout {
-  const _$LogoutImpl();
+class _$LogOutImpl implements LogOut {
+  const _$LogOutImpl();
 
   @override
   String toString() {
@@ -373,7 +564,7 @@ class _$LogoutImpl implements Logout {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LogoutImpl);
+        (other.runtimeType == runtimeType && other is _$LogOutImpl);
   }
 
   @override
@@ -383,7 +574,8 @@ class _$LogoutImpl implements Logout {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loading,
-    required TResult Function(auth.User user) signIn,
+    required TResult Function(User user) signedInComplete,
+    required TResult Function(User user) signedInIncomplete,
     required TResult Function() logOut,
     required TResult Function(String? message) error,
   }) {
@@ -394,7 +586,8 @@ class _$LogoutImpl implements Logout {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loading,
-    TResult? Function(auth.User user)? signIn,
+    TResult? Function(User user)? signedInComplete,
+    TResult? Function(User user)? signedInIncomplete,
     TResult? Function()? logOut,
     TResult? Function(String? message)? error,
   }) {
@@ -405,7 +598,8 @@ class _$LogoutImpl implements Logout {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loading,
-    TResult Function(auth.User user)? signIn,
+    TResult Function(User user)? signedInComplete,
+    TResult Function(User user)? signedInIncomplete,
     TResult Function()? logOut,
     TResult Function(String? message)? error,
     required TResult orElse(),
@@ -420,8 +614,9 @@ class _$LogoutImpl implements Logout {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoading value) loading,
-    required TResult Function(SignIn value) signIn,
-    required TResult Function(Logout value) logOut,
+    required TResult Function(SignedInComplete value) signedInComplete,
+    required TResult Function(SignedInIncomplete value) signedInIncomplete,
+    required TResult Function(LogOut value) logOut,
     required TResult Function(AuthError value) error,
   }) {
     return logOut(this);
@@ -431,8 +626,9 @@ class _$LogoutImpl implements Logout {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoading value)? loading,
-    TResult? Function(SignIn value)? signIn,
-    TResult? Function(Logout value)? logOut,
+    TResult? Function(SignedInComplete value)? signedInComplete,
+    TResult? Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult? Function(LogOut value)? logOut,
     TResult? Function(AuthError value)? error,
   }) {
     return logOut?.call(this);
@@ -442,8 +638,9 @@ class _$LogoutImpl implements Logout {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoading value)? loading,
-    TResult Function(SignIn value)? signIn,
-    TResult Function(Logout value)? logOut,
+    TResult Function(SignedInComplete value)? signedInComplete,
+    TResult Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult Function(LogOut value)? logOut,
     TResult Function(AuthError value)? error,
     required TResult orElse(),
   }) {
@@ -454,8 +651,8 @@ class _$LogoutImpl implements Logout {
   }
 }
 
-abstract class Logout implements AuthState {
-  const factory Logout() = _$LogoutImpl;
+abstract class LogOut implements AuthState {
+  const factory LogOut() = _$LogOutImpl;
 }
 
 /// @nodoc
@@ -523,7 +720,8 @@ class _$AuthErrorImpl implements AuthError {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loading,
-    required TResult Function(auth.User user) signIn,
+    required TResult Function(User user) signedInComplete,
+    required TResult Function(User user) signedInIncomplete,
     required TResult Function() logOut,
     required TResult Function(String? message) error,
   }) {
@@ -534,7 +732,8 @@ class _$AuthErrorImpl implements AuthError {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loading,
-    TResult? Function(auth.User user)? signIn,
+    TResult? Function(User user)? signedInComplete,
+    TResult? Function(User user)? signedInIncomplete,
     TResult? Function()? logOut,
     TResult? Function(String? message)? error,
   }) {
@@ -545,7 +744,8 @@ class _$AuthErrorImpl implements AuthError {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loading,
-    TResult Function(auth.User user)? signIn,
+    TResult Function(User user)? signedInComplete,
+    TResult Function(User user)? signedInIncomplete,
     TResult Function()? logOut,
     TResult Function(String? message)? error,
     required TResult orElse(),
@@ -560,8 +760,9 @@ class _$AuthErrorImpl implements AuthError {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoading value) loading,
-    required TResult Function(SignIn value) signIn,
-    required TResult Function(Logout value) logOut,
+    required TResult Function(SignedInComplete value) signedInComplete,
+    required TResult Function(SignedInIncomplete value) signedInIncomplete,
+    required TResult Function(LogOut value) logOut,
     required TResult Function(AuthError value) error,
   }) {
     return error(this);
@@ -571,8 +772,9 @@ class _$AuthErrorImpl implements AuthError {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoading value)? loading,
-    TResult? Function(SignIn value)? signIn,
-    TResult? Function(Logout value)? logOut,
+    TResult? Function(SignedInComplete value)? signedInComplete,
+    TResult? Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult? Function(LogOut value)? logOut,
     TResult? Function(AuthError value)? error,
   }) {
     return error?.call(this);
@@ -582,8 +784,9 @@ class _$AuthErrorImpl implements AuthError {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoading value)? loading,
-    TResult Function(SignIn value)? signIn,
-    TResult Function(Logout value)? logOut,
+    TResult Function(SignedInComplete value)? signedInComplete,
+    TResult Function(SignedInIncomplete value)? signedInIncomplete,
+    TResult Function(LogOut value)? logOut,
     TResult Function(AuthError value)? error,
     required TResult orElse(),
   }) {
