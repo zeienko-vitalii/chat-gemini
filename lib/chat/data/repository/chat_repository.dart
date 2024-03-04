@@ -1,11 +1,11 @@
 import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chat/models/message.dart';
 import 'package:chat_gemini/types/json_type.dart';
-import 'package:chat_gemini/utils/firestore_mixin.dart';
+import 'package:chat_gemini/utils/base_firestore.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ChatRepository with FirestoreMixin {
+class ChatRepository extends BaseFirestore {
   factory ChatRepository() => _instance;
   ChatRepository._();
 
@@ -13,6 +13,9 @@ class ChatRepository with FirestoreMixin {
 
   @override
   String collectionKey() => 'chats';
+
+  @override
+  FirebaseFirestore get firestoreInstance => FirebaseFirestore.instance;
 
   CollectionReference<Chat> _getCollectionRef() => collectionRef.withConverter(
         fromFirestore: (DocumentSnapshot<JsonType> snapshot, _) =>

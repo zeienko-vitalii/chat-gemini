@@ -16,7 +16,7 @@ String? usernameValidation(String? username) {
 
 String? passwordValidation(String? password) {
   if (password == null || password.isEmpty) {
-    return 'Email is required';
+    return 'Password is required';
   }
 
   if (password.isEmpty) {

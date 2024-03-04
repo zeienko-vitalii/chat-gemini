@@ -172,7 +172,7 @@ class _ChatComponentState extends State<ChatComponent> {
     if (state is ChatUpdated && state.chat.messages.isNotEmpty) {
       _scrollDown();
     } else if (state is ChatError) {
-      showErrorSnackbar(context, state.message);
+      showSnackbarMessage(context, message: state.message);
     }
   }
 

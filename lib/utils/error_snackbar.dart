@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 
-void showErrorSnackbar(BuildContext context, [String? message]) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message ?? 'An error occurred'),
-      backgroundColor: Colors.redAccent,
-    ),
-  );
+enum SnackbarMessageType {
+  error,
+  success,
 }
 
-void showSuccessSnackbar(BuildContext context, [String? message]) {
+void showSnackbarMessage(
+  BuildContext context, {
+  String? message,
+  SnackbarMessageType type = SnackbarMessageType.error,
+}) {
+  final color = switch (type) {
+    SnackbarMessageType.error => Colors.redAccent,
+    SnackbarMessageType.success => Colors.green,
+  };
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(message ?? 'Success!'),
-      backgroundColor: Colors.green,
+      content: Text(message ?? 'No message.'),
+      backgroundColor: color,
     ),
   );
 }

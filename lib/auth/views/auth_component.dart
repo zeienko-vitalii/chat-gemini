@@ -94,7 +94,7 @@ class _AuthComponentState extends State<AuthComponent> {
 
   void _onAuthListener(BuildContext context, AuthState state) {
     if (state is AuthError) {
-      showErrorSnackbar(context, state.message);
+      showSnackbarMessage(context, message: state.message);
     } else if (state is SignedInComplete) {
       context.router.replace(ChatScreenRoute());
     } else if (state is SignedInIncomplete) {

@@ -88,7 +88,7 @@ class _ProfileAvatarSelectionState extends State<ProfileAvatarSelection> {
       Log().e(e, stk);
 
       if (!context.mounted) return;
-      showErrorSnackbar(context, '$e');
+      showSnackbarMessage(context, message: '$e');
     }
   }
 }
