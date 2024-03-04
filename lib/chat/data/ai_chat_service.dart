@@ -48,7 +48,24 @@ class AiChatService {
     );
   }
 
-  Future<String> sendChatMessage(String message) async {
+  Future<String> sendMessage(
+    String text, {
+    SupportedMimeTypes? mimeType,
+    Uint8List? fileBytes,
+  }) async {
+    if (_chat == null) {
+      throw Exception('Chat not initialized. Run init() first.');
+    }
+    if (geminiApiKey.isEmpty) throw Exception('API key is empty');
+
+    if (mimeType != null && fileBytes != null) {
+      return sendImagePrompt(text, mimeType, fileBytes);
+    } else {
+      return sendSingleTextPromt(text);
+    }
+  }
+
+  Future<String> sendSingleTextPromt(String message) async {
     try {
       if (_chat == null) {
         throw Exception('Chat not initialized. Run init() first.');
@@ -58,6 +75,7 @@ class AiChatService {
       final response = await _chat!.sendMessage(
         Content.text(message),
       );
+      Log().d('Text response: $response');
       final text = response.text;
 
       if (text == null) {
@@ -86,13 +104,13 @@ class AiChatService {
           TextPart(message),
           // The only accepted mime types are image/*.
           DataPart(mimeType.name, fileBytes),
-          // DataPart('image/jpeg', sconeBytes.buffer.asUint8List()),
         ])
       ];
 
       final response = await _visionModel.generateContent(content);
       final text = response.text;
       // final image = response.candidates.first.content;
+      Log().d('Image response: $response');
 
       if (text == null) {
         throw Exception('No response from API.');

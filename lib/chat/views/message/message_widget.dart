@@ -1,5 +1,6 @@
 import 'package:chat_gemini/app/styles/theme.dart';
 import 'package:chat_gemini/chat/models/message.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:gap/gap.dart';
@@ -61,7 +62,18 @@ class MessageWidget extends StatelessWidget {
                   ),
                 ),
                 const Gap(4),
-                MarkdownBody(data: _textMessage),
+                MarkdownBody(
+                  data: _textMessage,
+                  selectable: true,
+                  styleSheet: MarkdownStyleSheet.fromTheme(
+                    Theme.of(context),
+                  ).copyWith(
+                    strong: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  styleSheetTheme: MarkdownStyleSheetBaseTheme.cupertino,
+                ),
                 if (message.hasMedia) ...[
                   const Gap(4),
                   Align(

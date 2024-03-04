@@ -44,6 +44,10 @@ final themeData = ThemeData(
       ),
     ),
   ),
+  cardTheme: const CardTheme(
+    elevation: 0,
+    color: Colors.white,
+  ),
   drawerTheme: const DrawerThemeData(
     elevation: 0,
     backgroundColor: Colors.white,
@@ -57,6 +61,18 @@ final themeData = ThemeData(
     enabledBorder: _border,
     focusedErrorBorder: _border,
     suffixIconColor: Color(0xFF0a0a0a),
+  ),
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(
+      foregroundColor: MaterialStateProperty.all(Colors.black87),
+      textStyle: MaterialStateProperty.all(
+        const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
+    ),
   ),
   textTheme: const TextTheme(
     bodySmall: TextStyle(color: Colors.black, fontSize: 14),
@@ -116,6 +132,10 @@ final themeDataDark = ThemeData(
     elevation: 0,
     backgroundColor: Color(0xFF1d1d1d),
   ),
+  cardTheme: const CardTheme(
+    elevation: 0,
+    color: Color(0xFF1d1d1d),
+  ),
   inputDecorationTheme: const InputDecorationTheme(
     labelStyle: TextStyle(color: Colors.white),
     focusedBorder: _border,
@@ -125,6 +145,18 @@ final themeDataDark = ThemeData(
     enabledBorder: _border,
     focusedErrorBorder: _border,
     suffixIconColor: Colors.white,
+  ),
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(
+      foregroundColor: MaterialStateProperty.all(Colors.white),
+      textStyle: MaterialStateProperty.all(
+        const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    ),
   ),
   textTheme: const TextTheme(
     bodySmall: TextStyle(color: Colors.white, fontSize: 14),

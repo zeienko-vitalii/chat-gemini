@@ -30,9 +30,13 @@ class ChatsCubit extends Cubit<ChatsState> {
       );
       if (_authService.currentUser?.uid case final id?) {
         final chats = await _chatRepository.getChatsByUserId(id);
+        final chartsSortedByUpdatedAt = chats
+          ..sort(
+            (a, b) => sortByUpdatedAt(a.updatedAt, b.updatedAt),
+          );
         emit(
           ChatsLoaded(
-            chats: chats,
+            chats: chartsSortedByUpdatedAt,
             selectedChatIndex: state.selectedChatIndex,
           ),
         );
@@ -49,4 +53,9 @@ class ChatsCubit extends Cubit<ChatsState> {
       );
     }
   }
+}
+
+int sortByUpdatedAt(DateTime? a, DateTime? b) {
+  if (a == null || b == null) return 0;
+  return b.compareTo(a);
 }

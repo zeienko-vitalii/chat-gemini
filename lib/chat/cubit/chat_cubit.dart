@@ -119,7 +119,7 @@ class ChatCubit extends Cubit<ChatState> {
         );
         await sendMessage(message);
 
-        // await askBotTextMessage(text);
+        await askBotTextMessage(text);
       }
     } catch (e) {
       emit(
@@ -142,7 +142,9 @@ class ChatCubit extends Cubit<ChatState> {
           guests: state.guests,
         ),
       );
-      final result = await _aiChatService.sendChatMessage(text);
+      final result = await _aiChatService.sendMessage(
+        text,
+      );
       final updatedChat = await _repository.updateChat(
         state.chat.copyWith(
           messages: [

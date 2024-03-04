@@ -97,17 +97,31 @@ class _AttachButtonState extends State<AttachButton>
 
   void _onAttachPressed() {
     showModalBottomSheet(
+      backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Cancel',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ),
           actions: [
             CupertinoActionSheetAction(
               onPressed: () => _onSelectFile(context, ImageSource.gallery),
-              child: const Text('🖼️ Photo library'),
+              child: Text(
+                '🖼️ Photo library',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
             ),
             CupertinoActionSheetAction(
               onPressed: () => _onSelectFile(context, ImageSource.camera),
-              child: const Text('📷 Take a photo'),
+              child: Text(
+                '📷 Take a photo',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
             ),
           ],
         );
