@@ -118,7 +118,7 @@ class _AttachButtonState extends State<AttachButton>
       Log().e(e, stk);
 
       if (!context.mounted) return;
-      showErrorSnackbar(context, '$e');
+      showSnackbarMessage(context, message: '$e');
     }
   }
 

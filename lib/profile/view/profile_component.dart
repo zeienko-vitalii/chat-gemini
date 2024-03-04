@@ -45,7 +45,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
         body: BlocConsumer<ProfileCubit, ProfileState>(
           listener: (BuildContext context, ProfileState state) {
             if (state is ProfileError) {
-              showErrorSnackbar(context, state.error);
+              showSnackbarMessage(context, message: state.error);
             }
           },
           builder: (context, state) {

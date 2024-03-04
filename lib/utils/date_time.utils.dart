@@ -13,13 +13,13 @@ String formatDateTime(DateTime dateTime) {
   } else if (isYesterday) {
     return 'Yesterday';
   } else if (isThisYear) {
-    return '${dateTime.day} ${_months[dateTime.month - 1]}';
+    return '${dateTime.day} ${months[dateTime.month - 1]}';
   } else {
-    return '${dateTime.day} ${_months[dateTime.month - 1]} ${dateTime.year}';
+    return '${dateTime.day} ${months[dateTime.month - 1]} ${dateTime.year}';
   }
 }
 
-final _months = [
+final months = [
   'January',
   'February',
   'March',
