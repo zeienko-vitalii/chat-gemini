@@ -1,6 +1,9 @@
+import 'package:chat_gemini/app/styles/theme.dart';
 import 'package:chat_gemini/chat/models/message.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:gap/gap.dart';
 
 class MessageWidget extends StatelessWidget {
   const MessageWidget({
@@ -14,7 +17,7 @@ class MessageWidget extends StatelessWidget {
   final String? avatar;
   final String username;
 
-  String get _message => message.text;
+  String get _textMessage => message.text;
 
   bool get hasAvatar => avatar != null;
   bool get assetAvatar => avatar != null && avatar!.startsWith('assets');
@@ -42,7 +45,7 @@ class MessageWidget extends StatelessWidget {
                     _shortUsername(avatar, username),
                   ),
           ),
-          const SizedBox(width: 8),
+          const Gap(8),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -58,9 +61,26 @@ class MessageWidget extends StatelessWidget {
                     height: 1,
                   ),
                 ),
-                const SizedBox(height: 4),
-                MarkdownBody(data: _message),
-                // SelectableText(_message),
+                const Gap(4),
+                MarkdownBody(
+                  data: _textMessage,
+                  selectable: true,
+                  styleSheet: MarkdownStyleSheet.fromTheme(
+                    Theme.of(context),
+                  ).copyWith(
+                    strong: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  styleSheetTheme: MarkdownStyleSheetBaseTheme.cupertino,
+                ),
+                if (message.hasMedia) ...[
+                  const Gap(4),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: _ImageAttachment(message.media!.url),
+                  ),
+                ],
               ],
             ),
           ),
@@ -74,5 +94,27 @@ class MessageWidget extends StatelessWidget {
       return username.substring(0, 2).toUpperCase();
     }
     return username.toUpperCase();
+  }
+}
+
+class _ImageAttachment extends StatelessWidget {
+  const _ImageAttachment(this.fileUrl);
+
+  final String fileUrl;
+
+  static const size = 200.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: size,
+      child: ClipRRect(
+        borderRadius: borderRadius16,
+        child: Image.network(
+          fileUrl,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
   }
 }

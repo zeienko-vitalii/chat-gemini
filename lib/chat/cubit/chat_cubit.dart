@@ -4,7 +4,9 @@ import 'package:chat_gemini/auth/data/repository/user_repository.dart';
 import 'package:chat_gemini/auth/models/user.dart';
 import 'package:chat_gemini/chat/data/ai_chat_service.dart';
 import 'package:chat_gemini/chat/data/repository/chat_repository.dart';
+import 'package:chat_gemini/chat/data/repository/media_storage_repository.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
+import 'package:chat_gemini/chat/models/media.dart';
 import 'package:chat_gemini/chat/models/message.dart';
 import 'package:chat_gemini/utils/logger.dart';
 
@@ -28,6 +30,7 @@ class ChatCubit extends Cubit<ChatState> {
   final _repository = ChatRepository();
   final _authService = AuthService();
   final _userRepository = UserRepository();
+  final _mediaStorageRepository = MediaStorageRepository();
   final _aiChatService = AiChatService();
 
   Future<void> loadChat(Chat chat) async {
@@ -94,13 +97,25 @@ class ChatCubit extends Cubit<ChatState> {
     return (author, guests);
   }
 
-  Future<void> sendTextMessage(String text) async {
+  Future<void> sendTextMessage(
+    String text, {
+    String? mimeType,
+    String? filePath,
+  }) async {
     try {
       if (_authService.currentUser?.uid case final id?) {
+        final isFilePathEmpty = filePath == null || filePath.isEmpty;
+        final isMimeTypeEmpty = mimeType == null || mimeType.isEmpty;
         final message = Message(
           text: text,
           authorId: id,
           createdAt: DateTime.now(),
+          media: isFilePathEmpty || isMimeTypeEmpty
+              ? null
+              : Media(
+                  url: filePath,
+                  mimeType: mimeType,
+                ),
         );
         await sendMessage(message);
 
@@ -127,7 +142,9 @@ class ChatCubit extends Cubit<ChatState> {
           guests: state.guests,
         ),
       );
-      final result = await _aiChatService.sendChatMessage(text);
+      final result = await _aiChatService.sendMessage(
+        text,
+      );
       final updatedChat = await _repository.updateChat(
         state.chat.copyWith(
           messages: [
@@ -173,23 +190,28 @@ class ChatCubit extends Cubit<ChatState> {
       final chat = state.chat;
       final chatId = chat.id;
 
-      late final Chat updatedChat;
+      Chat updatedChat;
       if (chatId.isEmpty) {
         final userId = _authService.currentUser?.uid;
         final chat = Chat(
           authorId: userId ?? '',
           title: 'Untitled',
-          messages: [message],
+          messages: [],
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );
+
         updatedChat = await _repository.addChat(chat);
+        updatedChat = await _uploadMediaAndUpdateChat(
+          chat: updatedChat,
+          userId: userId ?? '',
+          message: message,
+        );
       } else {
-        updatedChat = await _repository.updateChat(
-          chat.copyWith(
-            messages: [...chat.messages, message],
-            updatedAt: DateTime.now(),
-          ),
+        updatedChat = await _uploadMediaAndUpdateChat(
+          chat: chat,
+          userId: message.authorId,
+          message: message,
         );
       }
 
@@ -212,6 +234,45 @@ class ChatCubit extends Cubit<ChatState> {
     }
   }
 
+  Future<Chat> _uploadMediaAndUpdateChat({
+    required Chat chat,
+    required String userId,
+    required Message message,
+  }) async {
+    if (userId.isEmpty) throw Exception('User not found');
+
+    final isMediaEmpty = message.media == null;
+    final mediaUrl = await _uploadMedia(
+      chat.id,
+      isMediaEmpty ? '' : message.media!.url,
+    );
+    final isMediaUrlEmpty = mediaUrl == null || mediaUrl.isEmpty;
+    final mediaToSave = isMediaUrlEmpty
+        ? null
+        : message.media!.copyWith(
+            url: mediaUrl,
+          );
+    final messageToSave = message.copyWith(media: mediaToSave);
+    return _repository.updateChat(
+      chat.copyWith(
+        messages: [
+          ...chat.messages,
+          messageToSave,
+        ],
+        updatedAt: DateTime.now(),
+      ),
+    );
+  }
+
+  Future<String?> _uploadMedia(String chatId, String filePath) async {
+    if (chatId.isEmpty || filePath.isEmpty) return null;
+
+    return _mediaStorageRepository.uploadFile(
+      chatId,
+      filePath,
+    );
+  }
+
   Future<void> deleteChat() async {
     try {
       emit(
@@ -222,6 +283,7 @@ class ChatCubit extends Cubit<ChatState> {
         ),
       );
 
+      await _mediaStorageRepository.deleteChatFiles(state.chat.id);
       await _repository.deleteChat(state.chat.id);
 
       // start new chat

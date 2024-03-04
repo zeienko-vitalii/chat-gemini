@@ -74,7 +74,8 @@ class _ChatListComponentState extends State<ChatListComponent> {
               );
             }
 
-            final prevChatUpdatedAt = state.chats[index].updatedAt;
+            final prevChatUpdatedAt = state.chats[index - 1].updatedAt;
+
             final isDiffMoreThanOneDay = isDifferenceMoreThanOneDay(
               chatUpdatedAt ?? DateTime.now(),
               prevChatUpdatedAt ?? DateTime.now(),

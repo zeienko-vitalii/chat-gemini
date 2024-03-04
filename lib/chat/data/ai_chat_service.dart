@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:chat_gemini/chat/models/message.dart';
+import 'package:chat_gemini/utils/image/supported_image_mime_types.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
@@ -17,7 +20,6 @@ class AiChatService {
     model: _supportedModels[0],
     apiKey: geminiApiKey,
   );
-  // ignore: unused_field
   final GenerativeModel _visionModel = GenerativeModel(
     model: _supportedModels[1],
     apiKey: geminiApiKey,
@@ -46,7 +48,24 @@ class AiChatService {
     );
   }
 
-  Future<String> sendChatMessage(String message) async {
+  Future<String> sendMessage(
+    String text, {
+    SupportedMimeTypes? mimeType,
+    Uint8List? fileBytes,
+  }) async {
+    if (_chat == null) {
+      throw Exception('Chat not initialized. Run init() first.');
+    }
+    if (geminiApiKey.isEmpty) throw Exception('API key is empty');
+
+    if (mimeType != null && fileBytes != null) {
+      return sendImagePrompt(text, mimeType, fileBytes);
+    } else {
+      return sendSingleTextPromt(text);
+    }
+  }
+
+  Future<String> sendSingleTextPromt(String message) async {
     try {
       if (_chat == null) {
         throw Exception('Chat not initialized. Run init() first.');
@@ -56,6 +75,7 @@ class AiChatService {
       final response = await _chat!.sendMessage(
         Content.text(message),
       );
+      Log().d('Text response: $response');
       final text = response.text;
 
       if (text == null) {
@@ -68,56 +88,37 @@ class AiChatService {
     }
   }
 
-  Future<void> _sendImagePrompt(String message) async {
-    // setState(() {
-    //   _loading = true;
-    // });
-    // try {
-    //   ByteData catBytes = await rootBundle.load('assets/images/cat.jpg');
-    //   ByteData sconeBytes = await rootBundle.load('assets/images/scones.jpg');
-    //   final content = [
-    //     Content.multi([
-    //       TextPart(message),
-    //       // The only accepted mime types are image/*.
-    //       DataPart('image/jpeg', catBytes.buffer.asUint8List()),
-    //       DataPart('image/jpeg', sconeBytes.buffer.asUint8List()),
-    //     ])
-    //   ];
-    //   _generatedContent.add((
-    //     image: Image.asset("assets/images/cat.jpg"),
-    //     text: message,
-    //     fromUser: true
-    //   ));
-    //   _generatedContent.add((
-    //     image: Image.asset("assets/images/scones.jpg"),
-    //     text: null,
-    //     fromUser: true
-    //   ));
+  Future<String> sendImagePrompt(
+    String message,
+    SupportedMimeTypes mimeType,
+    Uint8List fileBytes,
+  ) async {
+    try {
+      if (_chat == null) {
+        throw Exception('Chat not initialized. Run init() first.');
+      }
+      if (geminiApiKey.isEmpty) throw Exception('API key is empty');
 
-    //   var response = await _visionModel.generateContent(content);
-    //   var text = response.text;
-    //   _generatedContent.add((image: null, text: text, fromUser: false));
+      final content = [
+        Content.multi([
+          TextPart(message),
+          // The only accepted mime types are image/*.
+          DataPart(mimeType.name, fileBytes),
+        ])
+      ];
 
-    //   if (text == null) {
-    //     _showError('No response from API.');
-    //     return;
-    //   } else {
-    //     setState(() {
-    //       _loading = false;
-    //       _scrollDown();
-    //     });
-    //   }
-    // } catch (e) {
-    //   _showError(e.toString());
-    //   setState(() {
-    //     _loading = false;
-    //   });
-    // } finally {
-    //   _textController.clear();
-    //   setState(() {
-    //     _loading = false;
-    //   });
-    //   _textFieldFocus.requestFocus();
-    // }
+      final response = await _visionModel.generateContent(content);
+      final text = response.text;
+      // final image = response.candidates.first.content;
+      Log().d('Image response: $response');
+
+      if (text == null) {
+        throw Exception('No response from API.');
+      }
+      return text;
+    } catch (e, stk) {
+      Log().e(e, stk);
+      rethrow;
+    }
   }
 }

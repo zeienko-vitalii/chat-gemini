@@ -14,7 +14,8 @@ Color chatListTileContentColor(
   return isSelected ? chatTileDarkColor : chatTileLightColor;
 }
 
-ButtonStyle chatListButtonStyle(BuildContext context, bool isSelected) {
+ButtonStyle chatListButtonStyle(BuildContext context,
+    [bool isSelected = false]) {
   final isLight = Theme.of(context).brightness == Brightness.light;
   return ButtonStyle(
     elevation: MaterialStateProperty.all(0),
@@ -36,4 +37,36 @@ ButtonStyle chatListButtonStyle(BuildContext context, bool isSelected) {
       ),
     ),
   );
+}
+
+class OutlinedElevatedButtonStyle extends ButtonStyle {
+  OutlinedElevatedButtonStyle(
+    BuildContext context, {
+    bool isSelected = false,
+    bool isLightTheme = true,
+    double elevation = 0,
+    double borderRadius = 12,
+    EdgeInsetsGeometry? padding,
+  }) : super(
+          elevation: MaterialStateProperty.all(elevation),
+          padding: MaterialStateProperty.all(
+            padding ?? const EdgeInsets.all(16),
+          ),
+          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+            (states) {
+              if (states.contains(MaterialState.pressed) || isSelected) {
+                return isLightTheme ? chatTileDarkColor : chatTileLightColor;
+              }
+              return Colors.transparent;
+            },
+          ),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
+        );
 }

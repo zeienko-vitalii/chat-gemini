@@ -8,6 +8,7 @@ import 'package:chat_gemini/auth/models/user.dart';
 import 'package:chat_gemini/chat/cubit/chat_cubit.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chat/models/message.dart';
+import 'package:chat_gemini/chat/views/attach_media/attach_media_button.dart';
 import 'package:chat_gemini/chat/views/chat_controls/chat_controls_widget.dart';
 import 'package:chat_gemini/chat/views/chat_controls/dialogs/rename_alert_chat_dialog.dart';
 import 'package:chat_gemini/chat/views/chat_text_field.dart';
@@ -15,6 +16,8 @@ import 'package:chat_gemini/chat/views/chat_widget.dart';
 import 'package:chat_gemini/chat/views/empty_chat_widget.dart';
 import 'package:chat_gemini/chat/views/invalid_api_key_widget.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
+import 'package:chat_gemini/utils/image/get_file_extension.dart';
+import 'package:chat_gemini/utils/logger.dart';
 import 'package:chat_gemini/widgets/custom_drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +34,8 @@ class ChatComponent extends StatefulWidget {
 
 class _ChatComponentState extends State<ChatComponent> {
   final ScrollController _scrollController = ScrollController();
+
+  (String mimeType, String filePath)? _imageFile;
 
   ChatCubit get _chatCubit => context.read<ChatCubit>();
 
@@ -87,7 +92,21 @@ class _ChatComponentState extends State<ChatComponent> {
                   ],
                   isLoading: isLoading,
                   hasApiKey: isGeminiApiKeyEmpty,
-                  onSend: _chatCubit.sendTextMessage,
+                  onSend: (String text) {
+                    _chatCubit.sendTextMessage(
+                      text,
+                      mimeType: _imageFile?.$1,
+                      filePath: _imageFile?.$2,
+                    );
+
+                    if (_imageFile == null) return;
+                    _removeFile(File(_imageFile!.$2));
+                  },
+                  files: [
+                    if (_imageFile != null) File(_imageFile!.$2),
+                  ],
+                  onRemovePressed: _removeFile,
+                  onAttachFilePressed: _selectFile,
                 ),
               ),
             ),
@@ -95,6 +114,20 @@ class _ChatComponentState extends State<ChatComponent> {
         },
       ),
     );
+  }
+
+  // TODO(V): implement deleting specific file, when multiple files are attached
+  void _removeFile(File _) {
+    Log().d('Removing file');
+    _imageFile = null;
+    setState(() {});
+  }
+
+  void _selectFile(String fileUrl) {
+    final mimeType = imageMimeTypeByFilePath(fileUrl);
+    Log().d('Add file: $fileUrl, mimeType: $mimeType');
+    _imageFile = (mimeType, fileUrl);
+    setState(() {});
   }
 
   Widget? _getChatControls({
@@ -170,6 +203,9 @@ class _ChatBody extends StatelessWidget {
     required this.hasApiKey,
     required this.messages,
     this.onSend,
+    required this.files,
+    required this.onRemovePressed,
+    required this.onAttachFilePressed,
   });
 
   final ScrollController scrollController;
@@ -178,6 +214,10 @@ class _ChatBody extends StatelessWidget {
   final bool isLoading;
   final bool hasApiKey;
   final OnMessageSend? onSend;
+
+  final List<File> files;
+  final OnRemovePressed onRemovePressed;
+  final OnAttachFilePressed onAttachFilePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -212,6 +252,9 @@ class _ChatBody extends StatelessWidget {
             child: ChatTextField(
               isLoading: isLoading,
               onSend: onSend,
+              files: files,
+              onRemovePressed: onRemovePressed,
+              onAttachFilePressed: onAttachFilePressed,
             ),
           ),
         ],
