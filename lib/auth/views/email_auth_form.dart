@@ -1,3 +1,4 @@
+import 'package:chat_gemini/utils/validators/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -24,6 +25,8 @@ class EmailAuthForm extends StatefulWidget {
 }
 
 class _EmailAuthFormState extends State<EmailAuthForm> {
+  final _formKey = GlobalKey<FormState>();
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -46,12 +49,14 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
     return Padding(
       padding: const EdgeInsets.only(top: 32),
       child: Form(
+        key: _formKey,
         child: Column(
           children: [
             TextFormField(
               controller: _emailController,
               cursorColor: Theme.of(context).iconTheme.color,
               cursorRadius: const Radius.circular(2),
+              validator: emailValidation,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 contentPadding: EdgeInsets.all(16.0),
@@ -64,6 +69,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
               cursorColor: Theme.of(context).iconTheme.color,
               cursorRadius: const Radius.circular(2),
               obscureText: !_isPasswordVisible,
+              validator: passwordValidation,
               decoration: InputDecoration(
                 labelText: 'Password',
                 contentPadding: const EdgeInsets.all(16.0),
@@ -83,6 +89,11 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
                 cursorColor: Theme.of(context).iconTheme.color,
                 cursorRadius: const Radius.circular(2),
                 obscureText: !_isConfirmPasswordVisible,
+                validator: (String? confirmPassword) =>
+                    confirmPasswordValidation(
+                  _passwordController.text,
+                  confirmPassword,
+                ),
                 decoration: InputDecoration(
                   labelText: 'Confirm Password',
                   contentPadding: const EdgeInsets.all(16.0),
@@ -103,13 +114,16 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
                 elevation: 0,
               ),
               onPressed: () {
-                _isButtonPressed = true;
-                setState(() {});
+                if (_formKey.currentState?.validate() ?? false) {
+                  _formKey.currentState?.save();
+                  _isButtonPressed = true;
+                  setState(() {});
 
-                widget.onPressed(
-                  email: _emailController.text,
-                  password: _passwordController.text,
-                );
+                  widget.onPressed(
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                  );
+                }
               },
               child: _isButtonPressed && widget.isLoading
                   ? const CupertinoActivityIndicator()

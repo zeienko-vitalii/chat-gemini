@@ -25,7 +25,7 @@ class ProfileComponent extends StatefulWidget {
 
 class _ProfileComponentState extends State<ProfileComponent> {
   ProfileCubit get _cubit => context.read<ProfileCubit>();
-
+  final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
 
   @override
@@ -74,9 +74,11 @@ class _ProfileComponentState extends State<ProfileComponent> {
                         ),
                         const Gap(20),
                         UsernameTextField(
+                          formKey: _formKey,
                           isLoading: isLoading,
                           hint: isUsernameEmpty ? 'Enter username' : username,
-                          onEdit: _cubit.updateUsername,
+                          onEdit: (String text) =>
+                              _onSaveUserName(text, _cubit),
                           controller: _controller,
                         ),
                       ],
@@ -90,7 +92,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
                           if (username == enteredUsername) {
                             context.router.replace(ChatScreenRoute());
                           } else {
-                            _cubit.updateUsername(enteredUsername);
+                            _onSaveUserName(enteredUsername, _cubit);
                           }
                         }
                       },
@@ -126,6 +128,13 @@ class _ProfileComponentState extends State<ProfileComponent> {
         ),
       ),
     );
+  }
+
+  void _onSaveUserName(String text, ProfileCubit cubit) {
+    if (_formKey.currentState?.validate() ?? false) {
+      _formKey.currentState?.save();
+      cubit.updateUsername(text);
+    }
   }
 }
 
