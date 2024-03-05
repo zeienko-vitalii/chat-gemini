@@ -14,10 +14,10 @@ typedef OnRemovePressed = void Function(File file);
 
 class AttachButton extends StatefulWidget {
   const AttachButton({
-    super.key,
-    this.files = const [],
     required this.onRemovePressed,
     required this.onAttachFilePressed,
+    super.key,
+    this.files = const [],
   });
 
   final List<File> files;

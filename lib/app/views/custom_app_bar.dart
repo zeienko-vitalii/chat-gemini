@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class CustomAppBar extends AppBar {
   CustomAppBar(
     BuildContext context, {
-    super.key,
     required String title,
+    super.key,
     super.leading,
     Widget? action,
   }) : super(

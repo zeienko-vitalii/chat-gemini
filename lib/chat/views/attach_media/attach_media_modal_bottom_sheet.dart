@@ -26,9 +26,9 @@ void showAttachMediaBottomSheet(
 
 class AttachMediaModalBottomSheet extends StatelessWidget {
   const AttachMediaModalBottomSheet({
-    super.key,
     required this.imagePicker,
     required this.onAttachFilePressed,
+    super.key,
   });
 
   final ImagePicker imagePicker;

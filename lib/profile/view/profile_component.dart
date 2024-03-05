@@ -13,8 +13,8 @@ import 'package:gap/gap.dart';
 
 class ProfileComponent extends StatefulWidget {
   const ProfileComponent({
-    super.key,
     required this.toCompleteProfile,
+    super.key,
   });
 
   final bool toCompleteProfile;
@@ -167,9 +167,9 @@ class _ElevatedButton extends StatelessWidget {
 
 class _UserControlButtons extends StatelessWidget {
   const _UserControlButtons({
-    this.isLoading = false,
     required this.onLogout,
     required this.onDelete,
+    this.isLoading = false,
   });
 
   final bool isLoading;

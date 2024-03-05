@@ -4,8 +4,8 @@ import 'package:gap/gap.dart';
 
 class ChatListTile extends StatelessWidget {
   const ChatListTile({
-    super.key,
     required this.title,
+    super.key,
     this.isSelected = false,
     this.isAddButton = false,
     this.onPressed,

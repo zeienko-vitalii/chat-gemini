@@ -6,9 +6,9 @@ import 'package:gap/gap.dart';
 
 class MessageWidget extends StatelessWidget {
   const MessageWidget({
-    super.key,
     required this.message,
     required this.username,
+    super.key,
     this.avatar,
   });
 

@@ -8,9 +8,9 @@ const placeholderSize = 80.0;
 
 class ImagePlaceholder extends StatelessWidget {
   const ImagePlaceholder({
-    super.key,
     required this.file,
     required this.onDeletePressed,
+    super.key,
   });
 
   final File file;

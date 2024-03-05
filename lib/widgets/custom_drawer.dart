@@ -10,8 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({
-    super.key,
     required this.chat,
+    super.key,
   });
 
   final Chat chat;

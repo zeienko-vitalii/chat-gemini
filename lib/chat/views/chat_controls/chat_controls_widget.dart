@@ -17,10 +17,10 @@ enum ChatControlsAction {
 
 class ChatControlsWidget extends StatelessWidget {
   const ChatControlsWidget({
-    super.key,
     required this.chatTitle,
     required this.onConfirmDelete,
     required this.onConfirmRename,
+    super.key,
   });
 
   final String chatTitle;

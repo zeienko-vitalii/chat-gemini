@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 
 class ChatWidget extends StatelessWidget {
   const ChatWidget({
-    super.key,
     required this.messages,
     required this.authors,
     required this.scrollController,
+    super.key,
   });
 
   final ScrollController scrollController;
@@ -24,7 +24,7 @@ class ChatWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         final message = messages[index];
         final bool isBot = message.isBot;
-        
+
         if (isBot) {
           return MessageWidget(
             message: messages[index],

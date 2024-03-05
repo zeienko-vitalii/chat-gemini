@@ -8,8 +8,8 @@ import 'package:image_picker/image_picker.dart';
 
 class ProfileAvatarSelection extends StatefulWidget {
   const ProfileAvatarSelection({
-    super.key,
     required this.onAttachFilePressed,
+    super.key,
     this.avatar,
     this.isLoading = false,
   });

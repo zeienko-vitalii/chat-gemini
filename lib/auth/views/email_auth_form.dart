@@ -10,9 +10,9 @@ typedef EmailAuthFormCallback = void Function({
 
 class EmailAuthForm extends StatefulWidget {
   const EmailAuthForm({
-    super.key,
     required this.isSignIn,
     required this.onPressed,
+    super.key,
     this.isLoading = false,
   });
 

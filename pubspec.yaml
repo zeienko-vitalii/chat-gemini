@@ -45,6 +45,7 @@ dev_dependencies:
   auto_route_generator: ^7.3.2
   mockito: ^5.4.4
   fake_cloud_firestore: ^2.4.8
+  very_good_analysis: ^5.1.0
 
 flutter:
   uses-material-design: true

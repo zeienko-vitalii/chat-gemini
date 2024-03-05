@@ -13,9 +13,9 @@ void logout(BuildContext context, AuthCubit authCubit) {
 
 class ConfirmationAlertDialog extends StatelessWidget {
   const ConfirmationAlertDialog({
-    super.key,
     required this.title,
     required this.onPressed,
+    super.key,
   });
 
   final String title;

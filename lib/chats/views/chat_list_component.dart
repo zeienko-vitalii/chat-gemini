@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/app/navigation/app_router.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
+import 'package:chat_gemini/chats/cubit/chats_cubit.dart';
 import 'package:chat_gemini/chats/styles/chat_list_styles.dart';
 import 'package:chat_gemini/chats/views/chat_list_tile.dart';
-import 'package:chat_gemini/chats/cubit/chats_cubit.dart';
 import 'package:chat_gemini/utils/date_time.utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +12,8 @@ import 'package:gap/gap.dart';
 
 class ChatListComponent extends StatefulWidget {
   const ChatListComponent({
-    super.key,
     required this.chat,
+    super.key,
   });
 
   final Chat chat;

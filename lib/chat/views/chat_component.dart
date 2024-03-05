@@ -24,7 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatComponent extends StatefulWidget {
-  const ChatComponent({super.key, required this.chat});
+  const ChatComponent({required this.chat, super.key});
 
   final Chat chat;
 
@@ -202,10 +202,10 @@ class _ChatBody extends StatelessWidget {
     required this.isLoading,
     required this.hasApiKey,
     required this.messages,
-    this.onSend,
     required this.files,
     required this.onRemovePressed,
     required this.onAttachFilePressed,
+    this.onSend,
   });
 
   final ScrollController scrollController;

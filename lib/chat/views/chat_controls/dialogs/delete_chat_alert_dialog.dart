@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class DeleteChatAlertDialog extends StatelessWidget {
-  const DeleteChatAlertDialog({super.key, required this.onConfirmDelete});
+  const DeleteChatAlertDialog({
+    required this.onConfirmDelete,
+    super.key,
+  });
 
   final VoidCallback onConfirmDelete;
   @override
