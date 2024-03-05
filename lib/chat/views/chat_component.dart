@@ -229,7 +229,7 @@ class _ChatBody extends StatelessWidget {
 
     final isAndroid = Platform.isAndroid;
     final bottomPadding = isAndroid ? 16.0 : 0.0;
-    return Container(
+    return ColoredBox(
       color: Colors.transparent,
       child: Column(
         children: <Widget>[

@@ -40,7 +40,7 @@ class _AttachButtonState extends State<AttachButton>
   );
   late final Animation<Offset> _animation = Tween<Offset>(
     begin: const Offset(0, 1),
-    end: const Offset(0, 0),
+    end: Offset.zero,
   ).animate(
     CurvedAnimation(
       parent: _controller,
@@ -96,7 +96,7 @@ class _AttachButtonState extends State<AttachButton>
 
   Future<void> _getLostData(BuildContext context) async {
     try {
-      final LostDataResponse response = await _imagePicker.retrieveLostData();
+      final response = await _imagePicker.retrieveLostData();
       if (response.isEmpty) {
         Log().d('No lost data');
         return;
@@ -112,7 +112,7 @@ class _AttachButtonState extends State<AttachButton>
       } else if (response.exception != null) {
         throw response.exception!;
       } else {
-        throw 'Unknown error';
+        throw Exception('Unknown error');
       }
     } catch (e, stk) {
       Log().e(e, stk);
@@ -202,9 +202,9 @@ class _AttachButtonState extends State<AttachButton>
   }
 
   Offset _getAttachMediaPosition(GlobalKey iconGlobalKey) {
-    final renderBox =
-        iconGlobalKey.currentContext?.findRenderObject() as RenderBox;
-    return renderBox.localToGlobal(Offset.zero);
+    final iconGlobalKeyContext = iconGlobalKey.currentContext;
+    final renderBox = iconGlobalKeyContext?.findRenderObject() as RenderBox?;
+    return renderBox?.localToGlobal(Offset.zero) ?? Offset.zero;
   }
 }
 
@@ -232,7 +232,6 @@ class _AttachMediaPlaceholder extends StatelessWidget {
       child: SlideTransition(
         position: animation,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ImagePlaceholder(
               file: file,
@@ -243,7 +242,6 @@ class _AttachMediaPlaceholder extends StatelessWidget {
               style: OutlinedElevatedButtonStyle(
                 context,
                 padding: EdgeInsets.zero,
-                borderRadius: 12,
               ),
               onPressed: onAttachPressed,
               child: Row(

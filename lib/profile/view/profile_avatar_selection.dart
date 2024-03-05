@@ -66,7 +66,7 @@ class _ProfileAvatarSelectionState extends State<ProfileAvatarSelection> {
 
   Future<void> _getLostData(BuildContext context) async {
     try {
-      final LostDataResponse response = await _imagePicker.retrieveLostData();
+      final response = await _imagePicker.retrieveLostData();
       if (response.isEmpty) {
         Log().d('No lost data');
         return;
@@ -82,7 +82,7 @@ class _ProfileAvatarSelectionState extends State<ProfileAvatarSelection> {
       } else if (response.exception != null) {
         throw response.exception!;
       } else {
-        throw 'Unknown error';
+        throw Exception('Unknown error');
       }
     } catch (e, stk) {
       Log().e(e, stk);

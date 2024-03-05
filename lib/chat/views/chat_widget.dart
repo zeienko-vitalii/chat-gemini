@@ -23,7 +23,7 @@ class ChatWidget extends StatelessWidget {
       itemCount: messages.length,
       itemBuilder: (context, index) {
         final message = messages[index];
-        final bool isBot = message.isBot;
+        final isBot = message.isBot;
 
         if (isBot) {
           return MessageWidget(

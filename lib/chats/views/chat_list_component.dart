@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/app/navigation/app_router.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
@@ -48,9 +50,9 @@ class _ChatListComponentState extends State<ChatListComponent> {
           itemBuilder: (context, index) {
             final isFirstChild = index == 0;
             final chatIndex = index - 1;
-            final isSelected = isFirstChild
-                ? false
-                : state.chats.indexOf(widget.chat) == chatIndex;
+
+            final isPassedChat = state.chats.indexOf(widget.chat) == chatIndex;
+            final isSelected = !isFirstChild && isPassedChat;
 
             final chat = isFirstChild ? null : state.chats[chatIndex];
             return ChatListTile(
@@ -100,10 +102,12 @@ class _ChatListComponentState extends State<ChatListComponent> {
   }) async {
     context.read<ChatsCubit>().updateSelectedChatIndex(index);
 
-    context.router.pop();
-    context.router.replace(
-      ChatScreenRoute(
-        chat: chat ?? const Chat(),
+    unawaited(context.router.pop());
+    unawaited(
+      context.router.replace(
+        ChatScreenRoute(
+          chat: chat ?? const Chat(),
+        ),
       ),
     );
   }
@@ -119,7 +123,7 @@ class _DateDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(18.0).copyWith(
+      padding: const EdgeInsets.all(18).copyWith(
         left: 12,
         bottom: 0,
       ),

@@ -55,8 +55,8 @@ class _ProfileComponentState extends State<ProfileComponent> {
             final isUsernameEmpty = username.isEmpty;
             return Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: 32.0,
-                vertical: 20.0,
+                horizontal: 32,
+                vertical: 20,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -106,11 +106,12 @@ class _ProfileComponentState extends State<ProfileComponent> {
                         context.read<AuthCubit>(),
                       ),
                       onDelete: () {
-                        showDialog(
+                        showDialog<void>(
                           context: context,
                           builder: (context) {
                             return ConfirmationAlertDialog(
                               title:
+                                  // ignore: lines_longer_than_80_chars
                                   'Are you sure you would like to delete the account?',
                               onPressed: () {
                                 _cubit.deleteAccount();

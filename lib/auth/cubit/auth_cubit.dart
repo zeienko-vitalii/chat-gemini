@@ -3,7 +3,6 @@ import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
 import 'package:chat_gemini/auth/models/user.dart';
 import 'package:chat_gemini/utils/logger.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_state.dart';
@@ -19,10 +18,11 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(const AuthState.loading());
       final currentUser = _authService.currentUser;
+      final isUserNotAuthenticated = currentUser == null;
       Log().i(
-        'User is: ${currentUser == null ? 'not authenticated' : 'authenticated'}',
+        'User is: ${isUserNotAuthenticated ? 'not' : ''} authenticated',
       );
-      if (currentUser == null) {
+      if (isUserNotAuthenticated) {
         emit(const AuthState.logOut());
         return;
       }
@@ -45,7 +45,7 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     try {
       emit(const AuthState.loading());
-      final auth.User user = await _authService.authWithEmailAndPassword(
+      final user = await _authService.authWithEmailAndPassword(
         email,
         password,
         shouldCreate: shouldCreate,
@@ -90,7 +90,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signInWithGoogle() async {
     try {
       emit(const AuthState.loading());
-      final auth.User user = await _authService.signInWithGoogle();
+      final user = await _authService.signInWithGoogle();
       final profile = await _userRepository.addUser(
         User(
           uid: user.uid,

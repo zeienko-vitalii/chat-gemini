@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:chat_gemini/app/app.dart';
+import 'package:chat_gemini/firebase_options.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'firebase_options.dart';
 
 bool shouldUseFirebaseEmulator = false;
 
@@ -23,10 +23,10 @@ Future<void> bootstrap() async {
 }
 
 Future<void> _firebaseInit() async {
-  final FirebaseApp app = await Firebase.initializeApp(
+  final app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  final FirebaseAuth auth = FirebaseAuth.instanceFor(app: app);
+  final auth = FirebaseAuth.instanceFor(app: app);
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
   );

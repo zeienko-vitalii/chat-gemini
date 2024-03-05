@@ -57,7 +57,6 @@ class ImagePlaceholder extends StatelessWidget {
         border: Border.all(
           color: Theme.of(context).textTheme.labelLarge?.color ??
               Colors.transparent,
-          width: 1,
         ),
         boxShadow: [
           BoxShadow(

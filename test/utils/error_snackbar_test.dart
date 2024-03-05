@@ -88,7 +88,6 @@ void main() {
                 onPressed: () => showSnackbarMessage(
                   context,
                   message: errorMessage,
-                  type: SnackbarMessageType.error,
                 ),
                 child: const Text('Show Error Snackbar'),
               );
