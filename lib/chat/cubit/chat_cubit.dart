@@ -195,7 +195,6 @@ class ChatCubit extends Cubit<ChatState> {
         final userId = _authService.currentUser?.uid;
         final chat = Chat(
           authorId: userId ?? '',
-          title: 'Untitled',
           messages: [],
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),

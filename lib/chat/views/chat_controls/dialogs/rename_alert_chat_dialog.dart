@@ -5,9 +5,9 @@ typedef RenameChatAlertDialogCallback = void Function(String newName);
 
 class RenameChatAlertDialog extends StatefulWidget {
   const RenameChatAlertDialog({
-    super.key,
     required this.title,
     required this.onConfirmRename,
+    super.key,
   });
 
   final String title;

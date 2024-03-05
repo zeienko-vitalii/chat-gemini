@@ -7,12 +7,11 @@ class EmptyChatWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Spacer(),
           if (!isKeyboardVisible) ...[

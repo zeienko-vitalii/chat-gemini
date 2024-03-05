@@ -4,8 +4,8 @@ import 'package:gap/gap.dart';
 
 class ChatListTile extends StatelessWidget {
   const ChatListTile({
-    super.key,
     required this.title,
+    super.key,
     this.isSelected = false,
     this.isAddButton = false,
     this.onPressed,
@@ -21,7 +21,7 @@ class ChatListTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12).copyWith(bottom: 0),
       child: ElevatedButton(
-        style: chatListButtonStyle(context, isSelected),
+        style: chatListButtonStyle(context, isSelected: isSelected),
         onPressed: onPressed,
         child: Row(
           children: [
@@ -30,7 +30,7 @@ class ChatListTile extends StatelessWidget {
                 Icons.add_rounded,
                 color: chatListTileContentColor(
                   context,
-                  isSelected,
+                  isSelected: isSelected,
                 ),
               ),
               const Gap(10),
@@ -38,7 +38,10 @@ class ChatListTile extends StatelessWidget {
             Text(
               title,
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: chatListTileContentColor(context, isSelected),
+                    color: chatListTileContentColor(
+                      context,
+                      isSelected: isSelected,
+                    ),
                   ),
             ),
           ],

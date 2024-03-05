@@ -7,20 +7,20 @@ typedef ChatControlsActionCallback = void Function(ChatControlsAction);
 
 enum ChatControlsAction {
   rename,
-  share(true),
+  share(isHidden: true),
   delete;
 
-  final bool isHidden;
+  const ChatControlsAction({this.isHidden = false});
 
-  const ChatControlsAction([this.isHidden = false]);
+  final bool isHidden;
 }
 
 class ChatControlsWidget extends StatelessWidget {
   const ChatControlsWidget({
-    super.key,
     required this.chatTitle,
     required this.onConfirmDelete,
     required this.onConfirmRename,
+    super.key,
   });
 
   final String chatTitle;
@@ -34,7 +34,6 @@ class ChatControlsWidget extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: borderRadius16,
         side: BorderSide(
-          color: Colors.black,
           width: 0.5,
         ),
       ),
@@ -58,18 +57,21 @@ class ChatControlsWidget extends StatelessWidget {
     );
   }
 
-  void _onActionPressedByType(BuildContext context, ChatControlsAction type) {
+  Future<void> _onActionPressedByType(
+    BuildContext context,
+    ChatControlsAction type,
+  ) {
     // onActionSelected(type);
     if (type == ChatControlsAction.delete) {
-      showDialog(
+      return showDialog(
         context: context,
         builder: (context) => DeleteChatAlertDialog(
-          onConfirmDelete: () => onConfirmDelete(),
+          onConfirmDelete: onConfirmDelete,
           // onConfirmDelete: () => onActionSelected(type),
         ),
       );
     } else if (type == ChatControlsAction.rename) {
-      showDialog(
+      return showDialog(
         context: context,
         builder: (context) => RenameChatAlertDialog(
           title: chatTitle,
@@ -77,7 +79,9 @@ class ChatControlsWidget extends StatelessWidget {
         ),
       );
     } else if (type == ChatControlsAction.share) {
-      UnimplementedError('Share action is not implemented');
+      throw UnimplementedError('Share action is not implemented');
+    } else {
+      throw UnimplementedError('Unknown action type');
     }
   }
 

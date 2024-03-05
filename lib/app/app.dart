@@ -28,7 +28,7 @@ class App extends StatelessWidget {
             ThemeSystem() => ThemeMode.system,
           };
 
-          final Brightness brightness = switch (state) {
+          final brightness = switch (state) {
             ThemeLight() => Brightness.light,
             ThemeDark() => Brightness.dark,
             ThemeSystem() => MediaQuery.platformBrightnessOf(context),

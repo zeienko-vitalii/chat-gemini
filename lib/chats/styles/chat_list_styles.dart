@@ -4,9 +4,9 @@ const chatTileDarkColor = Colors.black87;
 const chatTileLightColor = Color(0xDDFFFFFF);
 
 Color chatListTileContentColor(
-  BuildContext context, [
+  BuildContext context, {
   bool isSelected = false,
-]) {
+}) {
   final isLight = Theme.of(context).brightness == Brightness.light;
   if (isLight) {
     return isSelected ? chatTileLightColor : chatTileDarkColor;
@@ -14,8 +14,10 @@ Color chatListTileContentColor(
   return isSelected ? chatTileDarkColor : chatTileLightColor;
 }
 
-ButtonStyle chatListButtonStyle(BuildContext context,
-    [bool isSelected = false]) {
+ButtonStyle chatListButtonStyle(
+  BuildContext context, {
+  bool isSelected = false,
+}) {
   final isLight = Theme.of(context).brightness == Brightness.light;
   return ButtonStyle(
     elevation: MaterialStateProperty.all(0),

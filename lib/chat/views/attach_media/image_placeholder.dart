@@ -8,9 +8,9 @@ const placeholderSize = 80.0;
 
 class ImagePlaceholder extends StatelessWidget {
   const ImagePlaceholder({
-    super.key,
     required this.file,
     required this.onDeletePressed,
+    super.key,
   });
 
   final File file;
@@ -57,7 +57,6 @@ class ImagePlaceholder extends StatelessWidget {
         border: Border.all(
           color: Theme.of(context).textTheme.labelLarge?.color ??
               Colors.transparent,
-          width: 1,
         ),
         boxShadow: [
           BoxShadow(

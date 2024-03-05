@@ -10,9 +10,9 @@ typedef EmailAuthFormCallback = void Function({
 
 class EmailAuthForm extends StatefulWidget {
   const EmailAuthForm({
-    super.key,
     required this.isSignIn,
     required this.onPressed,
+    super.key,
     this.isLoading = false,
   });
 
@@ -59,7 +59,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
               validator: emailValidation,
               decoration: const InputDecoration(
                 labelText: 'Email',
-                contentPadding: EdgeInsets.all(16.0),
+                contentPadding: EdgeInsets.all(16),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
@@ -72,7 +72,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
               validator: passwordValidation,
               decoration: InputDecoration(
                 labelText: 'Password',
-                contentPadding: const EdgeInsets.all(16.0),
+                contentPadding: const EdgeInsets.all(16),
                 suffixIcon: _EyeIconButton(
                   isVisible: _isPasswordVisible,
                   onPressed: () {
@@ -96,7 +96,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
                 ),
                 decoration: InputDecoration(
                   labelText: 'Confirm Password',
-                  contentPadding: const EdgeInsets.all(16.0),
+                  contentPadding: const EdgeInsets.all(16),
                   suffixIcon: _EyeIconButton(
                     isVisible: _isConfirmPasswordVisible,
                     onPressed: () {

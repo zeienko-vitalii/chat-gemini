@@ -104,7 +104,7 @@ class AiChatService {
           TextPart(message),
           // The only accepted mime types are image/*.
           DataPart(mimeType.name, fileBytes),
-        ])
+        ]),
       ];
 
       final response = await _visionModel.generateContent(content);

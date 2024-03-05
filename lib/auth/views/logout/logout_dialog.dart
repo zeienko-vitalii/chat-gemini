@@ -1,8 +1,8 @@
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 
-void logout(BuildContext context, AuthCubit authCubit) {
-  showDialog(
+Future<void> logout(BuildContext context, AuthCubit authCubit) {
+  return showDialog(
     context: context,
     builder: (context) => ConfirmationAlertDialog(
       title: 'Would you like to logout?',
@@ -13,9 +13,9 @@ void logout(BuildContext context, AuthCubit authCubit) {
 
 class ConfirmationAlertDialog extends StatelessWidget {
   const ConfirmationAlertDialog({
-    super.key,
     required this.title,
     required this.onPressed,
+    super.key,
   });
 
   final String title;

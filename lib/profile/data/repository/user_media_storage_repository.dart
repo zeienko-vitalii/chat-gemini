@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:chat_gemini/utils/logger.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:chat_gemini/utils/image/blob_image_downloader_mobile.dart'
     if (dart.library.html) 'package:chat_gemini/utils/image/blob_image_downloader_web.dart'
     as blob_downloader;
+import 'package:chat_gemini/utils/logger.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 
 class UserMediaStorageRepository {
   factory UserMediaStorageRepository() => instance;

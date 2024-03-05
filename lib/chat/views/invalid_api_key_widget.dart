@@ -12,7 +12,6 @@ class InvalidApiKeyWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(
             Icons.key_off_rounded,

@@ -14,7 +14,7 @@ void main() {
     });
 
     test('returns false difference of one day', () {
-      var result = isDifferenceMoreThanOneDay(
+      final result = isDifferenceMoreThanOneDay(
         DateTime.now(),
         DateTime.now().subtract(
           const Duration(days: 1),

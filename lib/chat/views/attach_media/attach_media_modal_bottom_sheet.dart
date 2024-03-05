@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
 import 'package:chat_gemini/utils/logger.dart';
@@ -7,12 +9,12 @@ import 'package:image_picker/image_picker.dart';
 
 typedef OnAttachFilePressed = void Function(String fileUrl);
 
-void showAttachMediaBottomSheet(
+Future<void> showAttachMediaBottomSheet(
   BuildContext context, {
   required ImagePicker imagePicker,
   required OnAttachFilePressed onAttachFilePressed,
 }) {
-  showModalBottomSheet(
+  return showModalBottomSheet(
     backgroundColor: Colors.transparent,
     context: context,
     builder: (BuildContext context) {
@@ -26,9 +28,9 @@ void showAttachMediaBottomSheet(
 
 class AttachMediaModalBottomSheet extends StatelessWidget {
   const AttachMediaModalBottomSheet({
-    super.key,
     required this.imagePicker,
     required this.onAttachFilePressed,
+    super.key,
   });
 
   final ImagePicker imagePicker;
@@ -77,7 +79,7 @@ class AttachMediaModalBottomSheet extends StatelessWidget {
     ImagePicker imagePicker,
   ) async {
     try {
-      final XFile? image = await imagePicker.pickImage(
+      final image = await imagePicker.pickImage(
         source: source,
       );
       final filePath = image?.path;
@@ -92,7 +94,7 @@ class AttachMediaModalBottomSheet extends StatelessWidget {
       showSnackbarMessage(context, message: '$e');
     } finally {
       if (context.mounted) {
-        context.router.pop();
+        unawaited(context.router.pop());
       }
     }
   }

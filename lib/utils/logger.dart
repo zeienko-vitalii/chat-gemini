@@ -55,8 +55,11 @@ class Log {
   void e([dynamic msg, StackTrace? stk]) {
     if (msg is Object) onLogError?.call(msg, stk);
 
-    _logger?.e(_messageWithTag(msg),
-        error: _messageWithTag(msg), stackTrace: stk);
+    _logger?.e(
+      _messageWithTag(msg),
+      error: _messageWithTag(msg),
+      stackTrace: stk,
+    );
   }
 
   void f([dynamic msg]) {

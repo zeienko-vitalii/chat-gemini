@@ -8,12 +8,12 @@ typedef OnMessageSend = void Function(String message);
 
 class ChatTextField extends StatelessWidget {
   ChatTextField({
-    super.key,
-    this.onSend,
     required this.isLoading,
     required this.files,
     required this.onRemovePressed,
     required this.onAttachFilePressed,
+    super.key,
+    this.onSend,
   }) : _controller = TextEditingController();
 
   final bool isLoading;
