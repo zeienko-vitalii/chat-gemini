@@ -6,18 +6,26 @@ import 'package:chat_gemini/chat/data/repository/chat_repository.dart';
 import 'package:chat_gemini/chat/data/repository/media_storage_repository.dart';
 import 'package:chat_gemini/profile/data/repository/user_media_storage_repository.dart';
 import 'package:chat_gemini/utils/logger.dart';
+import 'package:injectable/injectable.dart';
 
 part 'profile_state.dart';
 
+@injectable
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit() : super(ProfileInitial());
+  ProfileCubit(
+    this._authService,
+    this._userRepository,
+    this._userMediaStorageRepository,
+    this._repository,
+    this._mediaStorageRepository,
+  ) : super(ProfileInitial());
 
-  final _authService = AuthService();
-  final _userRepository = UserRepository();
-  final _userMediaStorageRepository = UserMediaStorageRepository();
+  final AuthService _authService;// = AuthService();
+  final UserRepository _userRepository;// = UserRepository();
+  final UserMediaStorageRepository _userMediaStorageRepository;// = UserMediaStorageRepository();
 
-  final _repository = ChatRepository();
-  final _mediaStorageRepository = MediaStorageRepository();
+  final ChatRepository _repository;// = ChatRepository();
+  final MediaStorageRepository _mediaStorageRepository;// = MediaStorageRepository();
 
   Future<void> loadProfile() async {
     try {

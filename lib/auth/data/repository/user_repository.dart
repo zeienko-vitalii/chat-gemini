@@ -3,18 +3,14 @@ import 'package:chat_gemini/types/json_type.dart';
 import 'package:chat_gemini/utils/base_firestore.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:injectable/injectable.dart';
 
+@singleton
 class UserRepository extends BaseFirestore {
-  factory UserRepository() => _instance;
-  UserRepository._();
-
-  static final UserRepository _instance = UserRepository._();
+  UserRepository({required super.firestoreInstance});
 
   @override
   String collectionKey() => 'users';
-
-  @override
-  FirebaseFirestore get firestoreInstance => FirebaseFirestore.instance;
 
   CollectionReference<User> _getCollectionRef() => collectionRef.withConverter(
         fromFirestore: (DocumentSnapshot<JsonType> snapshot, _) =>

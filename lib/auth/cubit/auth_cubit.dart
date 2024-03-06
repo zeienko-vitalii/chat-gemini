@@ -4,15 +4,20 @@ import 'package:chat_gemini/auth/data/repository/user_repository.dart';
 import 'package:chat_gemini/auth/models/user.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 part 'auth_state.dart';
 part 'auth_cubit.freezed.dart';
 
+@injectable
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(const AuthState.loading());
+  AuthCubit(
+    this._authService,
+    this._userRepository,
+  ) : super(const AuthState.loading());
 
-  final _userRepository = UserRepository();
-  final _authService = AuthService();
+  final UserRepository _userRepository;
+  final AuthService _authService;
 
   Future<void> checkUserAuthStatus() async {
     try {

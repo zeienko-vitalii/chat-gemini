@@ -1,16 +1,16 @@
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:injectable/injectable.dart';
 
+@singleton
 class AuthService {
-  factory AuthService() => _instance;
-  AuthService._();
+  AuthService(this._auth, this._googleSignIn);
 
-  static final AuthService _instance = AuthService._();
+  final FirebaseAuth _auth;
+  final GoogleSignIn _googleSignIn;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  Stream<User?> get userChanges => FirebaseAuth.instance.authStateChanges();
+  Stream<User?> get userChanges => _auth.authStateChanges();
 
   User? get currentUser => _auth.currentUser;
 
@@ -50,7 +50,7 @@ class AuthService {
 
   Future<User> signInWithGoogle() async {
     try {
-      final googleUser = await GoogleSignIn().signIn();
+      final googleUser = await _googleSignIn.signIn();
 
       final googleAuth = await googleUser?.authentication;
 
@@ -59,7 +59,7 @@ class AuthService {
         idToken: googleAuth?.idToken,
       );
 
-      final userCreds = await FirebaseAuth.instance.signInWithCredential(
+      final userCreds = await _auth.signInWithCredential(
         credential,
       );
 
@@ -76,7 +76,7 @@ class AuthService {
 
   Future<bool> signOut() async {
     try {
-      await FirebaseAuth.instance.signOut();
+      await _auth.signOut();
       return true;
     } catch (e, stk) {
       Log().e('$e', stk);

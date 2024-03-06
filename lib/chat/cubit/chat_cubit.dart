@@ -9,14 +9,21 @@ import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chat/models/media.dart';
 import 'package:chat_gemini/chat/models/message.dart';
 import 'package:chat_gemini/utils/logger.dart';
+import 'package:injectable/injectable.dart';
 
 part 'chat_state.dart';
 
 bool isGeminiApiKeyEmpty = geminiApiKey.isEmpty;
 
+@injectable
 class ChatCubit extends Cubit<ChatState> {
-  ChatCubit()
-      : super(
+  ChatCubit(
+    this._repository,
+    this._authService,
+    this._userRepository,
+    this._mediaStorageRepository,
+    this._aiChatService,
+  ) : super(
           ChatLoading(
             chat: const Chat(),
             author: const User(
@@ -27,11 +34,12 @@ class ChatCubit extends Cubit<ChatState> {
           ),
         );
 
-  final _repository = ChatRepository();
-  final _authService = AuthService();
-  final _userRepository = UserRepository();
-  final _mediaStorageRepository = MediaStorageRepository();
-  final _aiChatService = AiChatService();
+  final ChatRepository _repository; // = ChatRepository();
+  final AuthService _authService; // = AuthService();
+  final UserRepository _userRepository; // = UserRepository();
+  final MediaStorageRepository
+      _mediaStorageRepository; // = MediaStorageRepository();
+  final AiChatService _aiChatService; // = AiChatService();
 
   Future<void> loadChat(Chat chat) async {
     try {

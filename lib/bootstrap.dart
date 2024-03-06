@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:chat_gemini/app/app.dart';
+import 'package:chat_gemini/di/di.dart';
 import 'package:chat_gemini/firebase_options.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +17,9 @@ Future<void> bootstrap() async {
       WidgetsFlutterBinding.ensureInitialized();
 
       await _firebaseInit();
+
+      configureDependencies();
+
       runApp(App());
     },
     _onError,
