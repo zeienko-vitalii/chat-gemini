@@ -33,6 +33,8 @@ dependencies:
   rive: ^0.12.4
   firebase_storage: ^11.6.7
   image_picker: ^1.0.7
+  get_it: ^7.6.7
+  injectable: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -46,6 +48,7 @@ dev_dependencies:
   mockito: ^5.4.4
   fake_cloud_firestore: ^2.4.8
   very_good_analysis: ^5.1.0
+  injectable_generator: ^2.4.1
 
 flutter:
   uses-material-design: true

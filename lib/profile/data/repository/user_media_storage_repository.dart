@@ -6,20 +6,17 @@ import 'package:chat_gemini/utils/image/blob_image_downloader_mobile.dart'
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
 
+@singleton
 class UserMediaStorageRepository {
-  factory UserMediaStorageRepository() => instance;
-  UserMediaStorageRepository._();
+  UserMediaStorageRepository(this.storage);
 
-  static final UserMediaStorageRepository instance =
-      UserMediaStorageRepository._();
-
-  final FirebaseStorage storage = FirebaseStorage.instance;
+  final FirebaseStorage storage;
 
   static const String _users = 'users';
 
-  Reference _referenceById(String userId) =>
-      FirebaseStorage.instance.ref(_users).child(userId);
+  Reference _referenceById(String userId) => storage.ref(_users).child(userId);
 
   Future<void> deleteFiles(String userId) async {
     try {

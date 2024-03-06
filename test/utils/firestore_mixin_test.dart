@@ -1,15 +1,13 @@
 import 'package:chat_gemini/utils/base_firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Mocking the necessary classes
 class MockBaseFirestore extends BaseFirestore {
-  @override
-  String collectionKey() => 'users';
+  MockBaseFirestore({required super.firestoreInstance});
 
   @override
-  FirebaseFirestore get firestoreInstance => FakeFirebaseFirestore();
+  String collectionKey() => 'users';
 }
 
 void main() {
@@ -19,7 +17,9 @@ void main() {
     late MockBaseFirestore mockFirestoreMixin;
 
     setUp(() {
-      mockFirestoreMixin = MockBaseFirestore();
+      mockFirestoreMixin = MockBaseFirestore(
+        firestoreInstance: FakeFirebaseFirestore(),
+      );
     });
 
     test('collectionRef is correctly initialized', () {

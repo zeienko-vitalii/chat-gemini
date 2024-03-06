@@ -6,14 +6,13 @@ import 'package:chat_gemini/utils/image/blob_image_downloader_mobile.dart'
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
 
+@singleton
 class MediaStorageRepository {
-  factory MediaStorageRepository() => instance;
-  MediaStorageRepository._();
+  MediaStorageRepository(this.storage);
 
-  static final MediaStorageRepository instance = MediaStorageRepository._();
-
-  final FirebaseStorage storage = FirebaseStorage.instance;
+  final FirebaseStorage storage;
 
   static const String _chatsKey = 'chats';
   static const String _chatFileKey = 'chat_files';
@@ -21,7 +20,7 @@ class MediaStorageRepository {
   Reference _chatFilesReference(
     String chatId,
   ) =>
-      FirebaseStorage.instance.ref(_chatsKey).child(chatId).child(_chatFileKey);
+      storage.ref(_chatsKey).child(chatId).child(_chatFileKey);
 
   Future<void> deleteChatFiles(String chatId) async {
     try {

@@ -2,14 +2,16 @@ import 'package:bloc/bloc.dart';
 import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/chat/data/repository/chat_repository.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
+import 'package:injectable/injectable.dart';
 
 part 'chats_state.dart';
 
+@injectable
 class ChatsCubit extends Cubit<ChatsState> {
-  ChatsCubit() : super(ChatsLoading());
+  ChatsCubit(this._chatRepository, this._authService) : super(ChatsLoading());
 
-  final _chatRepository = ChatRepository();
-  final _authService = AuthService();
+  final ChatRepository _chatRepository;
+  final AuthService _authService;
 
   void updateSelectedChatIndex(int index) {
     emit(
