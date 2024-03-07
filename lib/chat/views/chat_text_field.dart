@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chat_gemini/chat/views/attach_media/attach_media_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 typedef OnMessageSend = void Function(String message);
@@ -66,7 +67,7 @@ class ChatTextField extends StatelessWidget {
             },
           ),
         ),
-        AttachButton(
+        if(!kIsWeb) AttachButton(
           files: files,
           onRemovePressed: onRemovePressed,
           onAttachFilePressed: onAttachFilePressed,

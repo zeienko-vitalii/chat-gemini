@@ -131,7 +131,7 @@ class _DateDivider extends StatelessWidget {
         children: [
           Expanded(
             child: Divider(
-              height: 1,
+              height: 0.1,
               color: chatListTileContentColor(context),
             ),
           ),
@@ -146,7 +146,7 @@ class _DateDivider extends StatelessWidget {
           Expanded(
             flex: 8,
             child: Divider(
-              height: 1,
+              height: 0.1,
               color: chatListTileContentColor(context),
             ),
           ),

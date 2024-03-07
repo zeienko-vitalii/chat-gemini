@@ -19,7 +19,7 @@ class EmptyChatWidget extends StatelessWidget {
           ),
           const Gap(20),
           Text(
-            'No messages yet',
+            'Hi, there 👋',
             style: Theme.of(context).textTheme.headlineLarge,
             textAlign: TextAlign.center,
           ),

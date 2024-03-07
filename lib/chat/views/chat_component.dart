@@ -246,6 +246,7 @@ class _ChatBody extends StatelessWidget {
                     ),
                   ),
           ),
+          
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 12,

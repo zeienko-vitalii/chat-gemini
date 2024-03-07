@@ -5,7 +5,6 @@ import 'package:chat_gemini/app/views/custom_app_bar.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:chat_gemini/auth/views/email_auth_form.dart';
 import 'package:chat_gemini/auth/views/horizontal_divider.dart';
-import 'package:chat_gemini/auth/views/sign_in_button/sign_in_button.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
