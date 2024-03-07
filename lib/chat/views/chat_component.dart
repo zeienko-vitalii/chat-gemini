@@ -236,7 +236,7 @@ class _ChatBody extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: messages.isEmpty
-                ? const EmptyChatWidget()
+                ? EmptyChatWidget(onSend: onSend)
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: ChatWidget(
