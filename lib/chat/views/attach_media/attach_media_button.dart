@@ -5,6 +5,7 @@ import 'package:chat_gemini/chat/views/attach_media/image_placeholder.dart';
 import 'package:chat_gemini/chats/styles/chat_list_styles.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
 import 'package:chat_gemini/utils/logger.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
@@ -96,6 +97,7 @@ class _AttachButtonState extends State<AttachButton>
 
   Future<void> _getLostData(BuildContext context) async {
     try {
+      if (kIsWeb || !Platform.isAndroid) return;
       final response = await _imagePicker.retrieveLostData();
       if (response.isEmpty) {
         Log().d('No lost data');

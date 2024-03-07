@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:chat_gemini/app/app.dart';
 import 'package:chat_gemini/di/di.dart';
 import 'package:chat_gemini/firebase_options.dart';
+import 'package:chat_gemini/google_sign_in_example.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +22,12 @@ Future<void> bootstrap() async {
       configureDependencies();
 
       runApp(App());
+      // runApp(
+      //   const MaterialApp(
+      //     title: 'Google Sign In',
+      //     home: SignInDemo(),
+      //   ),
+      // );
     },
     _onError,
   );

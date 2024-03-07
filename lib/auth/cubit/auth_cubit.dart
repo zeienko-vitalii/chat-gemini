@@ -1,11 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
-import 'package:chat_gemini/auth/models/user.dart';
+import 'package:chat_gemini/auth/domain/exceptions/user_not_found_exception.dart';
+import 'package:chat_gemini/auth/domain/models/user.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 part 'auth_state.dart';
 part 'auth_cubit.freezed.dart';
 
@@ -28,16 +29,14 @@ class AuthCubit extends Cubit<AuthState> {
         'User is: ${isUserNotAuthenticated ? 'not' : ''} authenticated',
       );
       if (isUserNotAuthenticated) {
+        await _authService.silentSignInWithGoogle();
         emit(const AuthState.logOut());
         return;
       }
-      final user = await _userRepository.getUser(currentUser.uid);
 
-      if (user.name.isEmpty) {
-        emit(AuthState.signedInIncomplete(user));
-      } else {
-        emit(AuthState.signedInComplete(user));
-      }
+      final profile = await _userRepository.getUser(currentUser.uid);
+
+      checkProfileCompletionAndEmitState(profile);
     } catch (e) {
       emit(AuthState.error('$e'));
     }
@@ -67,28 +66,31 @@ class AuthCubit extends Cubit<AuthState> {
           ),
         );
       } else {
-        try {
-          // TODO(V): Add custom exceptions
-          // it will fail if user is not present
-          profile = await _userRepository.getUser(user.uid);
-        } catch (e) {
-          profile = await _userRepository.addUser(
-            User(
-              uid: user.uid,
-              email: user.email!,
-              name: user.displayName ?? '',
-              photoUrl: user.photoURL,
-            ),
-          );
-        }
+        profile = await addUserIfNotPresent(user);
       }
-      if (profile.photoUrl?.isEmpty ?? true) {
-        emit(AuthState.signedInIncomplete(profile));
-      } else {
-        emit(AuthState.signedInComplete(profile));
-      }
+      checkProfileCompletionAndEmitState(profile);
     } on Exception catch (e) {
       emit(AuthState.error('$e'));
+    }
+  }
+
+  Future<User> addUserIfNotPresent(auth.User user) async {
+    try {
+      print('Fetching user to database');
+      return _userRepository.getUser(user.uid);
+    } on UserNotFoundException catch (_) {
+      print('Adding user to database');
+      return _userRepository.addUser(
+        User(
+          uid: user.uid,
+          email: user.email!,
+          name: user.displayName ?? '',
+          photoUrl: user.photoURL,
+        ),
+      );
+    } catch (e) {
+      print('Rethrowing exception');
+      rethrow;
     }
   }
 
@@ -104,13 +106,18 @@ class AuthCubit extends Cubit<AuthState> {
           photoUrl: user.photoURL,
         ),
       );
-      if (profile.photoUrl?.isEmpty ?? true) {
-        emit(AuthState.signedInIncomplete(profile));
-      } else {
-        emit(AuthState.signedInComplete(profile));
-      }
+
+      checkProfileCompletionAndEmitState(profile);
     } on Exception catch (e) {
       emit(AuthState.error('$e'));
+    }
+  }
+
+  void checkProfileCompletionAndEmitState(User user) {
+    if (isProfileComplete(user.name)) {
+      emit(AuthState.signedInComplete(user));
+    } else {
+      emit(AuthState.signedInIncomplete(user));
     }
   }
 
@@ -127,4 +134,8 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthState.error('$e'));
     }
   }
+}
+
+bool isProfileComplete(String username) {
+  return username.isNotEmpty;
 }

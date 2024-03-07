@@ -37,13 +37,37 @@ class AuthService {
         );
       }
 
+      if (userCreds.user == null) {
+        throw Exception('User is null');
+      }
+
+      return userCreds.user!;
+    } catch (e) {
+      Log().e('$e');
+      rethrow;
+    }
+  }
+
+  Future<User> silentSignInWithGoogle() async {
+    try {
+      final googleUser = await _googleSignIn.signInSilently();
+      if (googleUser == null) throw Exception('User is null');
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCreds = await _auth.signInWithCredential(credential);
+
       if (userCreds.user != null) {
         return userCreds.user!;
       } else {
         throw Exception('User is null');
       }
-    } catch (e) {
-      Log().e('$e');
+    } on Exception catch (e, stk) {
+      Log().e('$e', stk);
       rethrow;
     }
   }
@@ -51,7 +75,6 @@ class AuthService {
   Future<User> signInWithGoogle() async {
     try {
       final googleUser = await _googleSignIn.signIn();
-
       final googleAuth = await googleUser?.authentication;
 
       final credential = GoogleAuthProvider.credential(
@@ -77,11 +100,17 @@ class AuthService {
   Future<bool> signOut() async {
     try {
       await _auth.signOut();
+      await disconnectFromGoogleIfSignedIn();
       return true;
     } catch (e, stk) {
       Log().e('$e', stk);
       rethrow;
     }
+  }
+
+  Future<void> disconnectFromGoogleIfSignedIn() async {
+    final isSignedIn = await _googleSignIn.isSignedIn();
+    if (isSignedIn) await _googleSignIn.disconnect();
   }
 
   Future<void> deleteUser() {

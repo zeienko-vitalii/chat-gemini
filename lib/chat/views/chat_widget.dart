@@ -1,4 +1,4 @@
-import 'package:chat_gemini/auth/models/user.dart';
+import 'package:chat_gemini/auth/domain/models/user.dart';
 import 'package:chat_gemini/chat/models/message.dart';
 import 'package:chat_gemini/chat/views/message/message_widget.dart';
 import 'package:collection/collection.dart';

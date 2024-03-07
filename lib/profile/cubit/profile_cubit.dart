@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
-import 'package:chat_gemini/auth/models/user.dart';
+import 'package:chat_gemini/auth/domain/models/user.dart';
 import 'package:chat_gemini/chat/data/repository/chat_repository.dart';
 import 'package:chat_gemini/chat/data/repository/media_storage_repository.dart';
 import 'package:chat_gemini/profile/data/repository/user_media_storage_repository.dart';
