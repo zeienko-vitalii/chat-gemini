@@ -1,13 +1,20 @@
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
+import 'package:chat_gemini/auth/domain/exceptions/user_not_found_exception.dart';
 import 'package:chat_gemini/auth/domain/models/user.dart';
 import 'package:chat_gemini/types/json_type.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mock_exceptions/mock_exceptions.dart';
 
 void main() {
   late FakeFirebaseFirestore fakeFirestore;
   late UserRepository userRepository;
+  const expectedUser = User(
+    uid: '123',
+    name: 'John Doe',
+    email: 'email@email.com',
+  );
 
   setUp(() {
     fakeFirestore = FakeFirebaseFirestore();
@@ -29,12 +36,6 @@ void main() {
       );
 
   group('getUser', () {
-    const expectedUser = User(
-      uid: '123',
-      name: 'John Doe',
-      email: 'email@email.com',
-    );
-
     test('returns a User when user exists', () async {
       // arrange
       await getCollectionRef().doc('123').set(expectedUser);
@@ -49,7 +50,18 @@ void main() {
       expect(user.email, expectedUser.email);
     });
 
-    test('throws when user does not exist', () async {
+    test('throws UserNotFoundException when user does', () async {
+      await expectLater(
+        () => userRepository.getUser('123'),
+        throwsA(isA<UserNotFoundException>()),
+      );
+    });
+
+    test('throws when fetching user fails', () async {
+      whenCalling(Invocation.method(#collection, null))
+          .on(fakeFirestore)
+          .thenThrow(Exception('Error'));
+
       await expectLater(
         () => userRepository.getUser('123'),
         throwsException,
@@ -58,35 +70,12 @@ void main() {
   });
 
   group('addUser', () {
-    const expectedUser = User(
-      uid: '123',
-      name: 'John Doe',
-      email: 'email@email.com',
-    );
-
     test('adds a User and returns the same User', () async {
-      final addedUser = await userRepository.addUser(expectedUser);
+      final data = await userRepository.addUser(expectedUser);
 
-      expect(addedUser, expectedUser);
+      expect(data, expectedUser);
+      expect(data.email, expectedUser.email);
     });
-
-    // test('throws when there is an error', () async {
-    //   const user = User(uid: '123', name: 'John Doe', email: '');
-
-    //   when(
-    //     () => fakeFirestore
-    //         .collection('users')
-    //         .doc('123')
-    //         .set(<String, dynamic>{}),
-    //   ).thenThrow(
-    //     Exception('Failed to add user'),
-    //   );
-
-    //   expect(
-    //     () async => userRepository.addUser(user),
-    //     throwsException,
-    //   );
-    // });
   });
 
   group('updateUser', () {
@@ -96,30 +85,25 @@ void main() {
       email: 'email@email.com',
     );
 
-    test('updates a User and returns the same User', () async {
-      final addedUser = await userRepository.updateUser(expectedUser);
+    test('updates/creates a user and returns the same User', () async {
+      final data = await userRepository.updateUser(expectedUser);
 
-      expect(addedUser, expectedUser);
+      expect(data, expectedUser);
+      expect(data.email, expectedUser.email);
     });
   });
 
   group('deleteUser', () {
-    const expectedUser = User(
-      uid: '123',
-      name: 'John Doe',
-      email: 'email@email.com',
-    );
-
     test('deletes user by id, completes successfully', () async {
       // arrange
       await getCollectionRef().doc('123').set(expectedUser);
 
-      await userRepository.deleteUser(expectedUser.uid);
+      // act
+      await userRepository.deleteUser('123');
 
-      await expectLater(
-        () => userRepository.getUser('123'),
-        throwsException,
-      );
+      // assert
+      final user = await getCollectionRef().doc('123').get();
+      expect(user.exists, isFalse);
     });
   });
 }

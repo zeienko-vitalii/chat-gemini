@@ -99,6 +99,8 @@ class _AuthComponentState extends State<AuthComponent> {
       context.router.replace(ChatScreenRoute());
     } else if (state is SignedInIncomplete) {
       context.router.replace(ProfileScreenRoute(toCompleteProfile: true));
+    } else if (state is LogOut) {
+      _authCubit.silentSignInWithGoogle();
     }
   }
 

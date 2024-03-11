@@ -1,3 +1,4 @@
+import 'package:chat_gemini/auth/domain/exceptions/user_not_found_exception.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -61,11 +62,11 @@ class AuthService {
 
       final userCreds = await _auth.signInWithCredential(credential);
 
-      if (userCreds.user != null) {
-        return userCreds.user!;
-      } else {
+      if (userCreds.user == null) {
         throw Exception('User is null');
       }
+
+      return userCreds.user!;
     } on Exception catch (e, stk) {
       Log().e('$e', stk);
       rethrow;
@@ -86,22 +87,21 @@ class AuthService {
         credential,
       );
 
-      if (userCreds.user != null) {
-        return userCreds.user!;
-      } else {
+      if (userCreds.user == null) {
         throw Exception('User is null');
       }
+
+      return userCreds.user!;
     } on Exception catch (e, stk) {
       Log().e('$e', stk);
       rethrow;
     }
   }
 
-  Future<bool> signOut() async {
+  Future<void> signOut() async {
     try {
       await _auth.signOut();
       await disconnectFromGoogleIfSignedIn();
-      return true;
     } catch (e, stk) {
       Log().e('$e', stk);
       rethrow;
@@ -113,12 +113,14 @@ class AuthService {
     if (isSignedIn) await _googleSignIn.disconnect();
   }
 
-  Future<void> deleteUser() {
+  Future<void> deleteUser() async {
     try {
       final currentUser = _auth.currentUser;
-      final id = currentUser?.uid;
-      if (id == null) throw Exception('User not found');
-      return _auth.currentUser!.delete();
+      if (currentUser == null) {
+        throw const UserNotFoundException();
+      }
+      await currentUser.delete();
+      return;
     } catch (e, stk) {
       Log().e('$e', stk);
       rethrow;

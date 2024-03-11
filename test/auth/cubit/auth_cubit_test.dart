@@ -6,90 +6,50 @@ import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
 import 'package:chat_gemini/auth/domain/exceptions/user_not_found_exception.dart';
 import 'package:chat_gemini/auth/domain/models/user.dart';
-import 'package:chat_gemini/types/json_type.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mock_exceptions/mock_exceptions.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockAuthService extends Mock implements AuthService {}
 
+class MockUserRepository extends Mock implements UserRepository {}
+
 class MockUserFirebase extends Mock implements auth.User {
-  MockUserFirebase({required this.uid});
+  MockUserFirebase({required this.uid, this.email = ''});
 
   @override
   final String uid;
+
+  @override
+  final String email;
 }
 
 void main() {
   late MockAuthService mockAuthService;
-  late UserRepository mockUserRepository;
-  late FakeFirebaseFirestore fakeFirestore;
-  // late UserRepository userRepository;
+  late MockUserRepository mockUserRepository;
+  const expectedUserNoUsername = User(
+    uid: '1',
+    email: '',
+    name: '',
+  );
+  const expectedUserWithUsername = User(
+    uid: '2',
+    name: 'John Doe',
+    email: '',
+  );
 
   setUpAll(() {
-    fakeFirestore = FakeFirebaseFirestore();
-    mockUserRepository = UserRepository(firestoreInstance: fakeFirestore);
-  });
-
-  CollectionReference<JsonType> getCollection() => fakeFirestore.collection(
-        mockUserRepository.collectionKey(),
-      );
-
-  CollectionReference<User> getCollectionRef() => getCollection().withConverter(
-        fromFirestore: (DocumentSnapshot<JsonType> snapshot, _) =>
-            User.fromJson(
-          snapshot.data()!,
-        ).copyWith(
-          uid: snapshot.id,
-        ),
-        toFirestore: (User model, _) => model.toJson(),
-      );
-
-  setUpAll(() {
-    fakeFirestore = FakeFirebaseFirestore();
+    mockUserRepository = MockUserRepository();
     mockAuthService = MockAuthService();
-    mockUserRepository = UserRepository(
-      firestoreInstance: fakeFirestore,
-    );
+    mockUserRepository = MockUserRepository();
+    registerFallbackValue(expectedUserWithUsername);
   });
 
   group('checkUserAuthStatus', () {
-    const expectedUserNoUsername = User(
-      uid: '1',
-      email: '',
-      name: '',
-    );
-    const expectedUserWithUsername = User(
-      uid: '2',
-      name: 'John Doe',
-      email: '',
-    );
-
-    setUpAll(() async {
-      await Future.wait([
-        getCollectionRef()
-            .doc(expectedUserNoUsername.uid)
-            .set(expectedUserNoUsername),
-        getCollectionRef()
-            .doc(expectedUserWithUsername.uid)
-            .set(expectedUserWithUsername),
-      ]);
-    });
-
-    tearDownAll(() async {
-      await Future.wait([
-        getCollectionRef().doc(expectedUserNoUsername.uid).delete(),
-        getCollectionRef().doc(expectedUserWithUsername.uid).delete(),
-      ]);
-    });
-
     blocTest<AuthCubit, AuthState>(
       'emits [AuthState.loading(), AuthState.logOut()] when user is not authenticated',
       build: () {
-        when(mockAuthService.currentUser).thenReturn(null);
+        when(() => mockAuthService.currentUser).thenReturn(null);
         return AuthCubit(mockAuthService, mockUserRepository);
       },
       act: (cubit) => cubit.checkUserAuthStatus(),
@@ -102,9 +62,12 @@ void main() {
     blocTest<AuthCubit, AuthState>(
       "emits [AuthState.loading(), AuthState.signedInIncomplete()] when user is authenticated but doesn't have a username",
       build: () {
-        when(mockAuthService.currentUser).thenReturn(
+        when(() => mockAuthService.currentUser).thenReturn(
           MockUserFirebase(uid: expectedUserNoUsername.uid),
         );
+        when(() => mockUserRepository.getUser(expectedUserNoUsername.uid))
+            .thenAnswer((_) async => expectedUserNoUsername);
+
         return AuthCubit(
           mockAuthService,
           mockUserRepository,
@@ -116,12 +79,17 @@ void main() {
         const AuthState.signedInIncomplete(expectedUserNoUsername),
       ],
     );
+
     blocTest<AuthCubit, AuthState>(
       'emits [AuthState.loading(), AuthState.signedInComplete()] when user is authenticated and has a username',
       build: () {
-        when(mockAuthService.currentUser).thenReturn(
+        when(() => mockAuthService.currentUser).thenReturn(
           MockUserFirebase(uid: expectedUserWithUsername.uid),
         );
+
+        when(() => mockUserRepository.getUser(expectedUserWithUsername.uid))
+            .thenAnswer((_) async => expectedUserWithUsername);
+
         return AuthCubit(
           mockAuthService,
           mockUserRepository,
@@ -133,12 +101,12 @@ void main() {
         const AuthState.signedInComplete(expectedUserWithUsername),
       ],
     );
-  });
 
-  group('emailSignIn', () {
     blocTest<AuthCubit, AuthState>(
-      'emits [AuthState.loading(), AuthState.error()] when FirebaseAuth.authWithEmailAndPassword fails',
+      'emits [AuthState.loading(), AuthState.error()] when something fails',
       build: () {
+        when(() => mockAuthService.currentUser).thenThrow(Exception('Error'));
+
         return AuthCubit(
           mockAuthService,
           mockUserRepository,
@@ -147,84 +115,319 @@ void main() {
       act: (cubit) => cubit.checkUserAuthStatus(),
       expect: () => [
         const AuthState.loading(),
-      ],
-    );
-
-    blocTest<AuthCubit, AuthState>(
-      'emits [AuthState.loading(), AuthState.error()] when FirebaseAuth.authWithEmailAndPassword fails',
-      build: () {
-        return AuthCubit(
-          mockAuthService,
-          mockUserRepository,
-        );
-      },
-      act: (cubit) => cubit.checkUserAuthStatus(),
-      expect: () => [
-        const AuthState.loading(),
+        const AuthState.error('Exception: Error'),
       ],
     );
   });
 
   group('addUserIfNotPresent', () {
-    late final AuthCubit authCubit;
-    late final MockUserFirebase existedUser;
-    late final MockUserFirebase notExistedUser;
-    const profile = User(
-      uid: '123',
-      name: '',
-      email: '',
-    );
-    setUpAll(() {
-      authCubit = AuthCubit(
-        mockAuthService,
-        mockUserRepository,
+    late AuthCubit authCubit;
+    late MockUserFirebase mockUserFirebase;
+
+    setUp(() {
+      authCubit = AuthCubit(mockAuthService, mockUserRepository);
+      mockUserFirebase = MockUserFirebase(
+        uid: expectedUserWithUsername.uid,
       );
-      existedUser = MockUserFirebase(uid: profile.uid);
-      notExistedUser = MockUserFirebase(uid: '1');
     });
 
-    setUpAll(() async {
-      await getCollectionRef().doc(existedUser.uid).set(profile);
-    });
+    test('returns user if there is a record in the Firestore', () {
+      when(() => mockUserRepository.getUser(mockUserFirebase.uid))
+          .thenAnswer((_) async => expectedUserWithUsername);
 
-    tearDownAll(() async {
-      await getCollectionRef().doc(existedUser.uid).delete();
+      expect(
+        authCubit.addUserIfNotPresent(mockUserFirebase),
+        completion(expectedUserWithUsername),
+      );
     });
-
-    test('returns user if it present in the Firestore', () async {
-      final user = await authCubit.addUserIfNotPresent(existedUser);
-      expect(user, profile);
-    });
-    test(
-      "adds and returns user from the Firestore when it wasn't present",
-      () async {
-        try {
-          final user = await authCubit.addUserIfNotPresent(notExistedUser);
-          print('Here');
-          expect(user, isA<User>());
-        } catch (e) {
-          print('Here1');
-          expect(e, isA<UserNotFoundException>());
-        }
-      },
-      timeout: const Timeout(Duration(seconds: 1)),
-    );
 
     test(
-      'throws Exception when something went wrong while fetching user from the Firestore',
-      () {
-        whenCalling(Invocation.method(#getUser, ['1']))
-            .on(mockUserRepository)
-            .thenThrow(Exception('Error'));
-        expect(
-          () => authCubit.addUserIfNotPresent(existedUser),
-          throwsException,
+        'returns user after adding him to the Firestore when UserNotFoundException was thrown',
+        () async {
+      when(() => mockUserRepository.getUser(mockUserFirebase.uid))
+          .thenThrow(const UserNotFoundException());
+      when(
+        () => mockUserRepository.addUser(any()),
+      ).thenAnswer((_) async => expectedUserWithUsername);
+
+      final profile = await authCubit.addUserIfNotPresent(mockUserFirebase);
+
+      verify(
+        () => mockUserRepository.addUser(any()),
+      ).called(1);
+      expect(profile, expectedUserWithUsername);
+    });
+    test(
+        'throws an error if something went wrong and the error is not UserNotFoundException',
+        () {
+      when(() => mockUserRepository.getUser(mockUserFirebase.uid))
+          .thenThrow(Exception('Error'));
+
+      expect(
+        authCubit.addUserIfNotPresent(mockUserFirebase),
+        throwsException,
+      );
+    });
+  });
+
+  group('silentSignInWithGoogle', () {
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.signedInComplete()] when user authenticated and profile is completed',
+      build: () {
+        when(() => mockAuthService.silentSignInWithGoogle()).thenAnswer(
+          (_) async => MockUserFirebase(uid: expectedUserWithUsername.uid),
         );
+        when(() => mockUserRepository.getUser(expectedUserWithUsername.uid))
+            .thenAnswer(
+          (_) async => expectedUserWithUsername,
+        );
+        return AuthCubit(mockAuthService, mockUserRepository);
       },
+      act: (cubit) => cubit.silentSignInWithGoogle(),
+      expect: () => const [
+        AuthState.signedInComplete(expectedUserWithUsername),
+      ],
     );
-    test(
-      'throws Exception when something went wrong while adding user to the Firestore',
-      () {},
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.signedInIncomplete()] when user authenticated and profile is incompleted',
+      build: () {
+        when(() => mockAuthService.silentSignInWithGoogle()).thenAnswer(
+          (_) async => MockUserFirebase(uid: expectedUserNoUsername.uid),
+        );
+        when(() => mockUserRepository.getUser(expectedUserNoUsername.uid))
+            .thenAnswer(
+          (_) async => expectedUserNoUsername,
+        );
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.silentSignInWithGoogle(),
+      expect: () => const [
+        AuthState.signedInIncomplete(expectedUserNoUsername),
+      ],
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.error()] when something fails',
+      build: () {
+        when(() => mockAuthService.silentSignInWithGoogle()).thenThrow(
+          Exception(),
+        );
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.silentSignInWithGoogle(),
+      expect: () => const [
+        AuthState.error('Exception'),
+      ],
+    );
+  });
+
+  group('emailSignIn', () {
+    const password = 'password';
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.loading(), AuthState.signedInComplete()] when sign in succeeds and completed profile',
+      build: () {
+        when(
+          () => mockAuthService.authWithEmailAndPassword(
+            expectedUserWithUsername.email,
+            password,
+          ),
+        ).thenAnswer(
+          (_) async => MockUserFirebase(
+            uid: expectedUserWithUsername.uid,
+            email: expectedUserWithUsername.email,
+          ),
+        );
+        when(() => mockUserRepository.addUser(any())).thenAnswer(
+          (_) async => expectedUserWithUsername,
+        );
+
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.emailSignIn(
+        email: expectedUserWithUsername.email,
+        password: password,
+      ),
+      expect: () => const [
+        AuthState.loading(),
+        AuthState.signedInComplete(expectedUserWithUsername),
+      ],
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.loading(), AuthState.signedInIncomplete()] when sign in succeeds and incompleted profile',
+      build: () {
+        when(
+          () => mockAuthService.authWithEmailAndPassword(
+            expectedUserNoUsername.email,
+            password,
+          ),
+        ).thenAnswer(
+          (_) async => MockUserFirebase(
+            uid: expectedUserNoUsername.uid,
+            email: expectedUserNoUsername.email,
+          ),
+        );
+        when(() => mockUserRepository.addUser(any())).thenAnswer(
+          (_) async => expectedUserNoUsername,
+        );
+
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.emailSignIn(
+        email: expectedUserNoUsername.email,
+        password: password,
+      ),
+      expect: () => const [
+        AuthState.loading(),
+        AuthState.signedInIncomplete(expectedUserNoUsername),
+      ],
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.loading(), AuthState.error()] when sign-in fails',
+      build: () {
+        when(
+          () => mockAuthService.authWithEmailAndPassword(
+            expectedUserNoUsername.email,
+            password,
+          ),
+        ).thenThrow(Exception('Invalid credentials'));
+
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.emailSignIn(
+        email: expectedUserNoUsername.email,
+        password: password,
+      ),
+      expect: () => [
+        const AuthState.loading(),
+        const AuthState.error('Exception: Invalid credentials'),
+      ],
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.loading(), AuthState.signedInComplete()] when user exists and shouldCreate is false',
+      build: () {
+        when(
+          () => mockAuthService.authWithEmailAndPassword(
+            expectedUserWithUsername.email,
+            password,
+            shouldCreate: false,
+          ),
+        ).thenAnswer(
+          (_) async => MockUserFirebase(
+            uid: expectedUserWithUsername.uid,
+            email: expectedUserWithUsername.email,
+          ),
+        );
+        when(
+          () => mockUserRepository.getUser(expectedUserWithUsername.uid),
+        ).thenAnswer(
+          (_) async => expectedUserWithUsername,
+        );
+
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.emailSignIn(
+        email: expectedUserWithUsername.email,
+        password: password,
+        shouldCreate: false,
+      ),
+      expect: () => [
+        const AuthState.loading(),
+        const AuthState.signedInComplete(expectedUserWithUsername),
+      ],
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.loading(), AuthState.signedInIncomplete()] when user exists and shouldCreate is false and profile is incompleted',
+      build: () {
+        when(
+          () => mockAuthService.authWithEmailAndPassword(
+            expectedUserNoUsername.email,
+            password,
+            shouldCreate: false,
+          ),
+        ).thenAnswer(
+          (_) async => MockUserFirebase(
+            uid: expectedUserNoUsername.uid,
+            email: expectedUserNoUsername.email,
+          ),
+        );
+        when(
+          () => mockUserRepository.getUser(expectedUserNoUsername.uid),
+        ).thenAnswer(
+          (_) async => expectedUserNoUsername,
+        );
+
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.emailSignIn(
+        email: expectedUserNoUsername.email,
+        password: password,
+        shouldCreate: false,
+      ),
+      expect: () => [
+        const AuthState.loading(),
+        const AuthState.signedInIncomplete(expectedUserNoUsername),
+      ],
+    );
+  });
+
+  group('signInWithGoogle', () {
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.loading(), AuthState.signedInComplete()] when user authenticated and profile is completed',
+      build: () {
+        when(() => mockAuthService.signInWithGoogle()).thenAnswer(
+          (_) async => MockUserFirebase(uid: expectedUserWithUsername.uid),
+        );
+        when(() => mockUserRepository.getUser(expectedUserWithUsername.uid))
+            .thenAnswer(
+          (_) async => expectedUserWithUsername,
+        );
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.signInWithGoogle(),
+      expect: () => const [
+        AuthState.loading(),
+        AuthState.signedInComplete(expectedUserWithUsername),
+      ],
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.loading(), AuthState.signedInIncomplete()] when user authenticated and profile is incompleted',
+      build: () {
+        when(() => mockAuthService.signInWithGoogle()).thenAnswer(
+          (_) async => MockUserFirebase(uid: expectedUserNoUsername.uid),
+        );
+        when(() => mockUserRepository.getUser(expectedUserNoUsername.uid))
+            .thenAnswer(
+          (_) async => expectedUserNoUsername,
+        );
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.signInWithGoogle(),
+      expect: () => const [
+        AuthState.loading(),
+        AuthState.signedInIncomplete(expectedUserNoUsername),
+      ],
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.loading(), AuthState.error()] when something fails',
+      build: () {
+        when(() => mockAuthService.signInWithGoogle()).thenThrow(
+          Exception(),
+        );
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.signInWithGoogle(),
+      expect: () => const [
+        AuthState.loading(),
+        AuthState.error('Exception'),
+      ],
     );
   });
 
@@ -262,6 +465,34 @@ void main() {
         incompletedProfile,
       ),
       expect: () => [const AuthState.signedInIncomplete(incompletedProfile)],
+    );
+  });
+
+  group('signOut', () {
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.loading(), AuthState.logOut()] when sign out succeeds',
+      build: () {
+        when(() => mockAuthService.signOut()).thenAnswer((_) async {});
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.signOut(),
+      expect: () => const [
+        AuthState.loading(),
+        AuthState.logOut(),
+      ],
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthState.loading(), AuthState.error()] when sign out fails',
+      build: () {
+        when(() => mockAuthService.signOut()).thenThrow(Exception('Error'));
+        return AuthCubit(mockAuthService, mockUserRepository);
+      },
+      act: (cubit) => cubit.signOut(),
+      expect: () => const [
+        AuthState.loading(),
+        AuthState.error('Exception: Error'),
+      ],
     );
   });
 

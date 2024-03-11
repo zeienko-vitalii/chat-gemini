@@ -30,7 +30,6 @@ class AuthCubit extends Cubit<AuthState> {
         'User is: ${isUserNotAuthenticated ? 'not' : ''} authenticated',
       );
       if (isUserNotAuthenticated) {
-        await _authService.silentSignInWithGoogle();
         emit(const AuthState.logOut());
         return;
       }
@@ -39,6 +38,17 @@ class AuthCubit extends Cubit<AuthState> {
 
       checkProfileCompletionAndEmitState(profile);
     } catch (e) {
+      emit(AuthState.error('$e'));
+    }
+  }
+
+  Future<void> silentSignInWithGoogle() async {
+    try {
+      final user = await _authService.silentSignInWithGoogle();
+      final profile = await addUserIfNotPresent(user);
+
+      checkProfileCompletionAndEmitState(profile);
+    } on Exception catch (e) {
       emit(AuthState.error('$e'));
     }
   }
@@ -75,13 +85,24 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<void> signInWithGoogle() async {
+    try {
+      emit(const AuthState.loading());
+      final user = await _authService.signInWithGoogle();
+      final profile = await addUserIfNotPresent(user);
+
+      checkProfileCompletionAndEmitState(profile);
+    } on Exception catch (e) {
+      emit(AuthState.error('$e'));
+    }
+  }
+
   Future<User> addUserIfNotPresent(auth.User user) async {
     try {
-      print('Fetching user to database');
-      return _userRepository.getUser(user.uid);
+      final profile = await _userRepository.getUser(user.uid);
+      return profile;
     } on UserNotFoundException catch (_) {
-      print('Adding user to database');
-      return _userRepository.addUser(
+      final profile = await _userRepository.addUser(
         User(
           uid: user.uid,
           email: user.email!,
@@ -89,28 +110,10 @@ class AuthCubit extends Cubit<AuthState> {
           photoUrl: user.photoURL,
         ),
       );
+
+      return profile;
     } catch (e) {
-      print('Rethrowing exception');
       rethrow;
-    }
-  }
-
-  Future<void> signInWithGoogle() async {
-    try {
-      emit(const AuthState.loading());
-      final user = await _authService.signInWithGoogle();
-      final profile = await _userRepository.addUser(
-        User(
-          uid: user.uid,
-          email: user.email!,
-          name: user.displayName!,
-          photoUrl: user.photoURL,
-        ),
-      );
-
-      checkProfileCompletionAndEmitState(profile);
-    } on Exception catch (e) {
-      emit(AuthState.error('$e'));
     }
   }
 
@@ -125,12 +128,8 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signOut() async {
     try {
       emit(const AuthState.loading());
-      final result = await _authService.signOut();
-      if (result) {
-        emit(const AuthState.logOut());
-      } else {
-        throw Exception('Sign out failed');
-      }
+      await _authService.signOut();
+      emit(const AuthState.logOut());
     } catch (e) {
       emit(AuthState.error('$e'));
     }
