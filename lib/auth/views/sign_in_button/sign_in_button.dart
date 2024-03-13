@@ -1,7 +1,42 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+import 'package:chat_gemini/auth/views/sign_in_button/base_button.dart';
+import 'package:flutter/material.dart';
 
-export 'stub.dart'
-    if (dart.library.js_util) 'web.dart'
-    if (dart.library.io) 'mobile.dart';
+class SignInButton extends StatelessWidget {
+  const SignInButton({
+    this.type = SignInButtonType.google,
+    this.onPressed,
+    super.key,
+    this.shape,
+    this.color,
+  });
+
+  final SignInButtonType type;
+  final HandleSignInFn? onPressed;
+  final OutlinedBorder? shape;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return BaseSignInButton(
+      title: titleBySignInType(type),
+      imagePath: imagePathBySignInType(type),
+      onPressed: onPressed,
+      shape: shape,
+      color: color,
+    );
+  }
+}
+
+String titleBySignInType(SignInButtonType type) {
+  switch (type) {
+    case SignInButtonType.google:
+      return 'Sign in with Google';
+  }
+}
+
+String imagePathBySignInType(SignInButtonType type) {
+  switch (type) {
+    case SignInButtonType.google:
+      return 'assets/images/google_logo.png';
+  }
+}

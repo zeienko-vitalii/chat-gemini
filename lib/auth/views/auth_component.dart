@@ -3,12 +3,14 @@ import 'package:chat_gemini/app/navigation/app_router.dart';
 import 'package:chat_gemini/app/styles/theme.dart';
 import 'package:chat_gemini/app/views/custom_app_bar.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
+import 'package:chat_gemini/auth/views/already_have_account/already_have_account.dart';
+import 'package:chat_gemini/auth/views/auth_horizontal_line/auth_horizontal_divider.dart';
 import 'package:chat_gemini/auth/views/email_auth_form.dart';
-import 'package:chat_gemini/auth/views/horizontal_divider.dart';
+import 'package:chat_gemini/auth/views/sign_in_button/sign_in_button.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:gap/gap.dart';
 
 class AuthComponent extends StatefulWidget {
@@ -35,45 +37,48 @@ class _AuthComponentState extends State<AuthComponent> {
     return Scaffold(
       appBar: CustomAppBar(
         context,
-        title: 'Sign In',
+        key: const Key('signin_appbar'),
+        title: titleByIsSignIn(_isSignIn),
         leading: const SizedBox(),
       ),
       body: BlocConsumer<AuthCubit, AuthState>(
-        listener: _onAuthListener,
+        listener: onAuthListener,
         builder: (context, state) {
           final isLoading = state is AuthLoading;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 64),
-              child: Column(
-                children: [
-                  const Icon(Icons.lock, size: 100),
-                  EmailAuthForm(
-                    isSignIn: _isSignIn,
-                    isLoading: isLoading,
-                    onPressed: _authWithEmail,
-                  ),
-                  _AlreadyHaveAccount(
-                    isSignIn: _isSignIn,
-                    onPressed: _changeSignInUpScreen,
-                  ),
-                  const _AuthHorizontalDivider(),
-                  const Gap(20),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: SignInButton(
-                      Buttons.Google,
-                      elevation: 8,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: borderRadius32,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.lock, size: 100),
+                EmailAuthForm(
+                  isSignIn: _isSignIn,
+                  isLoading: isLoading,
+                  onPressed: authWithEmail,
+                ),
+                AlreadyHaveAccount(
+                  isSignIn: _isSignIn,
+                  onPressed: changeSignInUpScreen,
+                ),
+                const AuthHorizontalDivider(),
+                const Gap(20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 54,
+                        child: SignInButton(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: borderRadius32,
+                            side: BorderSide(color: Colors.grey),
+                          ),
+                          onPressed: _authCubit.signInWithGoogle,
+                        ),
                       ),
-                      onPressed: _authCubit.signInWithGoogle,
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
           );
         },
@@ -81,7 +86,8 @@ class _AuthComponentState extends State<AuthComponent> {
     );
   }
 
-  void _authWithEmail({
+  @visibleForTesting
+  void authWithEmail({
     required String email,
     required String password,
   }) {
@@ -92,68 +98,26 @@ class _AuthComponentState extends State<AuthComponent> {
     );
   }
 
-  void _onAuthListener(BuildContext context, AuthState state) {
+  @visibleForTesting
+  void onAuthListener(BuildContext context, AuthState state) {
     if (state is AuthError) {
       showSnackbarMessage(context, message: state.message);
     } else if (state is SignedInComplete) {
       context.router.replace(ChatScreenRoute());
     } else if (state is SignedInIncomplete) {
       context.router.replace(ProfileScreenRoute(toCompleteProfile: true));
-    } else if (state is LogOut) {
+    } else if (state is LogOut && kIsWeb) {
       _authCubit.silentSignInWithGoogle();
     }
   }
 
-  void _changeSignInUpScreen() {
+  @visibleForTesting
+  void changeSignInUpScreen() {
     _isSignIn = !_isSignIn;
     setState(() {});
   }
 }
 
-class _AlreadyHaveAccount extends StatelessWidget {
-  const _AlreadyHaveAccount({
-    required this.onPressed,
-    required this.isSignIn,
-  });
-
-  final VoidCallback onPressed;
-  final bool isSignIn;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onPressed,
-      child: Text(
-        isSignIn
-            ? 'Need an account? Sign Up'
-            : 'Already have an account? Sign In',
-        style: Theme.of(context).textTheme.bodySmall,
-      ),
-    );
-  }
-}
-
-class _AuthHorizontalDivider extends Row {
-  const _AuthHorizontalDivider()
-      : super(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
-            Flexible(
-              flex: 2,
-              child: HorizontalDivider(),
-            ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  'OR',
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 2,
-              child: HorizontalDivider(),
-            ),
-          ],
-        );
+String titleByIsSignIn(bool isSignIn) {
+  return isSignIn ? 'Sign In' : 'Sign Up';
 }
