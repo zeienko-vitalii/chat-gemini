@@ -13,6 +13,7 @@ class AlreadyHaveAccount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
+      key: const Key('already_have_account_button'),
       onPressed: onPressed,
       child: Text(
         getTitleByIsSignIn(isSignIn: isSignIn),

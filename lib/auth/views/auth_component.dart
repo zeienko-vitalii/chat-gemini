@@ -38,7 +38,7 @@ class _AuthComponentState extends State<AuthComponent> {
       appBar: CustomAppBar(
         context,
         key: const Key('signin_appbar'),
-        title: titleByIsSignIn(_isSignIn),
+        title: titleByIsSignIn(isSignIn: _isSignIn),
         leading: const SizedBox(),
       ),
       body: BlocConsumer<AuthCubit, AuthState>(
@@ -47,18 +47,18 @@ class _AuthComponentState extends State<AuthComponent> {
           final isLoading = state is AuthLoading;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: ListView(
               children: [
+                const Gap(64),
                 const Icon(Icons.lock, size: 100),
                 EmailAuthForm(
                   isSignIn: _isSignIn,
                   isLoading: isLoading,
-                  onPressed: authWithEmail,
+                  onPressed: _authWithEmail,
                 ),
                 AlreadyHaveAccount(
                   isSignIn: _isSignIn,
-                  onPressed: changeSignInUpScreen,
+                  onPressed: _changeSignInUpScreen,
                 ),
                 const AuthHorizontalDivider(),
                 const Gap(20),
@@ -66,7 +66,7 @@ class _AuthComponentState extends State<AuthComponent> {
                   children: [
                     Expanded(
                       child: SizedBox(
-                        height: 54,
+                        height: 48,
                         child: SignInButton(
                           shape: const RoundedRectangleBorder(
                             borderRadius: borderRadius32,
@@ -86,8 +86,7 @@ class _AuthComponentState extends State<AuthComponent> {
     );
   }
 
-  @visibleForTesting
-  void authWithEmail({
+  void _authWithEmail({
     required String email,
     required String password,
   }) {
@@ -98,26 +97,25 @@ class _AuthComponentState extends State<AuthComponent> {
     );
   }
 
-  @visibleForTesting
-  void onAuthListener(BuildContext context, AuthState state) {
-    if (state is AuthError) {
-      showSnackbarMessage(context, message: state.message);
-    } else if (state is SignedInComplete) {
-      context.router.replace(ChatScreenRoute());
-    } else if (state is SignedInIncomplete) {
-      context.router.replace(ProfileScreenRoute(toCompleteProfile: true));
-    } else if (state is LogOut && kIsWeb) {
-      _authCubit.silentSignInWithGoogle();
-    }
-  }
-
-  @visibleForTesting
-  void changeSignInUpScreen() {
+  void _changeSignInUpScreen() {
     _isSignIn = !_isSignIn;
     setState(() {});
   }
 }
 
-String titleByIsSignIn(bool isSignIn) {
+String titleByIsSignIn({required bool isSignIn}) {
   return isSignIn ? 'Sign In' : 'Sign Up';
+}
+
+@visibleForTesting
+void onAuthListener(BuildContext context, AuthState state) {
+  if (state is AuthError) {
+    showSnackbarMessage(context, message: state.message);
+  } else if (state is SignedInComplete) {
+    context.router.replace(ChatScreenRoute());
+  } else if (state is SignedInIncomplete) {
+    context.router.replace(ProfileScreenRoute(toCompleteProfile: true));
+  } else if (state is LogOut && kIsWeb) {
+    context.read<AuthCubit>().silentSignInWithGoogle();
+  }
 }

@@ -1,5 +1,5 @@
-import 'package:chat_gemini/chat/views/animated_bot.dart';
 import 'package:chat_gemini/chat/views/chat_text_field.dart';
+import 'package:chat_gemini/chat/views/placeholders/animated_bot.dart';
 import 'package:chat_gemini/chats/styles/chat_list_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -88,8 +88,8 @@ class EmptyChatWidget extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: buttons.map((button) {
-                              final title = button['title'] as String;
-                              final content = button['content'] as String;
+                              final title = button['title']!;
+                              final content = button['content']!;
                               return Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.all(4),
@@ -151,7 +151,9 @@ class SuggestedConversationButton extends StatelessWidget {
           Expanded(
             child: Text(
               content,
-              style: Theme.of(context).textTheme.labelSmall,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
               overflow: TextOverflow.ellipsis,
             ),
           ),

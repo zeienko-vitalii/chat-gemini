@@ -18,12 +18,20 @@ class SignInButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseSignInButton(
+      key: keyBySignInType(type),
       title: titleBySignInType(type),
       imagePath: imagePathBySignInType(type),
       onPressed: onPressed,
       shape: shape,
       color: color,
     );
+  }
+}
+
+Key keyBySignInType(SignInButtonType type) {
+  switch (type) {
+    case SignInButtonType.google:
+      return const Key('google_sign_in_button');
   }
 }
 

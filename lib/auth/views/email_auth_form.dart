@@ -53,6 +53,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
         child: Column(
           children: [
             TextFormField(
+              key: const Key('email_text_field'),
               controller: _emailController,
               cursorColor: Theme.of(context).iconTheme.color,
               cursorRadius: const Radius.circular(2),
@@ -65,6 +66,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
             ),
             const Gap(20),
             TextFormField(
+              key: const Key('password_text_field'),
               controller: _passwordController,
               cursorColor: Theme.of(context).iconTheme.color,
               cursorRadius: const Radius.circular(2),
@@ -73,7 +75,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
               decoration: InputDecoration(
                 labelText: 'Password',
                 contentPadding: const EdgeInsets.all(16),
-                suffixIcon: _EyeIconButton(
+                suffixIcon: EyeIconButton(
                   isVisible: _isPasswordVisible,
                   onPressed: () {
                     _isPasswordVisible = !_isPasswordVisible;
@@ -85,6 +87,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
             if (!widget.isSignIn) ...[
               const Gap(20),
               TextFormField(
+                key: const Key('confirm_password_text_field'),
                 controller: _confirmPasswordController,
                 cursorColor: Theme.of(context).iconTheme.color,
                 cursorRadius: const Radius.circular(2),
@@ -97,7 +100,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
                 decoration: InputDecoration(
                   labelText: 'Confirm Password',
                   contentPadding: const EdgeInsets.all(16),
-                  suffixIcon: _EyeIconButton(
+                  suffixIcon: EyeIconButton(
                     isVisible: _isConfirmPasswordVisible,
                     onPressed: () {
                       _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
@@ -108,40 +111,42 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
               ),
             ],
             const Gap(20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-                elevation: 0,
-              ),
-              onPressed: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  _formKey.currentState?.save();
-                  _isButtonPressed = true;
-                  setState(() {});
-
-                  widget.onPressed(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  );
-                }
-              },
-              child: _isButtonPressed && widget.isLoading
-                  ? const CupertinoActivityIndicator()
-                  : Text(
-                      widget.isSignIn ? 'Sign In' : 'Sign Up',
-                    ),
+            EmailSignInButton(
+              isLoading: isButtonLoading(),
+              isSignIn: widget.isSignIn,
+              onSignInPressed: onSignInPressed,
             ),
           ],
         ),
       ),
     );
   }
+
+  bool isButtonLoading() {
+    return widget.isLoading && _isButtonPressed;
+  }
+
+  @visibleForTesting
+  void onSignInPressed() {
+    if (_formKey.currentState?.validate() ?? false) {
+      _formKey.currentState?.save();
+      _isButtonPressed = true;
+      setState(() {});
+
+      widget.onPressed(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+    }
+  }
 }
 
-class _EyeIconButton extends StatelessWidget {
-  const _EyeIconButton({
+@visibleForTesting
+class EyeIconButton extends StatelessWidget {
+  const EyeIconButton({
     required this.isVisible,
     required this.onPressed,
+    super.key,
   });
 
   final bool isVisible;
@@ -156,4 +161,39 @@ class _EyeIconButton extends StatelessWidget {
       onPressed: onPressed,
     );
   }
+}
+
+class EmailSignInButton extends StatelessWidget {
+  const EmailSignInButton({
+    required this.isLoading,
+    required this.isSignIn,
+    required this.onSignInPressed,
+    super.key,
+  });
+
+  final VoidCallback onSignInPressed;
+  final bool isLoading;
+  final bool isSignIn;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 50),
+        elevation: 0,
+      ),
+      onPressed: onSignInPressed,
+      child: isLoading
+          ? const CupertinoActivityIndicator()
+          : Text(
+              emailSignInButtonTitle(
+                isSignIn: isSignIn,
+              ),
+            ),
+    );
+  }
+}
+
+String emailSignInButtonTitle({required bool isSignIn}) {
+  return isSignIn ? 'Sign In' : 'Sign Up';
 }
