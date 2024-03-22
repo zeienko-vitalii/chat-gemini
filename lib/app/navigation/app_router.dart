@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:chat_gemini/app/navigation/guards/user_authenticated_guard.dart';
 import 'package:chat_gemini/auth/auth_screen.dart';
 import 'package:chat_gemini/chat/chat_screen.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
@@ -21,9 +22,11 @@ class AppRouter extends _$AppRouter {
         ),
         AutoRoute(
           page: ChatScreenRoute.page,
+          guards: [AuthGuard()],
         ),
         AutoRoute(
           page: ProfileScreenRoute.page,
+          guards: [AuthGuard()],
         ),
       ];
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chat_gemini/app/styles/theme.dart';
 import 'package:chat_gemini/chat/views/attach_media/attach_media_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 const placeholderSize = 80.0;
@@ -32,10 +33,15 @@ class ImagePlaceholder extends StatelessWidget {
               decoration: _getDecoration(context),
               child: ClipRRect(
                 borderRadius: borderRadius16 - BorderRadius.circular(4),
-                child: Image.file(
-                  file,
-                  fit: BoxFit.cover,
-                ),
+                child: kIsWeb
+                    ? Image.network(
+                        file.path,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.file(
+                        file,
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
           ),

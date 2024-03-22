@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
-import 'package:chat_gemini/auth/models/user.dart';
+import 'package:chat_gemini/auth/domain/models/user.dart';
 import 'package:chat_gemini/chat/data/repository/chat_repository.dart';
 import 'package:chat_gemini/chat/data/repository/media_storage_repository.dart';
 import 'package:chat_gemini/profile/data/repository/user_media_storage_repository.dart';
@@ -20,12 +20,11 @@ class ProfileCubit extends Cubit<ProfileState> {
     this._mediaStorageRepository,
   ) : super(ProfileInitial());
 
-  final AuthService _authService;// = AuthService();
-  final UserRepository _userRepository;// = UserRepository();
-  final UserMediaStorageRepository _userMediaStorageRepository;// = UserMediaStorageRepository();
-
-  final ChatRepository _repository;// = ChatRepository();
-  final MediaStorageRepository _mediaStorageRepository;// = MediaStorageRepository();
+  final AuthService _authService;
+  final UserRepository _userRepository;
+  final UserMediaStorageRepository _userMediaStorageRepository;
+  final ChatRepository _repository;
+  final MediaStorageRepository _mediaStorageRepository;
 
   Future<void> loadProfile() async {
     try {

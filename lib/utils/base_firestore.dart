@@ -10,6 +10,8 @@ abstract class BaseFirestore {
       firestoreInstance.collection(
     collectionKey(),
   );
-  String collectionKey();
+  
   final FirebaseFirestore firestoreInstance;
+  
+  String collectionKey();
 }

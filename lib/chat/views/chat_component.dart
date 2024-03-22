@@ -4,7 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/app/navigation/app_router.dart';
 import 'package:chat_gemini/app/views/custom_app_bar.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
-import 'package:chat_gemini/auth/models/user.dart';
+import 'package:chat_gemini/auth/domain/models/user.dart';
 import 'package:chat_gemini/chat/cubit/chat_cubit.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chat/models/message.dart';
@@ -13,13 +13,14 @@ import 'package:chat_gemini/chat/views/chat_controls/chat_controls_widget.dart';
 import 'package:chat_gemini/chat/views/chat_controls/dialogs/rename_alert_chat_dialog.dart';
 import 'package:chat_gemini/chat/views/chat_text_field.dart';
 import 'package:chat_gemini/chat/views/chat_widget.dart';
-import 'package:chat_gemini/chat/views/empty_chat_widget.dart';
-import 'package:chat_gemini/chat/views/invalid_api_key_widget.dart';
+import 'package:chat_gemini/chat/views/placeholders/empty_chat_widget.dart';
+import 'package:chat_gemini/chat/views/placeholders/invalid_api_key_widget.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
 import 'package:chat_gemini/utils/image/get_file_extension.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:chat_gemini/widgets/custom_drawer.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -227,7 +228,7 @@ class _ChatBody extends StatelessWidget {
       return const Center(child: CupertinoActivityIndicator());
     }
 
-    final isAndroid = Platform.isAndroid;
+    final isAndroid = kIsWeb || Platform.isAndroid;
     final bottomPadding = isAndroid ? 16.0 : 0.0;
     return ColoredBox(
       color: Colors.transparent,
@@ -235,7 +236,7 @@ class _ChatBody extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: messages.isEmpty
-                ? const EmptyChatWidget()
+                ? EmptyChatWidget(onSend: onSend)
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: ChatWidget(
@@ -245,6 +246,7 @@ class _ChatBody extends StatelessWidget {
                     ),
                   ),
           ),
+          
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 12,

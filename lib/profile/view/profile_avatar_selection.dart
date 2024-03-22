@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:chat_gemini/chat/views/attach_media/attach_media_modal_bottom_sheet.dart';
 import 'package:chat_gemini/profile/view/profile_avatar_widget.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
 import 'package:chat_gemini/utils/logger.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
@@ -66,6 +69,7 @@ class _ProfileAvatarSelectionState extends State<ProfileAvatarSelection> {
 
   Future<void> _getLostData(BuildContext context) async {
     try {
+      if (kIsWeb || !Platform.isAndroid) return;
       final response = await _imagePicker.retrieveLostData();
       if (response.isEmpty) {
         Log().d('No lost data');

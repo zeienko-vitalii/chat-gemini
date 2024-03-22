@@ -1,13 +1,15 @@
 import 'package:bloc/bloc.dart';
 import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
-import 'package:chat_gemini/auth/models/user.dart';
+import 'package:chat_gemini/auth/domain/exceptions/user_not_found_exception.dart';
+import 'package:chat_gemini/auth/domain/models/user.dart';
 import 'package:chat_gemini/utils/logger.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-part 'auth_state.dart';
 part 'auth_cubit.freezed.dart';
+part 'auth_state.dart';
 
 @injectable
 class AuthCubit extends Cubit<AuthState> {
@@ -31,14 +33,22 @@ class AuthCubit extends Cubit<AuthState> {
         emit(const AuthState.logOut());
         return;
       }
-      final user = await _userRepository.getUser(currentUser.uid);
 
-      if (user.name.isEmpty) {
-        emit(AuthState.signedInIncomplete(user));
-      } else {
-        emit(AuthState.signedInComplete(user));
-      }
+      final profile = await _userRepository.getUser(currentUser.uid);
+
+      checkProfileCompletionAndEmitState(profile);
     } catch (e) {
+      emit(AuthState.error('$e'));
+    }
+  }
+
+  Future<void> silentSignInWithGoogle() async {
+    try {
+      final user = await _authService.silentSignInWithGoogle();
+      final profile = await addUserIfNotPresent(user);
+
+      checkProfileCompletionAndEmitState(profile);
+    } on Exception catch (e) {
       emit(AuthState.error('$e'));
     }
   }
@@ -67,26 +77,9 @@ class AuthCubit extends Cubit<AuthState> {
           ),
         );
       } else {
-        try {
-          // TODO(V): Add custom exceptions
-          // it will fail if user is not present
-          profile = await _userRepository.getUser(user.uid);
-        } catch (e) {
-          profile = await _userRepository.addUser(
-            User(
-              uid: user.uid,
-              email: user.email!,
-              name: user.displayName ?? '',
-              photoUrl: user.photoURL,
-            ),
-          );
-        }
+        profile = await addUserIfNotPresent(user);
       }
-      if (profile.photoUrl?.isEmpty ?? true) {
-        emit(AuthState.signedInIncomplete(profile));
-      } else {
-        emit(AuthState.signedInComplete(profile));
-      }
+      checkProfileCompletionAndEmitState(profile);
     } on Exception catch (e) {
       emit(AuthState.error('$e'));
     }
@@ -96,35 +89,53 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(const AuthState.loading());
       final user = await _authService.signInWithGoogle();
+      final profile = await addUserIfNotPresent(user);
+
+      checkProfileCompletionAndEmitState(profile);
+    } on Exception catch (e) {
+      emit(AuthState.error('$e'));
+    }
+  }
+
+  Future<User> addUserIfNotPresent(auth.User user) async {
+    try {
+      final profile = await _userRepository.getUser(user.uid);
+      return profile;
+    } on UserNotFoundException catch (_) {
       final profile = await _userRepository.addUser(
         User(
           uid: user.uid,
           email: user.email!,
-          name: user.displayName!,
+          name: user.displayName ?? '',
           photoUrl: user.photoURL,
         ),
       );
-      if (profile.photoUrl?.isEmpty ?? true) {
-        emit(AuthState.signedInIncomplete(profile));
-      } else {
-        emit(AuthState.signedInComplete(profile));
-      }
-    } on Exception catch (e) {
-      emit(AuthState.error('$e'));
+
+      return profile;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  void checkProfileCompletionAndEmitState(User user) {
+    if (isProfileComplete(user.name)) {
+      emit(AuthState.signedInComplete(user));
+    } else {
+      emit(AuthState.signedInIncomplete(user));
     }
   }
 
   Future<void> signOut() async {
     try {
       emit(const AuthState.loading());
-      final result = await _authService.signOut();
-      if (result) {
-        emit(const AuthState.logOut());
-      } else {
-        throw Exception('Sign out failed');
-      }
+      await _authService.signOut();
+      emit(const AuthState.logOut());
     } catch (e) {
       emit(AuthState.error('$e'));
     }
   }
+}
+
+bool isProfileComplete(String username) {
+  return username.isNotEmpty;
 }
