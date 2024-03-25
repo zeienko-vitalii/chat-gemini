@@ -3,6 +3,7 @@ import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
 import 'package:chat_gemini/auth/domain/models/user.dart';
 import 'package:chat_gemini/chat/data/ai_chat_service.dart';
+import 'package:chat_gemini/chat/data/exceptions/unsupported_location_exception.dart';
 import 'package:chat_gemini/chat/data/repository/chat_repository.dart';
 import 'package:chat_gemini/chat/data/repository/media_storage_repository.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
@@ -77,14 +78,7 @@ class ChatCubit extends Cubit<ChatState> {
       }
     } catch (e, stk) {
       Log().e(e, stk);
-      emit(
-        ChatError(
-          chat: chat,
-          message: '$e',
-          author: state.author,
-          guests: state.guests,
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -129,14 +123,7 @@ class ChatCubit extends Cubit<ChatState> {
         await askBotTextMessage(text);
       }
     } catch (e) {
-      emit(
-        ChatError(
-          chat: state.chat,
-          message: '$e',
-          author: state.author,
-          guests: state.guests,
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -173,14 +160,7 @@ class ChatCubit extends Cubit<ChatState> {
         ),
       );
     } catch (e) {
-      emit(
-        ChatError(
-          chat: state.chat,
-          message: '$e',
-          author: state.author,
-          guests: state.guests,
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -229,14 +209,7 @@ class ChatCubit extends Cubit<ChatState> {
         ),
       );
     } catch (e) {
-      emit(
-        ChatError(
-          chat: state.chat,
-          message: '$e',
-          author: state.author,
-          guests: state.guests,
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -296,14 +269,7 @@ class ChatCubit extends Cubit<ChatState> {
       await loadChat(const Chat());
     } catch (e) {
       Log().e(e);
-      emit(
-        ChatError(
-          chat: state.chat,
-          author: state.author,
-          guests: state.guests,
-          message: '$e',
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -333,14 +299,20 @@ class ChatCubit extends Cubit<ChatState> {
       );
     } catch (e) {
       Log().e(e);
-      emit(
-        ChatError(
-          chat: state.chat,
-          author: state.author,
-          guests: state.guests,
-          message: '$e',
-        ),
-      );
+      _handleError(e);
     }
+  }
+
+  void _handleError(Object e, [StackTrace? stk]) {
+    final isUnsupportedLocation = e is UnsupportedLocationException;
+    emit(
+      ChatError(
+        chat: state.chat,
+        message: '$e',
+        author: state.author,
+        guests: state.guests,
+        isUnsupportedLocation: isUnsupportedLocation,
+      ),
+    );
   }
 }

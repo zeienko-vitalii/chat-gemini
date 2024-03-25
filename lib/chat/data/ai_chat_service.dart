@@ -69,9 +69,12 @@ class AiChatService {
         return sendSingleTextPromt(text);
       }
     } on UnsupportedUserLocation catch (_) {
-      throw UnsupportedLocaleException();
+      throw UnsupportedLocationException();
     } catch (e, stk) {
       Log().e(e, stk);
+      if (e is UnsupportedUserLocation) {
+        throw UnsupportedLocationException();
+      }
       rethrow;
     }
   }
@@ -95,6 +98,9 @@ class AiChatService {
       return text;
     } catch (e, stk) {
       Log().e(e, stk);
+      if (e is UnsupportedUserLocation) {
+        throw UnsupportedLocationException();
+      }
       rethrow;
     }
   }
@@ -129,6 +135,9 @@ class AiChatService {
       return text;
     } catch (e, stk) {
       Log().e(e, stk);
+      if (e is UnsupportedUserLocation) {
+        throw UnsupportedLocationException();
+      }
       rethrow;
     }
   }

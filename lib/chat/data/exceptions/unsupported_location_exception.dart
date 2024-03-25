@@ -1,3 +1,3 @@
-class UnsupportedLocaleException implements Exception {
-  UnsupportedLocaleException() : super();
+class UnsupportedLocationException implements Exception {
+  UnsupportedLocationException() : super();
 }

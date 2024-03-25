@@ -16,9 +16,9 @@ final themeData = ThemeData(
   brightness: Brightness.light,
   colorScheme: const ColorScheme(
     brightness: Brightness.light,
-    primary: Color(0xFF494949),
-    onPrimary: Color(0xFF494949),
-    inversePrimary: Color(0xFF494949),
+    primary: Color(0xFF2C2C2C),
+    onPrimary: Color(0xFF2C2C2C),
+    inversePrimary: Color(0xFF2C2C2C),
     background: Colors.white,
     onBackground: Colors.white,
     secondary: Colors.black87,
