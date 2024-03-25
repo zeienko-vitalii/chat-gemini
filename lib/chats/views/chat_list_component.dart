@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/app/navigation/app_router.dart';
+import 'package:chat_gemini/app/utils/ui_utils.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:chat_gemini/chats/cubit/chats_cubit.dart';
 import 'package:chat_gemini/chats/styles/chat_list_styles.dart';
@@ -122,6 +123,9 @@ class _DateDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = chatListTileContentColor(
+      isLightTheme: isLightTheme(context),
+    );
     return Padding(
       padding: const EdgeInsets.all(18).copyWith(
         left: 12,
@@ -132,14 +136,14 @@ class _DateDivider extends StatelessWidget {
           Expanded(
             child: Divider(
               height: 0.1,
-              color: chatListTileContentColor(context),
+              color: color,
             ),
           ),
           const Gap(12),
           Text(
             formatDateTime(dateTime),
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: chatListTileContentColor(context),
+                  color: color,
                 ),
           ),
           const Gap(12),
@@ -147,7 +151,7 @@ class _DateDivider extends StatelessWidget {
             flex: 8,
             child: Divider(
               height: 0.1,
-              color: chatListTileContentColor(context),
+              color: color,
             ),
           ),
         ],
