@@ -7,10 +7,11 @@ Color chatListTileContentColor({
   required bool isLightTheme,
   bool isSelected = false,
 }) {
-  final isSelectedState = isLightTheme ? isSelected : !isSelected;
-  return selectedTileColor(
-    isSelected: isSelectedState,
-  );
+  if (isLightTheme) {
+    return selectedTileColor(isSelected: isSelected);
+  } else {
+    return chatTileLightColor;
+  }
 }
 
 Color selectedTileColor({required bool isSelected}) {

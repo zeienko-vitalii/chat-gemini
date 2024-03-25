@@ -9,7 +9,6 @@ class EmptyChatWidget extends StatelessWidget {
 
   final OnMessageSend? onSend;
 
-  // ignore: unused_field
   static const _suggestedButtons = [
     [
       {
@@ -40,9 +39,9 @@ class EmptyChatWidget extends StatelessWidget {
         BuildContext context,
         BoxConstraints constrains,
       ) {
-        // final isSmallScreen = constrains.maxWidth < 600;
+        final isSmallScreen = constrains.maxWidth < 600;
         final isMedHeight = constrains.maxHeight < 500;
-        final isMidSmHeight = constrains.maxHeight < 380;
+        final isMidSmHeight = constrains.maxHeight < 280;
         final isSmallHeight = constrains.maxHeight < 150;
 
         if (isSmallHeight) {
@@ -54,8 +53,14 @@ class EmptyChatWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (!isMidSmHeight) const Center(child: AnimatedBot()),
-              if (!isMedHeight) ...[
+              if (!isMedHeight)
+                const Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: AnimatedBot(),
+                  ),
+                ),
+              if (!isMidSmHeight) ...[
                 const Gap(20),
                 Text(
                   'Hi, there 👋',
@@ -69,43 +74,43 @@ class EmptyChatWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ],
-              // Expanded(
-              //   child: Row(
-              //     crossAxisAlignment: CrossAxisAlignment.stretch,
-              //     children: [
-              //       ..._suggestedButtons
-              //           .take(
-              //         isSmallScreen ? 1 : _suggestedButtons.length,
-              //       )
-              //           .map((buttons) {
-              //         return Expanded(
-              //           child: Padding(
-              //             padding: const EdgeInsets.all(4),
-              //             child: Column(
-              //               crossAxisAlignment: CrossAxisAlignment.stretch,
-              //               children: buttons.map((button) {
-              //                 final title = button['title']!;
-              //                 final content = button['content']!;
-              //                 return Expanded(
-              //                   child: Padding(
-              //                     padding: const EdgeInsets.all(4),
-              //                     child: SuggestedConversationButton(
-              //                       onPressed: () {
-              //                         onSend?.call('$title $content');
-              //                       },
-              //                       title: title,
-              //                       content: content,
-              //                     ),
-              //                   ),
-              //                 );
-              //               }).toList(),
-              //             ),
-              //           ),
-              //         );
-              //       }),
-              //     ],
-              //   ),
-              // ),
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ..._suggestedButtons
+                        .take(
+                      isSmallScreen ? 1 : _suggestedButtons.length,
+                    )
+                        .map((buttons) {
+                      return Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: buttons.map((button) {
+                              final title = button['title']!;
+                              final content = button['content']!;
+                              return Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: SuggestedConversationButton(
+                                    onPressed: () {
+                                      onSend?.call('$title $content');
+                                    },
+                                    title: title,
+                                    content: content,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
             ],
           ),
         );

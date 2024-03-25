@@ -18,6 +18,7 @@ class MessageWidget extends StatelessWidget {
   final String username;
 
   String get _textMessage => message.text;
+  String get _username => isBot ? username : 'Me';
 
   bool get hasAvatar => avatar != null;
   bool get assetAvatar => avatar != null && avatar!.startsWith('assets');
@@ -41,7 +42,7 @@ class MessageWidget extends StatelessWidget {
             child: hasAvatar
                 ? const SizedBox()
                 : Text(
-                    _shortUsername(avatar, username),
+                    _shortUsername(avatar, _username),
                   ),
           ),
           const Gap(8),
@@ -58,7 +59,7 @@ class MessageWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      username,
+                      _username,
                       textAlign: TextAlign.start,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,

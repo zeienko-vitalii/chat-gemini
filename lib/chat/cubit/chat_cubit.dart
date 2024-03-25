@@ -34,12 +34,11 @@ class ChatCubit extends Cubit<ChatState> {
           ),
         );
 
-  final ChatRepository _repository; // = ChatRepository();
-  final AuthService _authService; // = AuthService();
-  final UserRepository _userRepository; // = UserRepository();
-  final MediaStorageRepository
-      _mediaStorageRepository; // = MediaStorageRepository();
-  final AiChatService _aiChatService; // = AiChatService();
+  final ChatRepository _repository;
+  final AuthService _authService;
+  final UserRepository _userRepository;
+  final MediaStorageRepository _mediaStorageRepository;
+  final AiChatService _aiChatService;
 
   Future<void> loadChat(Chat chat) async {
     try {
