@@ -12,8 +12,10 @@ class BaseSignInButton extends StatelessWidget {
     this.onPressed,
     this.shape,
     this.color,
+    this.circle = false,
   });
 
+  final bool circle;
   final String title;
   final String? imagePath;
   final HandleSignInFn? onPressed;
@@ -32,25 +34,21 @@ class BaseSignInButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (shouldShowImage(imagePath)) ...[
-            Expanded(
-              child: Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: Image.asset(
-                  imagePath!,
-                  height: 28,
-                  width: 28,
-                ),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Image.asset(
+                imagePath!,
+                height: 28,
+                width: 28,
               ),
             ),
-            const SizedBox(width: 12),
+            if (!circle) const SizedBox(width: 12),
           ],
-          Expanded(
-            flex: 2,
-            child: Align(
+          if (!circle)
+            Align(
               alignment: AlignmentDirectional.centerStart,
               child: Text(title),
             ),
-          ),
         ],
       ),
     );

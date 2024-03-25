@@ -9,16 +9,21 @@ typedef EmailAuthFormCallback = void Function({
 });
 
 class EmailAuthForm extends StatefulWidget {
-  const EmailAuthForm({
+  EmailAuthForm({
     required this.isSignIn,
-    required this.onPressed,
     super.key,
+    this.onPressed,
     this.isLoading = false,
-  });
+    TextEditingController? emailController,
+    TextEditingController? passwordController,
+  })  : emailController = emailController ?? TextEditingController(),
+        passwordController = passwordController ?? TextEditingController();
 
   final bool isSignIn;
   final bool isLoading;
-  final EmailAuthFormCallback onPressed;
+  final EmailAuthFormCallback? onPressed;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
 
   @override
   State<EmailAuthForm> createState() => _EmailAuthFormState();
@@ -27,8 +32,9 @@ class EmailAuthForm extends StatefulWidget {
 class _EmailAuthFormState extends State<EmailAuthForm> {
   final _formKey = GlobalKey<FormState>();
 
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  TextEditingController get _emailController => widget.emailController;
+  TextEditingController get _passwordController => widget.passwordController;
+  
   final _confirmPasswordController = TextEditingController();
 
   bool _isButtonPressed = false;
@@ -111,11 +117,12 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
               ),
             ],
             const Gap(20),
-            EmailSignInButton(
-              isLoading: isButtonLoading(),
-              isSignIn: widget.isSignIn,
-              onSignInPressed: onSignInPressed,
-            ),
+            if (widget.onPressed != null)
+              EmailSignInButton(
+                isLoading: isButtonLoading(),
+                isSignIn: widget.isSignIn,
+                onSignInPressed: onSignInPressed,
+              ),
           ],
         ),
       ),
@@ -133,7 +140,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
       _isButtonPressed = true;
       setState(() {});
 
-      widget.onPressed(
+      widget.onPressed?.call(
         email: _emailController.text,
         password: _passwordController.text,
       );

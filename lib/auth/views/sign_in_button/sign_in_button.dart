@@ -8,22 +8,32 @@ class SignInButton extends StatelessWidget {
     super.key,
     this.shape,
     this.color,
+    this.title,
+    this.circle = false,
+    this.size,
   });
 
   final SignInButtonType type;
   final HandleSignInFn? onPressed;
   final OutlinedBorder? shape;
   final Color? color;
+  final String? title;
+  final bool circle;
+  final Size? size;
 
   @override
   Widget build(BuildContext context) {
-    return BaseSignInButton(
-      key: keyBySignInType(type),
-      title: titleBySignInType(type),
-      imagePath: imagePathBySignInType(type),
-      onPressed: onPressed,
-      shape: shape,
-      color: color,
+    return SizedBox.fromSize(
+      size: size ?? const Size.fromHeight(50),
+      child: BaseSignInButton(
+        key: keyBySignInType(type),
+        title: title ?? titleBySignInType(type),
+        imagePath: imagePathBySignInType(type),
+        onPressed: onPressed,
+        shape: shape,
+        color: color,
+        circle: circle,
+      ),
     );
   }
 }

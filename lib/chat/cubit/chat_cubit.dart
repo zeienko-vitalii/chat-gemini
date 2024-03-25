@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
+import 'package:chat_gemini/auth/domain/exceptions/user_not_found_exception.dart';
 import 'package:chat_gemini/auth/domain/models/user.dart';
 import 'package:chat_gemini/chat/data/ai_chat_service.dart';
 import 'package:chat_gemini/chat/data/exceptions/unsupported_location_exception.dart';
@@ -87,7 +88,7 @@ class ChatCubit extends Cubit<ChatState> {
     List<String> sharedWithIds = const [],
   ]) async {
     if (currentUserId == null) {
-      throw Exception('User not found');
+      throw const UserNotFoundException();
     }
 
     final author = await _userRepository.getUser(currentUserId);
@@ -218,7 +219,7 @@ class ChatCubit extends Cubit<ChatState> {
     required String userId,
     required Message message,
   }) async {
-    if (userId.isEmpty) throw Exception('User not found');
+    if (userId.isEmpty) throw const UserNotFoundException();
 
     final isMediaEmpty = message.media == null;
     final mediaUrl = await _uploadMedia(
@@ -303,7 +304,7 @@ class ChatCubit extends Cubit<ChatState> {
     }
   }
 
-  void _handleError(Object e, [StackTrace? stk]) {
+  void _handleError(Object e) {
     final isUnsupportedLocation = e is UnsupportedLocationException;
     emit(
       ChatError(
