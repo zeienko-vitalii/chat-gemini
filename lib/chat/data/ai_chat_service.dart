@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:chat_gemini/chat/data/exceptions/invalid_api_exception.dart';
+import 'package:chat_gemini/chat/data/exceptions/unsupported_location_exception.dart';
 import 'package:chat_gemini/chat/models/message.dart';
 import 'package:chat_gemini/utils/image/supported_image_mime_types.dart';
 import 'package:chat_gemini/utils/logger.dart';
@@ -55,15 +57,25 @@ class AiChatService {
     SupportedMimeTypes? mimeType,
     Uint8List? fileBytes,
   }) async {
-    if (_chat == null) {
-      throw Exception('Chat not initialized. Run init() first.');
-    }
-    if (geminiApiKey.isEmpty) throw Exception('API key is empty');
+    try {
+      if (_chat == null) {
+        throw Exception('Chat not initialized. Run init() first.');
+      }
+      if (geminiApiKey.isEmpty) throw InvalidApiException();
 
-    if (mimeType != null && fileBytes != null) {
-      return sendImagePrompt(text, mimeType, fileBytes);
-    } else {
-      return sendSingleTextPromt(text);
+      if (mimeType != null && fileBytes != null) {
+        return sendImagePrompt(text, mimeType, fileBytes);
+      } else {
+        return sendSingleTextPromt(text);
+      }
+    } on UnsupportedUserLocation catch (_) {
+      throw UnsupportedLocationException();
+    } catch (e, stk) {
+      Log().e(e, stk);
+      if (e is UnsupportedUserLocation) {
+        throw UnsupportedLocationException();
+      }
+      rethrow;
     }
   }
 
@@ -72,7 +84,7 @@ class AiChatService {
       if (_chat == null) {
         throw Exception('Chat not initialized. Run init() first.');
       }
-      if (geminiApiKey.isEmpty) throw Exception('API key is empty');
+      if (geminiApiKey.isEmpty) throw InvalidApiException();
 
       final response = await _chat!.sendMessage(
         Content.text(message),
@@ -86,6 +98,9 @@ class AiChatService {
       return text;
     } catch (e, stk) {
       Log().e(e, stk);
+      if (e is UnsupportedUserLocation) {
+        throw UnsupportedLocationException();
+      }
       rethrow;
     }
   }
@@ -99,7 +114,7 @@ class AiChatService {
       if (_chat == null) {
         throw Exception('Chat not initialized. Run init() first.');
       }
-      if (geminiApiKey.isEmpty) throw Exception('API key is empty');
+      if (geminiApiKey.isEmpty) throw InvalidApiException();
 
       final content = [
         Content.multi([
@@ -120,6 +135,9 @@ class AiChatService {
       return text;
     } catch (e, stk) {
       Log().e(e, stk);
+      if (e is UnsupportedUserLocation) {
+        throw UnsupportedLocationException();
+      }
       rethrow;
     }
   }

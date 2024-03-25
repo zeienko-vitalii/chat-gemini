@@ -23,7 +23,12 @@ class ProfileDeleted extends ProfileState {
 }
 
 class ProfileError extends ProfileState {
-  ProfileError({this.error, super.profile});
+  ProfileError({
+    this.error,
+    this.needToReathenticate = false,
+    super.profile,
+  });
 
   final String? error;
+  final bool needToReathenticate;
 }

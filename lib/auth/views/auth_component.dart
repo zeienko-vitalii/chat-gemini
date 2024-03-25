@@ -34,39 +34,39 @@ class _AuthComponentState extends State<AuthComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        context,
-        key: const Key('signin_appbar'),
-        title: titleByIsSignIn(isSignIn: _isSignIn),
-        leading: const SizedBox(),
-      ),
-      body: BlocConsumer<AuthCubit, AuthState>(
-        listener: onAuthListener,
-        builder: (context, state) {
-          final isLoading = state is AuthLoading;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: ListView(
-              children: [
-                const Gap(64),
-                const Icon(Icons.lock, size: 100),
-                EmailAuthForm(
-                  isSignIn: _isSignIn,
-                  isLoading: isLoading,
-                  onPressed: _authWithEmail,
-                ),
-                AlreadyHaveAccount(
-                  isSignIn: _isSignIn,
-                  onPressed: _changeSignInUpScreen,
-                ),
-                const AuthHorizontalDivider(),
-                const Gap(20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 48,
+    return GestureDetector(
+      onTap: FocusScope.of(context).unfocus,
+      child: Scaffold(
+        appBar: CustomAppBar(
+          context,
+          key: const Key('signin_appbar'),
+          title: titleByIsSignIn(isSignIn: _isSignIn),
+          leading: const SizedBox(),
+        ),
+        body: BlocConsumer<AuthCubit, AuthState>(
+          listener: onAuthListener,
+          builder: (context, state) {
+            final isLoading = state is AuthLoading;
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: ListView(
+                children: [
+                  const Gap(64),
+                  const Icon(Icons.lock, size: 100),
+                  EmailAuthForm(
+                    isSignIn: _isSignIn,
+                    isLoading: isLoading,
+                    onPressed: _authWithEmail,
+                  ),
+                  AlreadyHaveAccount(
+                    isSignIn: _isSignIn,
+                    onPressed: _changeSignInUpScreen,
+                  ),
+                  const AuthHorizontalDivider(),
+                  const Gap(20),
+                  Row(
+                    children: [
+                      Expanded(
                         child: SignInButton(
                           shape: const RoundedRectangleBorder(
                             borderRadius: borderRadius32,
@@ -75,13 +75,13 @@ class _AuthComponentState extends State<AuthComponent> {
                           onPressed: _authCubit.signInWithGoogle,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
+import 'package:chat_gemini/auth/domain/exceptions/user_not_found_exception.dart';
 import 'package:chat_gemini/auth/domain/models/user.dart';
 import 'package:chat_gemini/chat/data/ai_chat_service.dart';
+import 'package:chat_gemini/chat/data/exceptions/unsupported_location_exception.dart';
 import 'package:chat_gemini/chat/data/repository/chat_repository.dart';
 import 'package:chat_gemini/chat/data/repository/media_storage_repository.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
@@ -34,12 +36,11 @@ class ChatCubit extends Cubit<ChatState> {
           ),
         );
 
-  final ChatRepository _repository; // = ChatRepository();
-  final AuthService _authService; // = AuthService();
-  final UserRepository _userRepository; // = UserRepository();
-  final MediaStorageRepository
-      _mediaStorageRepository; // = MediaStorageRepository();
-  final AiChatService _aiChatService; // = AiChatService();
+  final ChatRepository _repository;
+  final AuthService _authService;
+  final UserRepository _userRepository;
+  final MediaStorageRepository _mediaStorageRepository;
+  final AiChatService _aiChatService;
 
   Future<void> loadChat(Chat chat) async {
     try {
@@ -78,14 +79,7 @@ class ChatCubit extends Cubit<ChatState> {
       }
     } catch (e, stk) {
       Log().e(e, stk);
-      emit(
-        ChatError(
-          chat: chat,
-          message: '$e',
-          author: state.author,
-          guests: state.guests,
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -94,7 +88,7 @@ class ChatCubit extends Cubit<ChatState> {
     List<String> sharedWithIds = const [],
   ]) async {
     if (currentUserId == null) {
-      throw Exception('User not found');
+      throw const UserNotFoundException();
     }
 
     final author = await _userRepository.getUser(currentUserId);
@@ -130,14 +124,7 @@ class ChatCubit extends Cubit<ChatState> {
         await askBotTextMessage(text);
       }
     } catch (e) {
-      emit(
-        ChatError(
-          chat: state.chat,
-          message: '$e',
-          author: state.author,
-          guests: state.guests,
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -174,14 +161,7 @@ class ChatCubit extends Cubit<ChatState> {
         ),
       );
     } catch (e) {
-      emit(
-        ChatError(
-          chat: state.chat,
-          message: '$e',
-          author: state.author,
-          guests: state.guests,
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -230,14 +210,7 @@ class ChatCubit extends Cubit<ChatState> {
         ),
       );
     } catch (e) {
-      emit(
-        ChatError(
-          chat: state.chat,
-          message: '$e',
-          author: state.author,
-          guests: state.guests,
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -246,7 +219,7 @@ class ChatCubit extends Cubit<ChatState> {
     required String userId,
     required Message message,
   }) async {
-    if (userId.isEmpty) throw Exception('User not found');
+    if (userId.isEmpty) throw const UserNotFoundException();
 
     final isMediaEmpty = message.media == null;
     final mediaUrl = await _uploadMedia(
@@ -297,14 +270,7 @@ class ChatCubit extends Cubit<ChatState> {
       await loadChat(const Chat());
     } catch (e) {
       Log().e(e);
-      emit(
-        ChatError(
-          chat: state.chat,
-          author: state.author,
-          guests: state.guests,
-          message: '$e',
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -334,14 +300,20 @@ class ChatCubit extends Cubit<ChatState> {
       );
     } catch (e) {
       Log().e(e);
-      emit(
-        ChatError(
-          chat: state.chat,
-          author: state.author,
-          guests: state.guests,
-          message: '$e',
-        ),
-      );
+      _handleError(e);
     }
+  }
+
+  void _handleError(Object e) {
+    final isUnsupportedLocation = e is UnsupportedLocationException;
+    emit(
+      ChatError(
+        chat: state.chat,
+        message: '$e',
+        author: state.author,
+        guests: state.guests,
+        isUnsupportedLocation: isUnsupportedLocation,
+      ),
+    );
   }
 }

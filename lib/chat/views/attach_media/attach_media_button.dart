@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chat_gemini/app/utils/ui_utils.dart';
 import 'package:chat_gemini/chat/views/attach_media/attach_media_modal_bottom_sheet.dart';
 import 'package:chat_gemini/chat/views/attach_media/image_placeholder.dart';
 import 'package:chat_gemini/chats/styles/chat_list_styles.dart';
@@ -250,7 +251,9 @@ class _AttachMediaPlaceholder extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.add_rounded,
-                    color: chatListTileContentColor(context),
+                    color: chatListTileContentColor(
+                      isLightTheme: isLightTheme(context),
+                    ),
                   ),
                 ],
               ),

@@ -33,7 +33,9 @@ final class ChatError extends ChatState {
     required super.author,
     super.guests = const [],
     this.message,
+    this.isUnsupportedLocation = false,
   });
 
   final String? message;
+  final bool isUnsupportedLocation;
 }

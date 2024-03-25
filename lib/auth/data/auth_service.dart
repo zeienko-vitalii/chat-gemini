@@ -1,3 +1,4 @@
+import 'package:chat_gemini/auth/domain/exceptions/reauthenticate_exception.dart';
 import 'package:chat_gemini/auth/domain/exceptions/user_not_found_exception.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -113,6 +114,38 @@ class AuthService {
     if (isSignedIn) await _googleSignIn.disconnect();
   }
 
+  Future<UserCredential> reauthenticateUserWithEmail(
+    String email,
+    String password,
+  ) async {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      throw const UserNotFoundException();
+    }
+    return currentUser.reauthenticateWithCredential(
+      EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      ),
+    );
+  }
+
+  Future<UserCredential> reauthenticateUserWithGoogle() async {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      throw const UserNotFoundException();
+    }
+
+    final googleUser = await _googleSignIn.signIn();
+    final googleAuth = await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+    return currentUser.reauthenticateWithCredential(credential);
+  }
+
   Future<void> deleteUser() async {
     try {
       final currentUser = _auth.currentUser;
@@ -121,6 +154,11 @@ class AuthService {
       }
       await currentUser.delete();
       return;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw const ReauthenticateException();
+      }
+      rethrow;
     } catch (e, stk) {
       Log().e('$e', stk);
       rethrow;

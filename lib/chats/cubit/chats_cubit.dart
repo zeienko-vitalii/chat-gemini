@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:chat_gemini/auth/data/auth_service.dart';
+import 'package:chat_gemini/auth/domain/exceptions/user_not_found_exception.dart';
 import 'package:chat_gemini/chat/data/repository/chat_repository.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
 import 'package:injectable/injectable.dart';
@@ -45,7 +46,7 @@ class ChatsCubit extends Cubit<ChatsState> {
           ),
         );
       } else {
-        throw Exception('User not found');
+        throw const UserNotFoundException();
       }
     } catch (e) {
       if (isClosed) return;

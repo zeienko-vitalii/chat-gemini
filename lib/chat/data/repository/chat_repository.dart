@@ -98,6 +98,25 @@ class ChatRepository extends BaseFirestore {
     }
   }
 
+  Future<bool> deleteAllChatsByAuthor(String id) async {
+    try {
+      final chats = await _getCollectionRef()
+          .where(
+            'authorId',
+            isEqualTo: id,
+          )
+          .get();
+
+      for (final chat in chats.docs) {
+        await chat.reference.delete();
+      }
+      return true;
+    } catch (e, stk) {
+      Log().e(e, stk);
+      rethrow;
+    }
+  }
+
   Future<bool> addMessage(String chatId, Message message) async {
     try {
       await _getCollectionRef().doc(chatId).update(

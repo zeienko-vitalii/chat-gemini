@@ -15,6 +15,7 @@ import 'package:chat_gemini/chat/views/chat_text_field.dart';
 import 'package:chat_gemini/chat/views/chat_widget.dart';
 import 'package:chat_gemini/chat/views/placeholders/empty_chat_widget.dart';
 import 'package:chat_gemini/chat/views/placeholders/invalid_api_key_widget.dart';
+import 'package:chat_gemini/chat/views/placeholders/unsupported_location_widget.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
 import 'package:chat_gemini/utils/image/get_file_extension.dart';
 import 'package:chat_gemini/utils/logger.dart';
@@ -66,6 +67,9 @@ class _ChatComponentState extends State<ChatComponent> {
           final chat = state.chat;
           final isLoading = state is ChatLoading;
 
+          final isUnsupportedLocation =
+              state is ChatError && state.isUnsupportedLocation;
+
           return Scaffold(
             drawer: CustomDrawer(chat: chat),
             appBar: CustomAppBar(
@@ -93,6 +97,7 @@ class _ChatComponentState extends State<ChatComponent> {
                   ],
                   isLoading: isLoading,
                   hasApiKey: isGeminiApiKeyEmpty,
+                  isUnsupportedLocation: isUnsupportedLocation,
                   onSend: (String text) {
                     _chatCubit.sendTextMessage(
                       text,
@@ -202,6 +207,7 @@ class _ChatBody extends StatelessWidget {
     required this.authors,
     required this.isLoading,
     required this.hasApiKey,
+    required this.isUnsupportedLocation,
     required this.messages,
     required this.files,
     required this.onRemovePressed,
@@ -214,6 +220,7 @@ class _ChatBody extends StatelessWidget {
   final List<Message> messages;
   final bool isLoading;
   final bool hasApiKey;
+  final bool isUnsupportedLocation;
   final OnMessageSend? onSend;
 
   final List<File> files;
@@ -224,6 +231,8 @@ class _ChatBody extends StatelessWidget {
   Widget build(BuildContext context) {
     if (hasApiKey) {
       return const InvalidApiKeyWidget();
+    } else if (isUnsupportedLocation) {
+      return const UnsupportedLocationWidget();
     } else if (messages.isEmpty && isLoading) {
       return const Center(child: CupertinoActivityIndicator());
     }
@@ -246,7 +255,6 @@ class _ChatBody extends StatelessWidget {
                     ),
                   ),
           ),
-          
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 12,

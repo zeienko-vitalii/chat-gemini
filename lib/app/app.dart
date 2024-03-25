@@ -26,13 +26,13 @@ class App extends StatelessWidget {
           final themeMode = switch (state) {
             ThemeLight() => ThemeMode.light,
             ThemeDark() => ThemeMode.dark,
-            ThemeSystem() => ThemeMode.system,
+            // ThemeSystem() => ThemeMode.system,
           };
 
           final brightness = switch (state) {
             ThemeLight() => Brightness.light,
             ThemeDark() => Brightness.dark,
-            ThemeSystem() => MediaQuery.platformBrightnessOf(context),
+            // ThemeSystem() => MediaQuery.platformBrightnessOf(context),
           };
 
           return AnnotatedRegion<SystemUiOverlayStyle>(

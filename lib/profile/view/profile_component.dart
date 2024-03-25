@@ -4,6 +4,7 @@ import 'package:chat_gemini/app/views/custom_app_bar.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:chat_gemini/auth/views/logout/logout_dialog.dart';
 import 'package:chat_gemini/profile/cubit/profile_cubit.dart';
+import 'package:chat_gemini/profile/view/dialogs/reauthenticate_dialog.dart';
 import 'package:chat_gemini/profile/view/profile_avatar_selection.dart';
 import 'package:chat_gemini/profile/view/username_text_field.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
@@ -37,15 +38,19 @@ class _ProfileComponentState extends State<ProfileComponent> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
+      onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
         appBar: CustomAppBar(context, title: 'Profile'),
         body: BlocConsumer<ProfileCubit, ProfileState>(
           listener: (BuildContext context, ProfileState state) {
             if (state is ProfileError) {
-              showSnackbarMessage(context, message: state.error);
+              if (state.needToReathenticate) {
+                _showReauthenicateDialog(context);
+              } else {
+                showSnackbarMessage(context, message: state.error);
+              }
+            } else if (state is ProfileDeleted) {
+              context.router.replace(const AuthScreenRoute());
             }
           },
           builder: (context, state) {
@@ -53,6 +58,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
 
             final username = state.profile?.name ?? '';
             final isUsernameEmpty = username.isEmpty;
+
             return Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 32,
@@ -73,6 +79,20 @@ class _ProfileComponentState extends State<ProfileComponent> {
                           },
                         ),
                         const Gap(20),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Text(
+                              state.profile?.email ?? 'No email',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Gap(20),
                         UsernameTextField(
                           formKey: _formKey,
                           isLoading: isLoading,
@@ -86,17 +106,8 @@ class _ProfileComponentState extends State<ProfileComponent> {
                   ),
                   if (widget.toCompleteProfile)
                     _ElevatedButton(
-                      onPressed: () {
-                        final enteredUsername = _controller.text.trim();
-                        if (enteredUsername.isNotEmpty) {
-                          if (username == enteredUsername) {
-                            context.router.replace(ChatScreenRoute());
-                          } else {
-                            _onSaveUserName(enteredUsername, _cubit);
-                          }
-                        }
-                      },
                       title: 'Continue',
+                      onPressed: () => _completeAccountContinue(username),
                     )
                   else
                     _UserControlButtons(
@@ -105,22 +116,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
                         context,
                         context.read<AuthCubit>(),
                       ),
-                      onDelete: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (context) {
-                            return ConfirmationAlertDialog(
-                              title:
-                                  // ignore: lines_longer_than_80_chars
-                                  'Are you sure you would like to delete the account?',
-                              onPressed: () {
-                                _cubit.deleteAccount();
-                                context.router.replace(const AuthScreenRoute());
-                              },
-                            );
-                          },
-                        );
-                      },
+                      onDelete: _onDeletePressed,
                     ),
                 ],
               ),
@@ -128,6 +124,58 @@ class _ProfileComponentState extends State<ProfileComponent> {
           },
         ),
       ),
+    );
+  }
+
+  void _completeAccountContinue(String username) {
+    final enteredUsername = _controller.text.trim();
+    if (enteredUsername.isNotEmpty) {
+      if (username == enteredUsername) {
+        context.router.replace(ChatScreenRoute());
+      } else {
+        _onSaveUserName(enteredUsername, _cubit);
+      }
+    }
+  }
+
+  void _onDeletePressed() {
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return ConfirmationAlertDialog(
+          title: 'Are you sure you would like to delete the account?',
+          onPressed: () {
+            Navigator.of(context).pop();
+            _cubit.deleteAccount();
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showReauthenicateDialog(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (context) {
+        return BlocProvider.value(
+          value: _cubit,
+          child: ReauthenticateDialog(
+            onGoogleReauthenticate: () => _cubit.reauthenticateAndDeleteUser(
+              isGoogleSignIn: true,
+            ),
+            // onGoogleReauthenticate: _cubit.reauthenticateUserWithGoogle,
+            onEmailReauthenticate: ({
+              required String email,
+              required String password,
+            }) =>
+                _cubit.reauthenticateAndDeleteUser(
+              email: email,
+              password: password,
+            ),
+            // onEmailReauthenticate: ({required String email, required String password}) => _cubit.reauthenticateUserWithEmail(),
+          ),
+        );
+      },
     );
   }
 

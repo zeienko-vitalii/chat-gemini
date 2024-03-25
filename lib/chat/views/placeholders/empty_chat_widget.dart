@@ -41,9 +41,8 @@ class EmptyChatWidget extends StatelessWidget {
       ) {
         final isSmallScreen = constrains.maxWidth < 600;
         final isMedHeight = constrains.maxHeight < 500;
-        final isMidSmHeight = constrains.maxHeight < 380;
+        final isMidSmHeight = constrains.maxHeight < 280;
         final isSmallHeight = constrains.maxHeight < 150;
-        // final isMedHeight = ;
 
         if (isSmallHeight) {
           return const SizedBox();
@@ -54,12 +53,14 @@ class EmptyChatWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (!isMidSmHeight)
+              if (!isMedHeight)
                 const Expanded(
                   flex: 2,
-                  child: Center(child: AnimatedBot()),
+                  child: Center(
+                    child: AnimatedBot(),
+                  ),
                 ),
-              if (!isMedHeight) ...[
+              if (!isMidSmHeight) ...[
                 const Gap(20),
                 Text(
                   'Hi, there 👋',
@@ -134,7 +135,7 @@ class SuggestedConversationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      style: chatListButtonStyle(context),
+      style: OutlinedElevatedButtonStyle(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
