@@ -5,7 +5,7 @@ part 'theme_state.dart';
 
 @injectable
 class ThemeCubit extends Cubit<ThemeState> {
-  ThemeCubit() : super(ThemeSystem());
+  ThemeCubit() : super(ThemeLight());
 
   void changeTheme() {
     emit(state is ThemeLight? ? ThemeDark() : ThemeLight());
