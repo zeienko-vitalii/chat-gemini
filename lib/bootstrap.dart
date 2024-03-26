@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:chat_gemini/app/app.dart';
 import 'package:chat_gemini/di/di.dart';
@@ -7,6 +8,8 @@ import 'package:chat_gemini/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 bool shouldUseFirebaseEmulator = false;
@@ -19,6 +22,8 @@ Future<void> bootstrap() async {
       await _firebaseInit();
 
       configureDependencies();
+
+      _registerCrashlytics();
 
       runApp(App());
     },
@@ -39,12 +44,36 @@ Future<void> _firebaseInit() async {
   }
 }
 
+void _registerCrashlytics() {
+  if (kIsWeb || kDebugMode) {
+    return;
+  }
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
+  Isolate.current.addErrorListener(
+    RawReceivePort(
+      (List<dynamic> pair) async {
+        final errorAndStacktrace = pair;
+        await FirebaseCrashlytics.instance.recordError(
+          errorAndStacktrace.first,
+          errorAndStacktrace.last as StackTrace?,
+          fatal: true,
+        );
+      },
+    ).sendPort,
+  );
+}
+
 void _onError(Object error, StackTrace stackTrace) {
-  // if (_recordErrorToCrashlytics) {
-  //   FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: true);
-  // } else {
-  //   Log().e('', error, stackTrace);
-  // }
+  if (!kIsWeb || !kDebugMode) {
+    FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: true);
+  } else {
+    Log().e(error, stackTrace);
+  }
   Log().e(error, stackTrace);
 }
 
