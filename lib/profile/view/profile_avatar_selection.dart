@@ -6,7 +6,6 @@ import 'package:chat_gemini/utils/error_snackbar.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileAvatarSelection extends StatefulWidget {
@@ -38,30 +37,26 @@ class _ProfileAvatarSelectionState extends State<ProfileAvatarSelection> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ProfileAvatarWidget(
-          size: 42,
-          photoUrl: widget.avatar,
-          isLoading: widget.isLoading,
-        ),
-        const Gap(20),
-        Expanded(
-          child: TextButton(
-            style: TextButton.styleFrom(
-              fixedSize: const Size(20, 48),
-              side: const BorderSide(color: Colors.grey),
-            ),
-            onPressed: () {
-              showAttachMediaBottomSheet(
-                context,
-                imagePicker: _imagePicker,
-                onAttachFilePressed: widget.onAttachFilePressed,
-              );
-            },
-            child: const Text('Change photo'),
+        Center(
+          child: ProfileAvatarWidget(
+            size: 100,
+            photoUrl: widget.avatar,
+            isLoading: widget.isLoading,
           ),
+        ),
+        TextButton(
+          onPressed: () {
+            showAttachMediaBottomSheet(
+              context,
+              imagePicker: _imagePicker,
+              onAttachFilePressed: widget.onAttachFilePressed,
+            );
+          },
+          child: const Text('Change photo'),
         ),
       ],
     );
