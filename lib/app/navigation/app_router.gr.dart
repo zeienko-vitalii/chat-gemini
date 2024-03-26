@@ -32,6 +32,12 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    Privacy.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PrivacyPolicyView(),
+      );
+    },
     ProfileScreenRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<ProfileScreenRouteArgs>(
@@ -52,6 +58,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const SplashView(),
+      );
+    },
+    Terms.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const TermsOfUseView(),
       );
     },
   };
@@ -110,6 +122,20 @@ class ChatScreenRouteArgs {
 }
 
 /// generated route for
+/// [PrivacyPolicyView]
+class Privacy extends PageRouteInfo<void> {
+  const Privacy({List<PageRouteInfo>? children})
+      : super(
+          Privacy.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'Privacy';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [ProfileScreen]
 class ProfileScreenRoute extends PageRouteInfo<ProfileScreenRouteArgs> {
   ProfileScreenRoute({
@@ -158,6 +184,20 @@ class SplashViewRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'SplashViewRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TermsOfUseView]
+class Terms extends PageRouteInfo<void> {
+  const Terms({List<PageRouteInfo>? children})
+      : super(
+          Terms.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'Terms';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

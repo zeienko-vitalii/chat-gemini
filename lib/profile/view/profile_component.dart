@@ -67,57 +67,67 @@ class _ProfileComponentState extends State<ProfileComponent> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ProfileAvatarSelection(
-                          isLoading: isLoading,
-                          avatar: state.profile?.photoUrl,
-                          onAttachFilePressed: (String fileUrl) {
-                            _cubit.updateProfilePhoto(fileUrl);
-                          },
-                        ),
-                        const Gap(20),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Text(
-                              state.profile?.email ?? 'No email',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ProfileAvatarSelection(
+                        isLoading: isLoading,
+                        avatar: state.profile?.photoUrl,
+                        onAttachFilePressed: (String fileUrl) {
+                          _cubit.updateProfilePhoto(fileUrl);
+                        },
+                      ),
+                      const Gap(20),
+                      Center(
+                        child: Text(
+                          state.profile?.email ?? 'No email',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300,
                           ),
                         ),
-                        const Gap(20),
-                        UsernameTextField(
-                          formKey: _formKey,
-                          isLoading: isLoading,
-                          hint: isUsernameEmpty ? 'Enter username' : username,
-                          onEdit: (String text) =>
-                              _onSaveUserName(text, _cubit),
-                          controller: _controller,
+                      ),
+                      const Gap(20),
+                      UsernameTextField(
+                        formKey: _formKey,
+                        isLoading: isLoading,
+                        hint: isUsernameEmpty ? 'Enter username' : username,
+                        onEdit: (String text) => _onSaveUserName(text, _cubit),
+                        controller: _controller,
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        PrivacyPolicyTextButton(
+                          onPressed: () => context.router.push(const Terms()),
+                          title: 'Terms of Use',
                         ),
+                        const Gap(8),
+                        PrivacyPolicyTextButton(
+                          onPressed: () => context.router.push(const Privacy()),
+                          title: 'Privacy Policy',
+                        ),
+                        const Gap(20),
+                        if (widget.toCompleteProfile)
+                          _ElevatedButton(
+                            title: 'Continue',
+                            onPressed: () => _completeAccountContinue(username),
+                          )
+                        else
+                          _UserControlButtons(
+                            isLoading: isLoading,
+                            onLogout: () => logout(
+                              context,
+                              context.read<AuthCubit>(),
+                            ),
+                            onDelete: _onDeletePressed,
+                          ),
                       ],
                     ),
                   ),
-                  if (widget.toCompleteProfile)
-                    _ElevatedButton(
-                      title: 'Continue',
-                      onPressed: () => _completeAccountContinue(username),
-                    )
-                  else
-                    _UserControlButtons(
-                      isLoading: isLoading,
-                      onLogout: () => logout(
-                        context,
-                        context.read<AuthCubit>(),
-                      ),
-                      onDelete: _onDeletePressed,
-                    ),
                 ],
               ),
             );
@@ -163,7 +173,6 @@ class _ProfileComponentState extends State<ProfileComponent> {
             onGoogleReauthenticate: () => _cubit.reauthenticateAndDeleteUser(
               isGoogleSignIn: true,
             ),
-            // onGoogleReauthenticate: _cubit.reauthenticateUserWithGoogle,
             onEmailReauthenticate: ({
               required String email,
               required String password,
@@ -172,7 +181,6 @@ class _ProfileComponentState extends State<ProfileComponent> {
               email: email,
               password: password,
             ),
-            // onEmailReauthenticate: ({required String email, required String password}) => _cubit.reauthenticateUserWithEmail(),
           ),
         );
       },
@@ -187,28 +195,25 @@ class _ProfileComponentState extends State<ProfileComponent> {
   }
 }
 
-class _ElevatedButton extends StatelessWidget {
-  const _ElevatedButton({
+class PrivacyPolicyTextButton extends StatelessWidget {
+  const PrivacyPolicyTextButton({
     required this.title,
     required this.onPressed,
-    this.color,
+    super.key,
   });
 
   final String title;
-  final VoidCallback? onPressed;
-  final Color? color;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all(const Size(double.infinity, 50)),
-          backgroundColor: MaterialStateProperty.all(color),
+    return InkWell(
+      onTap: onPressed,
+      child: Text(
+        title,
+        style: const TextStyle(
+          decoration: TextDecoration.underline,
         ),
-        onPressed: onPressed,
-        child: Text(title),
       ),
     );
   }
@@ -240,6 +245,33 @@ class _UserControlButtons extends StatelessWidget {
           title: 'Delete profile',
         ),
       ],
+    );
+  }
+}
+
+class _ElevatedButton extends StatelessWidget {
+  const _ElevatedButton({
+    required this.title,
+    required this.onPressed,
+    this.color,
+  });
+
+  final String title;
+  final VoidCallback? onPressed;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ButtonStyle(
+          fixedSize: MaterialStateProperty.all(const Size(double.infinity, 50)),
+          backgroundColor: MaterialStateProperty.all(color),
+        ),
+        onPressed: onPressed,
+        child: Text(title),
+      ),
     );
   }
 }
