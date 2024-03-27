@@ -98,6 +98,7 @@ class _ProfileItem extends StatelessWidget {
             builder: (context, state) => switch (state) {
               ThemeLight() => _iconButton(context, Icons.nightlight_round),
               ThemeDark() => _iconButton(context, Icons.wb_sunny_rounded),
+              // ignore: lines_longer_than_80_chars
               // ThemeSystem() => _iconButton(context, Icons.auto_awesome_rounded),
             },
           ),

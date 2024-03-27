@@ -16,10 +16,12 @@ class AppRouter extends _$AppRouter {
   @override
   List<AutoRoute> get routes => [
         AutoRoute(
+          path: '/',
           page: SplashViewRoute.page,
           initial: true,
         ),
         AutoRoute(
+          path: '/auth',
           page: AuthScreenRoute.page,
         ),
         AutoRoute(
@@ -31,10 +33,12 @@ class AppRouter extends _$AppRouter {
           page: Terms.page,
         ),
         AutoRoute(
+          path: '/chat',
           page: ChatScreenRoute.page,
           guards: [AuthGuard()],
         ),
         AutoRoute(
+          path: '/profile',
           page: ProfileScreenRoute.page,
           guards: [AuthGuard()],
         ),
