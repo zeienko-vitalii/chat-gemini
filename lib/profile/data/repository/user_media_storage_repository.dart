@@ -48,13 +48,19 @@ class UserMediaStorageRepository {
     String filePath, [
     String? fileName,
   ]) async {
-    final snapshot = await _uploadImageTaskSnapshot(
-      userId,
-      filePath,
-      fileName: fileName,
-    );
+    try {
+      final snapshot = await _uploadImageTaskSnapshot(
+        userId,
+        filePath,
+        fileName: fileName,
+      );
 
-    return snapshot.ref.getDownloadURL();
+      final url = await snapshot.ref.getDownloadURL();
+      return url;
+    } catch (e) {
+      Log().e('Failed to upload file: $e');
+      rethrow;
+    }
   }
 
   Future<TaskSnapshot> _uploadImageTaskSnapshot(
@@ -62,23 +68,16 @@ class UserMediaStorageRepository {
     String filePath, {
     String? fileName,
   }) async {
-    try {
-      final imageRef = _referenceById(userId);
-      final imageName = fileName ?? filePath.split('/').last;
-      final ref = imageRef.child(imageName);
+    final imageRef = _referenceById(userId);
+    final imageName = fileName ?? filePath.split('/').last;
+    final ref = imageRef.child(imageName);
 
-      Log().i('Uploading image $imageName to $ref');
-      if (kIsWeb) {
-        final dynamic blob = blob_downloader.downloadBlobImageFromUrl(filePath);
-        return ref.putBlob(blob);
-      } else {
-        return ref.putFile(
-          File(filePath),
-        );
-      }
-    } on FirebaseException catch (e, s) {
-      Log().e('Failed to upload image: $e', s);
-      rethrow;
+    Log().i('Uploading image $imageName to $ref');
+    if (kIsWeb) {
+      final dynamic blob = blob_downloader.downloadBlobImageFromUrl(filePath);
+      return ref.putBlob(blob);
+    } else {
+      return ref.putFile(File(filePath));
     }
   }
 }
