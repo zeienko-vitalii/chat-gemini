@@ -25,6 +25,7 @@ class ChatCubit extends Cubit<ChatState> {
     this._userRepository,
     this._mediaStorageRepository,
     this._aiChatService,
+    this._aiHelper,
   ) : super(
           ChatLoading(
             chat: const Chat(),
@@ -41,6 +42,7 @@ class ChatCubit extends Cubit<ChatState> {
   final UserRepository _userRepository;
   final MediaStorageRepository _mediaStorageRepository;
   final AiChatService _aiChatService;
+  final AiChatService _aiHelper;
 
   Future<void> loadChat(Chat chat) async {
     try {
@@ -119,7 +121,12 @@ class ChatCubit extends Cubit<ChatState> {
                   mimeType: mimeType,
                 ),
         );
+
         await sendMessage(message);
+
+        if (state.chat.messages.length == 1) {
+          await generateChatName(message.text);
+        }
 
         await askBotTextMessage(text);
       }
@@ -274,6 +281,22 @@ class ChatCubit extends Cubit<ChatState> {
     }
   }
 
+  Future<void> generateChatName(String message) async {
+    try {
+      final prompt =
+          // ignore: lines_longer_than_80_chars,  ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+          'I need you to generate unique chat name limitied by 18 characters it could be less if necessary, no special characters, by the request that user made, which is - $message. Please provide only the chat name. I do not need any other information.';
+      final chatName = await _aiHelper.sendSingleTextPromt(prompt);
+      if (chatName.isNotEmpty) {
+        final cleanChatName = cleanUpChatName(chatName);
+        await renameChat(cleanChatName);
+      }
+    } catch (e) {
+      Log().e(e);
+      // _handleError(e);
+    }
+  }
+
   Future<void> renameChat(String title) async {
     try {
       emit(
@@ -317,3 +340,8 @@ class ChatCubit extends Cubit<ChatState> {
     );
   }
 }
+
+String cleanUpChatName(String title) => title.replaceAll(
+      RegExp('[^a-zA-Z0-9]'),
+      '',
+    );

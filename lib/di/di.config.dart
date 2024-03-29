@@ -84,6 +84,7 @@ extension GetItInjectableX on _i1.GetIt {
           gh<_i11.UserRepository>(),
           gh<_i8.MediaStorageRepository>(),
           gh<_i3.AiChatService>(),
+          gh<_i3.AiChatService>(),
         ));
     return this;
   }
