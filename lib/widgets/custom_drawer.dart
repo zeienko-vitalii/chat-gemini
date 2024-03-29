@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/app/navigation/app_router.dart';
 import 'package:chat_gemini/app/theme/theme_cubit.dart';
@@ -45,8 +47,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
               children: <Widget>[
                 _ProfileItem(
                   avatar: avatar,
-                  onPressed: () {
-                    context.router.push(ProfileScreenRoute());
+                  onPressed: () async {
+                    await context.router.push(ProfileScreenRoute());
+                    if (context.mounted) {
+                      unawaited(
+                        context.read<AuthCubit>().checkUserAuthStatus(),
+                      );
+                    }
                   },
                 ),
                 Expanded(
