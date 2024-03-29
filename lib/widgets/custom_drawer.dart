@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/app/navigation/app_router.dart';
+import 'package:chat_gemini/app/styles/theme.dart';
 import 'package:chat_gemini/app/theme/theme_cubit.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:chat_gemini/chat/models/chat.dart';
@@ -82,15 +83,22 @@ class _ProfileItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      margin: const EdgeInsets.only(bottom: 8),
+      // padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+        borderRadius: borderRadius32,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
             onTap: onPressed,
             child: CircleAvatar(
-              radius: 28,
+              radius: 24,
               backgroundImage: hasAvatar ? NetworkImage(avatar!) : null,
               child: hasAvatar
                   ? null
@@ -116,6 +124,16 @@ class _ProfileItem extends StatelessWidget {
 
   IconButton _iconButton(BuildContext context, IconData data) => IconButton(
         icon: Icon(data),
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: borderRadius32,
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+              ),
+            ),
+          ),
+        ),
         onPressed: context.read<ThemeCubit>().changeTheme,
       );
 }

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/app/navigation/app_router.dart';
+import 'package:chat_gemini/app/styles/theme.dart';
 import 'package:chat_gemini/app/views/custom_app_bar.dart';
 import 'package:chat_gemini/auth/cubit/auth_cubit.dart';
 import 'package:chat_gemini/auth/views/logout/logout_dialog.dart';
@@ -8,6 +9,7 @@ import 'package:chat_gemini/profile/view/dialogs/reauthenticate_dialog.dart';
 import 'package:chat_gemini/profile/view/profile_avatar_selection.dart';
 import 'package:chat_gemini/profile/view/username_text_field.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -59,77 +61,65 @@ class _ProfileComponentState extends State<ProfileComponent> {
             final username = state.profile?.name ?? '';
             final isUsernameEmpty = username.isEmpty;
 
-            return Padding(
+            return ListView(
               padding: const EdgeInsets.symmetric(
                 horizontal: 32,
                 vertical: 20,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ProfileAvatarSelection(
-                        isLoading: isLoading,
-                        avatar: state.profile?.photoUrl,
-                        onAttachFilePressed: (String fileUrl) {
-                          _cubit.updateProfilePhoto(fileUrl);
-                        },
-                      ),
-                      const Gap(20),
-                      Center(
-                        child: Text(
-                          state.profile?.email ?? 'No email',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                      ),
-                      const Gap(20),
-                      UsernameTextField(
-                        formKey: _formKey,
-                        isLoading: isLoading,
-                        hint: isUsernameEmpty ? 'Enter username' : username,
-                        onEdit: (String text) => _onSaveUserName(text, _cubit),
-                        controller: _controller,
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        PrivacyPolicyTextButton(
-                          onPressed: () => context.router.push(const Terms()),
-                          title: 'Terms of Use',
-                        ),
-                        const Gap(8),
-                        PrivacyPolicyTextButton(
-                          onPressed: () => context.router.push(const Privacy()),
-                          title: 'Privacy Policy',
-                        ),
-                        const Gap(20),
-                        if (widget.toCompleteProfile)
-                          _ElevatedButton(
-                            title: 'Continue',
-                            onPressed: () => _completeAccountContinue(username),
-                          )
-                        else
-                          _UserControlButtons(
-                            isLoading: isLoading,
-                            onLogout: () => logout(
-                              context,
-                              context.read<AuthCubit>(),
-                            ),
-                            onDelete: _onDeletePressed,
-                          ),
-                      ],
+              children: [
+                Column(
+                  children: [
+                    ProfileAvatarSelection(
+                      isLoading: isLoading,
+                      avatar: state.profile?.photoUrl,
+                      onAttachFilePressed: _cubit.updateProfilePhoto,
                     ),
-                  ),
-                ],
-              ),
+                    const Gap(20),
+                    Center(
+                      child: Text(
+                        state.profile?.email ?? 'No email',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ),
+                    const Gap(20),
+                    UsernameTextField(
+                      formKey: _formKey,
+                      isLoading: isLoading,
+                      hint: isUsernameEmpty ? 'Enter username' : username,
+                      onEdit: (String text) => _onSaveUserName(text, _cubit),
+                      controller: _controller,
+                    ),
+                    const Gap(84),
+                    PrivacyPolicyTextButton(
+                      onPressed: () => context.router.push(const Terms()),
+                      title: 'Terms of Use',
+                    ),
+                    const Gap(8),
+                    PrivacyPolicyTextButton(
+                      onPressed: () => context.router.push(const Privacy()),
+                      title: 'Privacy Policy',
+                    ),
+                    const Gap(20),
+                    if (widget.toCompleteProfile)
+                      _ElevatedButton(
+                        title: 'Continue',
+                        onPressed: () => _completeAccountContinue(username),
+                      )
+                    else
+                      _UserControlButtons(
+                        isLoading: isLoading,
+                        onLogout: () => logout(
+                          context,
+                          context.read<AuthCubit>(),
+                        ),
+                        onDelete: _onDeletePressed,
+                      ),
+                  ],
+                ),
+              ],
             );
           },
         ),
@@ -236,12 +226,17 @@ class _UserControlButtons extends StatelessWidget {
       children: [
         _ElevatedButton(
           onPressed: isLoading ? null : onLogout,
+          bgColor: Colors.transparent,
+          textColor: Theme.of(context).colorScheme.secondary,
+          borderColor: Theme.of(context).colorScheme.secondary,
           title: 'Logout',
         ),
         const Gap(10),
         _ElevatedButton(
           onPressed: isLoading ? null : onDelete,
-          color: Colors.redAccent,
+          bgColor: const Color.fromARGB(255, 255, 142, 142),
+          textColor: Theme.of(context).colorScheme.secondary,
+          borderColor: const Color.fromARGB(255, 255, 112, 112),
           title: 'Delete profile',
         ),
       ],
@@ -253,12 +248,16 @@ class _ElevatedButton extends StatelessWidget {
   const _ElevatedButton({
     required this.title,
     required this.onPressed,
-    this.color,
+    this.bgColor,
+    this.textColor,
+    this.borderColor,
   });
 
   final String title;
   final VoidCallback? onPressed;
-  final Color? color;
+  final Color? bgColor;
+  final Color? textColor;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +266,16 @@ class _ElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(const Size(double.infinity, 50)),
-          backgroundColor: MaterialStateProperty.all(color),
+          backgroundColor: MaterialStateProperty.all(bgColor),
+          foregroundColor: MaterialStateProperty.all(textColor),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: borderRadius16,
+              side: borderColor == null
+                  ? BorderSide.none
+                  : BorderSide(color: borderColor!),
+            ),
+          ),
         ),
         onPressed: onPressed,
         child: Text(title),

@@ -48,15 +48,17 @@ class _ProfileAvatarSelectionState extends State<ProfileAvatarSelection> {
             isLoading: widget.isLoading,
           ),
         ),
-        TextButton(
-          onPressed: () {
-            showAttachMediaBottomSheet(
-              context,
-              imagePicker: _imagePicker,
-              onAttachFilePressed: widget.onAttachFilePressed,
-            );
-          },
-          child: const Text('Change photo'),
+        Center(
+          child: TextButton(
+            onPressed: () {
+              showAttachMediaBottomSheet(
+                context,
+                imagePicker: _imagePicker,
+                onAttachFilePressed: widget.onAttachFilePressed,
+              );
+            },
+            child: const Text('Change photo'),
+          ),
         ),
       ],
     );
