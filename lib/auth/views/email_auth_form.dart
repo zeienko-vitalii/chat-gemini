@@ -9,21 +9,20 @@ typedef EmailAuthFormCallback = void Function({
 });
 
 class EmailAuthForm extends StatefulWidget {
-  EmailAuthForm({
+  const EmailAuthForm({
     required this.isSignIn,
     super.key,
     this.onPressed,
     this.isLoading = false,
-    TextEditingController? emailController,
-    TextEditingController? passwordController,
-  })  : emailController = emailController ?? TextEditingController(),
-        passwordController = passwordController ?? TextEditingController();
+    this.emailController,
+    this.passwordController,
+  });
 
   final bool isSignIn;
   final bool isLoading;
   final EmailAuthFormCallback? onPressed;
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
+  final TextEditingController? emailController;
+  final TextEditingController? passwordController;
 
   @override
   State<EmailAuthForm> createState() => _EmailAuthFormState();
@@ -32,10 +31,14 @@ class EmailAuthForm extends StatefulWidget {
 class _EmailAuthFormState extends State<EmailAuthForm> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController get _emailController => widget.emailController;
-  TextEditingController get _passwordController => widget.passwordController;
-  
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  TextEditingController get _safeEmailController =>
+      widget.emailController ?? _emailController;
+  TextEditingController get _safePasswordController =>
+      widget.passwordController ?? _passwordController;
 
   bool _isButtonPressed = false;
 
@@ -60,7 +63,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
           children: [
             TextFormField(
               key: const Key('email_text_field'),
-              controller: _emailController,
+              controller: _safeEmailController,
               cursorColor: Theme.of(context).iconTheme.color,
               cursorRadius: const Radius.circular(2),
               validator: emailValidation,
@@ -73,7 +76,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
             const Gap(20),
             TextFormField(
               key: const Key('password_text_field'),
-              controller: _passwordController,
+              controller: _safePasswordController,
               cursorColor: Theme.of(context).iconTheme.color,
               cursorRadius: const Radius.circular(2),
               obscureText: !_isPasswordVisible,
@@ -100,7 +103,7 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
                 obscureText: !_isConfirmPasswordVisible,
                 validator: (String? confirmPassword) =>
                     confirmPasswordValidation(
-                  _passwordController.text,
+                  _safePasswordController.text,
                   confirmPassword,
                 ),
                 decoration: InputDecoration(
@@ -141,8 +144,8 @@ class _EmailAuthFormState extends State<EmailAuthForm> {
       setState(() {});
 
       widget.onPressed?.call(
-        email: _emailController.text,
-        password: _passwordController.text,
+        email: _safeEmailController.text,
+        password: _safePasswordController.text,
       );
     }
   }
@@ -191,7 +194,9 @@ class EmailSignInButton extends StatelessWidget {
       ),
       onPressed: onSignInPressed,
       child: isLoading
-          ? const CupertinoActivityIndicator()
+          ? CupertinoActivityIndicator(
+              color: Theme.of(context).colorScheme.background,
+            )
           : Text(
               emailSignInButtonTitle(
                 isSignIn: isSignIn,
