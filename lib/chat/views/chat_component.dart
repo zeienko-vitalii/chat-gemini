@@ -52,9 +52,17 @@ class _ChatComponentState extends State<ChatComponent> {
   @override
   void didUpdateWidget(covariant ChatComponent oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.chat != widget.chat) {
+
+    var currentChat = oldWidget.chat;
+    if (context.mounted) {
+      currentChat = context.read<ChatCubit>().state.chat;
+    }
+    if (widget.chat != currentChat) {
       _chatCubit.loadChat(widget.chat);
     }
+    // if (oldWidget.chat != currentChat) {
+    //   _chatCubit.loadChat(widget.chat);
+    // }
   }
 
   @override
@@ -71,7 +79,6 @@ class _ChatComponentState extends State<ChatComponent> {
               state is ChatError && state.isUnsupportedLocation;
 
           return Scaffold(
-            drawer: CustomDrawer(chat: chat),
             appBar: CustomAppBar(
               context,
               title: _getAppBarTitle(
@@ -85,6 +92,7 @@ class _ChatComponentState extends State<ChatComponent> {
                 onConfirmRename: _confirmRename,
               ),
             ),
+            drawer: CustomDrawer(chat: chat),
             body: SafeArea(
               child: GestureDetector(
                 onTap: FocusScope.of(context).unfocus,
@@ -113,6 +121,9 @@ class _ChatComponentState extends State<ChatComponent> {
                   ],
                   onRemovePressed: _removeFile,
                   onAttachFilePressed: _selectFile,
+                  onReload: () {
+                    _chatCubit.loadChat(widget.chat);
+                  },
                 ),
               ),
             ),
@@ -213,6 +224,7 @@ class _ChatBody extends StatelessWidget {
     required this.onRemovePressed,
     required this.onAttachFilePressed,
     this.onSend,
+    this.onReload,
   });
 
   final ScrollController scrollController;
@@ -222,6 +234,7 @@ class _ChatBody extends StatelessWidget {
   final bool hasApiKey;
   final bool isUnsupportedLocation;
   final OnMessageSend? onSend;
+  final VoidCallback? onReload;
 
   final List<File> files;
   final OnRemovePressed onRemovePressed;
@@ -232,7 +245,7 @@ class _ChatBody extends StatelessWidget {
     if (hasApiKey) {
       return const InvalidApiKeyWidget();
     } else if (isUnsupportedLocation) {
-      return const UnsupportedLocationWidget();
+      return UnsupportedLocationWidget(onReload: onReload);
     } else if (messages.isEmpty && isLoading) {
       return const Center(child: CupertinoActivityIndicator());
     }
