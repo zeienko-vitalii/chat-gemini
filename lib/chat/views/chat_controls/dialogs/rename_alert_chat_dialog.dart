@@ -1,17 +1,23 @@
+import 'dart:async';
+
 import 'package:chat_gemini/utils/validators/validators.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 typedef RenameChatAlertDialogCallback = void Function(String newName);
+typedef GenerateNameChatAlertDialogCallback = Future<String?> Function();
 
 class RenameChatAlertDialog extends StatefulWidget {
   const RenameChatAlertDialog({
     required this.title,
     required this.onConfirmRename,
+    required this.onGenerateName,
     super.key,
   });
 
   final String title;
   final RenameChatAlertDialogCallback onConfirmRename;
+  final GenerateNameChatAlertDialogCallback onGenerateName;
 
   @override
   State<RenameChatAlertDialog> createState() => _RenameChatAlertDialogState();
@@ -56,6 +62,27 @@ class _RenameChatAlertDialogState extends State<RenameChatAlertDialog> {
         TextButton(
           onPressed: () => _onSave(_controller.text),
           child: const Text('Save'),
+        ),
+        TextButton(
+          onPressed: () async {
+            await widget.onGenerateName().then((value) {
+              if (value != null) {
+                _controller.text = value;
+              }
+            });
+
+            _onSave(_controller.text);
+          },
+          child: Row(
+            children: [
+              Icon(
+                Icons.grain_rounded,
+                color: Colors.grey.shade500,
+              ),
+              const Gap(8),
+              const Text('Generate name'),
+            ],
+          ),
         ),
       ],
     );

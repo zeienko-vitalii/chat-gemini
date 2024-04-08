@@ -1,20 +1,23 @@
 import 'dart:typed_data';
 
+import 'package:chat_gemini/chat/data/ai_chat/ai_chat_interface.dart';
 import 'package:chat_gemini/chat/data/exceptions/invalid_api_exception.dart';
 import 'package:chat_gemini/chat/data/exceptions/unsupported_location_exception.dart';
 import 'package:chat_gemini/chat/models/message.dart';
+import 'package:chat_gemini/env/env.dart';
 import 'package:chat_gemini/utils/image/supported_image_mime_types.dart';
 import 'package:chat_gemini/utils/logger.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:injectable/injectable.dart';
 
 const _supportedModels = ['gemini-pro', 'gemini-pro-vision'];
-const geminiApiKey = String.fromEnvironment('GEMINI_API_KEY');
+const geminiApiKey = Env.geminiApiKey;
 
 enum _ContentSupportedRoles { user, model }
 
-@singleton
-class AiChatService {
+@Named('AiChatGemini')
+@Singleton(as: AIChatInterface)
+class AiChatService implements AIChatInterface {
   factory AiChatService() => instance;
   AiChatService._();
 
@@ -31,6 +34,7 @@ class AiChatService {
 
   ChatSession? _chat;
 
+  @override
   void init({List<Message> messages = const []}) {
     _chat = _model.startChat(
       history: messages
@@ -52,6 +56,7 @@ class AiChatService {
     );
   }
 
+  @override
   Future<String> sendMessage(
     String text, {
     SupportedMimeTypes? mimeType,
@@ -79,7 +84,11 @@ class AiChatService {
     }
   }
 
-  Future<String> sendSingleTextPromt(String message) async {
+  @override
+  Future<String> sendSingleTextPromt(
+    String message, {
+    bool persist = false,
+  }) async {
     try {
       if (_chat == null) {
         throw Exception('Chat not initialized. Run init() first.');

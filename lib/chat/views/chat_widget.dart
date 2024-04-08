@@ -10,15 +10,17 @@ class ChatWidget extends StatelessWidget {
     required this.authors,
     required this.scrollController,
     super.key,
+    this.listPadding = const EdgeInsets.only(bottom: 60),
   });
 
   final ScrollController scrollController;
   final List<User> authors;
   final List<Message> messages;
-
+  final EdgeInsetsGeometry listPadding;
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      padding: listPadding,
       controller: scrollController,
       itemCount: messages.length,
       itemBuilder: (context, index) {

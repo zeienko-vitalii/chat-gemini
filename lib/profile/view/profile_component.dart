@@ -9,7 +9,6 @@ import 'package:chat_gemini/profile/view/dialogs/reauthenticate_dialog.dart';
 import 'package:chat_gemini/profile/view/profile_avatar_selection.dart';
 import 'package:chat_gemini/profile/view/username_text_field.dart';
 import 'package:chat_gemini/utils/error_snackbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
