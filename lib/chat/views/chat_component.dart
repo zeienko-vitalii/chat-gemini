@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_gemini/app/navigation/app_router.dart';
@@ -90,6 +92,7 @@ class _ChatComponentState extends State<ChatComponent> {
                 chatTitle: chat.title,
                 onConfirmDelete: _confirmDelete,
                 onConfirmRename: _confirmRename,
+                onGenerateName: _generateRename,
               ),
             ),
             drawer: CustomDrawer(chat: chat),
@@ -152,6 +155,7 @@ class _ChatComponentState extends State<ChatComponent> {
     required String chatTitle,
     required VoidCallback onConfirmDelete,
     required RenameChatAlertDialogCallback onConfirmRename,
+    required GenerateNameChatAlertDialogCallback onGenerateName,
   }) {
     if (isNewChat) return null;
 
@@ -165,6 +169,7 @@ class _ChatComponentState extends State<ChatComponent> {
         onConfirmRename(newName);
         context.router.pop();
       },
+      onGenerateName: onGenerateName,
     );
   }
 
@@ -176,6 +181,10 @@ class _ChatComponentState extends State<ChatComponent> {
   void _confirmRename(String newName) {
     _chatCubit.renameChat(newName);
     context.router.pop();
+  }
+
+  Future<String?> _generateRename() {
+    return _chatCubit.generateChatNameByFirstMessage();
   }
 
   String _getAppBarTitle({
@@ -235,7 +244,6 @@ class _ChatBody extends StatelessWidget {
   final bool isUnsupportedLocation;
   final OnMessageSend? onSend;
   final VoidCallback? onReload;
-
   final List<File> files;
   final OnRemovePressed onRemovePressed;
   final OnAttachFilePressed onAttachFilePressed;
@@ -254,30 +262,52 @@ class _ChatBody extends StatelessWidget {
     final bottomPadding = isAndroid ? 16.0 : 0.0;
     return ColoredBox(
       color: Colors.transparent,
-      child: Column(
+      child: Stack(
         children: <Widget>[
-          Expanded(
-            child: messages.isEmpty
-                ? EmptyChatWidget(onSend: onSend)
-                : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: ChatWidget(
-                      scrollController: scrollController,
-                      messages: messages,
-                      authors: authors,
-                    ),
-                  ),
-          ),
-          Padding(
+          if (messages.isEmpty)
+            EmptyChatWidget(onSend: onSend)
+          else
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: ChatWidget(
+                scrollController: scrollController,
+                messages: messages,
+                authors: authors,
+              ),
+            ),
+          Container(
+            alignment: AlignmentDirectional.bottomCenter,
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
             ).copyWith(top: 8, bottom: bottomPadding),
-            child: ChatTextField(
-              isLoading: isLoading,
-              onSend: onSend,
-              files: files,
-              onRemovePressed: onRemovePressed,
-              onAttachFilePressed: onAttachFilePressed,
+            child: Stack(
+              alignment: AlignmentDirectional.bottomCenter,
+              children: [
+                Positioned(
+                  bottom: 0,
+                  child: SizedBox(
+                    height: 60,
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                      child: const ColoredBox(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                  ).copyWith(top: 8, bottom: bottomPadding),
+                  child: ChatTextField(
+                    isLoading: isLoading,
+                    onSend: onSend,
+                    files: files,
+                    onRemovePressed: onRemovePressed,
+                    onAttachFilePressed: onAttachFilePressed,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

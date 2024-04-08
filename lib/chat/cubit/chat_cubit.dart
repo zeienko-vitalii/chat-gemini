@@ -3,7 +3,8 @@ import 'package:chat_gemini/auth/data/auth_service.dart';
 import 'package:chat_gemini/auth/data/repository/user_repository.dart';
 import 'package:chat_gemini/auth/domain/exceptions/user_not_found_exception.dart';
 import 'package:chat_gemini/auth/domain/models/user.dart';
-import 'package:chat_gemini/chat/data/ai_chat_service.dart';
+import 'package:chat_gemini/chat/data/ai_chat/ai_chat_gemini.dart';
+import 'package:chat_gemini/chat/data/ai_chat/ai_chat_interface.dart';
 import 'package:chat_gemini/chat/data/exceptions/unsupported_location_exception.dart';
 import 'package:chat_gemini/chat/data/repository/chat_repository.dart';
 import 'package:chat_gemini/chat/data/repository/media_storage_repository.dart';
@@ -24,8 +25,8 @@ class ChatCubit extends Cubit<ChatState> {
     this._authService,
     this._userRepository,
     this._mediaStorageRepository,
-    this._aiChatService,
-    this._aiHelper,
+    @Named('AiChatOpenAi') this._aiChatService,
+    @Named('AiChatOpenAi') this._aiHelper,
   ) : super(
           ChatLoading(
             chat: const Chat(),
@@ -41,8 +42,8 @@ class ChatCubit extends Cubit<ChatState> {
   final AuthService _authService;
   final UserRepository _userRepository;
   final MediaStorageRepository _mediaStorageRepository;
-  final AiChatService _aiChatService;
-  final AiChatService _aiHelper;
+  final AIChatInterface _aiChatService;
+  final AIChatInterface _aiHelper;
 
   Future<void> loadChat(Chat chat) async {
     try {
@@ -125,7 +126,7 @@ class ChatCubit extends Cubit<ChatState> {
         await sendMessage(message);
 
         if (state.chat.messages.length == 1) {
-          await generateChatName(message.text);
+          await generateChatNameByMessage(message.text);
         }
 
         await askBotTextMessage(text);
@@ -281,7 +282,20 @@ class ChatCubit extends Cubit<ChatState> {
     }
   }
 
-  Future<void> generateChatName(String message) async {
+  Future<String?> generateChatNameByFirstMessage() async {
+    try {
+      final firstMessage = state.chat.messages.firstOrNull;
+      if (firstMessage != null) {
+        return generateChatNameByMessage(firstMessage.text);
+      }
+      return null;
+    } catch (e) {
+      Log().e(e);
+      return null;
+    }
+  }
+
+  Future<String?> generateChatNameByMessage(String message) async {
     try {
       final prompt =
           // ignore: lines_longer_than_80_chars,  ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
@@ -290,10 +304,12 @@ class ChatCubit extends Cubit<ChatState> {
       if (chatName.isNotEmpty) {
         final cleanChatName = cleanUpChatName(chatName);
         await renameChat(cleanChatName);
+        return cleanChatName;
       }
+      return null;
     } catch (e) {
       Log().e(e);
-      // _handleError(e);
+      return null;
     }
   }
 

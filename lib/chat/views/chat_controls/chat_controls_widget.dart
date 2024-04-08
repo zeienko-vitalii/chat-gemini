@@ -20,13 +20,14 @@ class ChatControlsWidget extends StatelessWidget {
     required this.chatTitle,
     required this.onConfirmDelete,
     required this.onConfirmRename,
+    required this.onGenerateName,
     super.key,
   });
 
   final String chatTitle;
   final VoidCallback onConfirmDelete;
   final RenameChatAlertDialogCallback onConfirmRename;
-  // final ChatControlsActionCallback onActionSelected;
+  final GenerateNameChatAlertDialogCallback onGenerateName;
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +77,7 @@ class ChatControlsWidget extends StatelessWidget {
         builder: (context) => RenameChatAlertDialog(
           title: chatTitle,
           onConfirmRename: onConfirmRename,
+          onGenerateName: onGenerateName,
         ),
       );
     } else if (type == ChatControlsAction.share) {
