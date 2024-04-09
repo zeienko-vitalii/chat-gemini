@@ -264,50 +264,53 @@ class _ChatBody extends StatelessWidget {
       color: Colors.transparent,
       child: Stack(
         children: <Widget>[
-          if (messages.isEmpty)
-            EmptyChatWidget(onSend: onSend)
-          else
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: ChatWidget(
-                scrollController: scrollController,
-                messages: messages,
-                authors: authors,
-              ),
-            ),
-          Container(
-            alignment: AlignmentDirectional.bottomCenter,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-            ).copyWith(top: 8, bottom: bottomPadding),
-            child: Stack(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 90),
+            child: messages.isEmpty
+                ? EmptyChatWidget(onSend: onSend)
+                : ChatWidget(
+                    scrollController: scrollController,
+                    messages: messages,
+                    authors: authors,
+                  ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 100,
               alignment: AlignmentDirectional.bottomCenter,
-              children: [
-                Positioned(
-                  bottom: 0,
-                  child: SizedBox(
-                    height: 60,
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-                      child: const ColoredBox(
-                        color: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+              ).copyWith(top: 8, bottom: bottomPadding),
+              child: Stack(
+                alignment: AlignmentDirectional.bottomCenter,
+                children: [
+                  Positioned(
+                    bottom: 0,
+                    child: SizedBox(
+                      height: 100,
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                        child: const ColoredBox(
+                          color: Colors.white54,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                  ).copyWith(top: 8, bottom: bottomPadding),
-                  child: ChatTextField(
-                    isLoading: isLoading,
-                    onSend: onSend,
-                    files: files,
-                    onRemovePressed: onRemovePressed,
-                    onAttachFilePressed: onAttachFilePressed,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                    ).copyWith(top: 8, bottom: bottomPadding),
+                    child: ChatTextField(
+                      isLoading: isLoading,
+                      onSend: onSend,
+                      files: files,
+                      onRemovePressed: onRemovePressed,
+                      onAttachFilePressed: onAttachFilePressed,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
