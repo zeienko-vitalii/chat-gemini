@@ -195,7 +195,7 @@ class EmailSignInButton extends StatelessWidget {
       onPressed: onSignInPressed,
       child: isLoading
           ? CupertinoActivityIndicator(
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.surface,
             )
           : Text(
               emailSignInButtonTitle(

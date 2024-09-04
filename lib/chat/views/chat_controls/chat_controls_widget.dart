@@ -38,7 +38,7 @@ class ChatControlsWidget extends StatelessWidget {
           width: 0.5,
         ),
       ),
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       onSelected: (ChatControlsAction action) => _onActionPressedByType(
         context,
         action,

@@ -27,13 +27,13 @@ class OutlinedElevatedButtonStyle extends ButtonStyle {
     double borderRadius = 12,
     EdgeInsetsGeometry? padding,
   }) : super(
-          elevation: MaterialStateProperty.all(elevation),
-          padding: MaterialStateProperty.all(
+          elevation: WidgetStateProperty.all(elevation),
+          padding: WidgetStateProperty.all(
             padding ?? const EdgeInsets.all(16),
           ),
-          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+          backgroundColor: WidgetStateProperty.resolveWith<Color>(
             (states) {
-              if (states.contains(MaterialState.pressed)) {
+              if (states.contains(WidgetState.pressed)) {
                 return Colors.black38;
               }
               if (isSelected) {
@@ -42,7 +42,7 @@ class OutlinedElevatedButtonStyle extends ButtonStyle {
               return Colors.transparent;
             },
           ),
-          shape: MaterialStateProperty.all(
+          shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
               side: BorderSide(

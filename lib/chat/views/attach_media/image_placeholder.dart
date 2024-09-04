@@ -58,7 +58,7 @@ class ImagePlaceholder extends StatelessWidget {
   }
 
   Decoration _getDecoration(BuildContext context) => BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: borderRadius16,
         border: Border.all(
           color: Theme.of(context).textTheme.labelLarge?.color ??

@@ -125,7 +125,7 @@ class _ProfileItem extends StatelessWidget {
   IconButton _iconButton(BuildContext context, IconData data) => IconButton(
         icon: Icon(data),
         style: ButtonStyle(
-          shape: MaterialStateProperty.all(
+          shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: borderRadius32,
               side: BorderSide(

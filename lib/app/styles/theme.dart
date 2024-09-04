@@ -19,8 +19,6 @@ final themeData = ThemeData(
     primary: Color(0xFF2C2C2C),
     onPrimary: Color(0xFF2C2C2C),
     inversePrimary: Color(0xFF2C2C2C),
-    background: Colors.white,
-    onBackground: Colors.white,
     secondary: Colors.black87,
     onSecondary: Colors.black87,
     error: Colors.redAccent,
@@ -31,16 +29,16 @@ final themeData = ThemeData(
   iconTheme: const IconThemeData(color: Colors.black),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all(Colors.black87),
-      foregroundColor: MaterialStateProperty.all(Colors.white),
-      textStyle: MaterialStateProperty.all(
+      backgroundColor: WidgetStateProperty.all(Colors.black87),
+      foregroundColor: WidgetStateProperty.all(Colors.white),
+      textStyle: WidgetStateProperty.all(
         const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
       ),
-      shape: MaterialStateProperty.all(
+      shape: WidgetStateProperty.all(
         const RoundedRectangleBorder(
           borderRadius: borderRadius32,
         ),
@@ -67,8 +65,8 @@ final themeData = ThemeData(
   ),
   textButtonTheme: TextButtonThemeData(
     style: ButtonStyle(
-      foregroundColor: MaterialStateProperty.all(Colors.black87),
-      textStyle: MaterialStateProperty.all(
+      foregroundColor: WidgetStateProperty.all(Colors.black87),
+      textStyle: WidgetStateProperty.all(
         const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
@@ -103,28 +101,26 @@ final themeDataDark = ThemeData(
     primary: Color(0xFF0a0a0a),
     onPrimary: Color(0xFF0a0a0a),
     inversePrimary: Color(0xFF0a0a0a),
-    background: Color(0xFF1d1d1d),
-    onBackground: Color(0xFF1d1d1d),
+    surface: Color(0xFF1d1d1d),
+    onSurface: Color(0xFF1d1d1d),
     secondary: Colors.white,
     onSecondary: Colors.white,
     error: Colors.redAccent,
     onError: Colors.redAccent,
-    surface: Colors.white,
-    onSurface: Colors.white,
   ),
   iconTheme: const IconThemeData(color: Colors.white),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all(Colors.white),
-      foregroundColor: MaterialStateProperty.all(Colors.black87),
-      textStyle: MaterialStateProperty.all(
+      backgroundColor: WidgetStateProperty.all(Colors.white),
+      foregroundColor: WidgetStateProperty.all(Colors.black87),
+      textStyle: WidgetStateProperty.all(
         const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
           color: Colors.black,
         ),
       ),
-      shape: MaterialStateProperty.all(
+      shape: WidgetStateProperty.all(
         const RoundedRectangleBorder(
           borderRadius: borderRadius32,
         ),
@@ -151,8 +147,8 @@ final themeDataDark = ThemeData(
   ),
   textButtonTheme: TextButtonThemeData(
     style: ButtonStyle(
-      foregroundColor: MaterialStateProperty.all(Colors.white),
-      textStyle: MaterialStateProperty.all(
+      foregroundColor: WidgetStateProperty.all(Colors.white),
+      textStyle: WidgetStateProperty.all(
         const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,

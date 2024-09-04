@@ -264,10 +264,10 @@ class _ElevatedButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all(const Size(double.infinity, 50)),
-          backgroundColor: MaterialStateProperty.all(bgColor),
-          foregroundColor: MaterialStateProperty.all(textColor),
-          shape: MaterialStateProperty.all(
+          fixedSize: WidgetStateProperty.all(const Size(double.infinity, 50)),
+          backgroundColor: WidgetStateProperty.all(bgColor),
+          foregroundColor: WidgetStateProperty.all(textColor),
+          shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: borderRadius16,
               side: borderColor == null
