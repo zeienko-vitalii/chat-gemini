@@ -28,9 +28,6 @@ class MockGoogleSignInAuthentication extends Mock
     implements GoogleSignInAuthentication {
   @override
   String? get idToken => '';
-
-  @override
-  String? get accessToken => '';
 }
 
 void main() {
@@ -170,11 +167,12 @@ void main() {
     'silentSignInWithGoogle',
     () {
       test('returns a User when user is authenticated', () async {
-        when(() => mockitoGoogleSignIn.signInSilently()).thenAnswer(
+        when(() => mockitoGoogleSignIn.attemptLightweightAuthentication())
+            .thenAnswer(
           (_) => Future.value(mockGoogleSignInAccount),
         );
-        when(() => mockGoogleSignInAccount.authentication).thenAnswer(
-          (_) => Future.value(mockGoogleSignInAuthentication),
+        when(() => mockGoogleSignInAccount.authentication).thenReturn(
+          mockGoogleSignInAuthentication,
         );
         when(() => userCreds.user).thenReturn(expectedUser);
         when(
@@ -186,11 +184,12 @@ void main() {
       });
 
       test('throws Exception when user is null', () async {
-        when(() => mockitoGoogleSignIn.signInSilently()).thenAnswer(
+        when(() => mockitoGoogleSignIn.attemptLightweightAuthentication())
+            .thenAnswer(
           (_) => Future.value(mockGoogleSignInAccount),
         );
-        when(() => mockGoogleSignInAccount.authentication).thenAnswer(
-          (_) => Future.value(mockGoogleSignInAuthentication),
+        when(() => mockGoogleSignInAccount.authentication).thenReturn(
+          mockGoogleSignInAuthentication,
         );
         when(() => userCreds.user).thenReturn(null);
         when(
@@ -203,9 +202,11 @@ void main() {
         );
       });
 
-      test('throws Exception when GoogleSignIn.signInSilently fails', () async {
+      test(
+          'throws Exception when GoogleSignIn.attemptLightweightAuthentication fails',
+          () async {
         when(
-          () => mockitoGoogleSignIn.signInSilently(),
+          () => mockitoGoogleSignIn.attemptLightweightAuthentication(),
         ).thenThrow(Exception());
         expect(
           authServiceMockGooglSignIn.silentSignInWithGoogle(),
@@ -214,11 +215,12 @@ void main() {
       });
 
       test('throws Exception when signInWithCredential fails', () async {
-        when(() => mockitoGoogleSignIn.signInSilently()).thenAnswer(
+        when(() => mockitoGoogleSignIn.attemptLightweightAuthentication())
+            .thenAnswer(
           (_) => Future.value(mockGoogleSignInAccount),
         );
-        when(() => mockGoogleSignInAccount.authentication).thenAnswer(
-          (_) => Future.value(mockGoogleSignInAuthentication),
+        when(() => mockGoogleSignInAccount.authentication).thenReturn(
+          mockGoogleSignInAuthentication,
         );
         when(() => userCreds.user).thenReturn(null);
         when(
@@ -287,9 +289,7 @@ void main() {
   });
 
   group('disconnectFromGoogleIfSignedIn', () {
-    test('disconnects from Google if user is signed in', () async {
-      when(() => mockitoGoogleSignIn.isSignedIn())
-          .thenAnswer((_) => Future.value(true));
+    test('disconnects from Google', () async {
       when(() => mockitoGoogleSignIn.disconnect())
           .thenAnswer((_) => Future.value());
 
@@ -298,37 +298,15 @@ void main() {
       verify(() => mockitoGoogleSignIn.disconnect()).called(1);
     });
 
-    test('returns without disconnecting when user is not signed in', () async {
-      when(() => mockitoGoogleSignIn.isSignedIn())
-          .thenAnswer((_) => Future.value(false));
+    test('handles disconnect errors gracefully', () async {
       when(() => mockitoGoogleSignIn.disconnect())
-          .thenAnswer((_) => Future.value());
+          .thenThrow(Exception('Disconnect failed'));
 
-      await authServiceMockGooglSignIn.disconnectFromGoogleIfSignedIn();
-
-      verifyNever(() => mockitoGoogleSignIn.disconnect());
-    });
-
-    test('throws error when GoogleSignIn.isSignedIn fails', () async {
-      when(() => mockitoGoogleSignIn.isSignedIn()).thenThrow(Exception());
       expect(
         () => authServiceMockGooglSignIn.disconnectFromGoogleIfSignedIn(),
         throwsException,
       );
     });
-    test(
-      'throws error when user is signed in and GoogleSignIn.disconnect fails',
-      () async {
-        when(() => mockitoGoogleSignIn.isSignedIn())
-            .thenAnswer((_) => Future.value(true));
-        when(() => mockitoGoogleSignIn.disconnect()).thenThrow(Exception());
-
-        expect(
-          () => authServiceMockGooglSignIn.disconnectFromGoogleIfSignedIn(),
-          throwsException,
-        );
-      },
-    );
   });
 
   group('signOut', () {
@@ -341,10 +319,8 @@ void main() {
     });
 
     test(
-      'returns successfully if user was signed out and disconnected from Google if user was previously signed in with Google',
+      'returns successfully if user was signed out and disconnected from Google',
       () async {
-        when(() => mockitoGoogleSignIn.isSignedIn())
-            .thenAnswer((_) => Future.value(true));
         when(() => mockitoGoogleSignIn.disconnect())
             .thenAnswer((_) => Future.value());
         when(() => mockitoFirebaseAuth.signOut()).thenAnswer((_) {
@@ -357,27 +333,10 @@ void main() {
         verify(() => mockitoFirebaseAuth.signOut()).called(1);
       },
     );
-    test(
-      "returns successfully if user was signed out when user wasn't previously signed in with Google",
-      () async {
-        when(() => mockitoGoogleSignIn.isSignedIn())
-            .thenAnswer((_) => Future.value(false));
-        when(() => mockitoFirebaseAuth.signOut()).thenAnswer((_) {
-          return Future.value();
-        });
-
-        await authService.signOut();
-
-        verifyNever(() => mockitoGoogleSignIn.disconnect());
-        verify(() => mockitoFirebaseAuth.signOut()).called(1);
-      },
-    );
 
     test(
       'throws error when FirebaseAuth.signOut or disconnectFromGoogleIfSignedIn fails',
       () async {
-        when(() => mockitoGoogleSignIn.isSignedIn())
-            .thenAnswer((_) => Future.value(true));
         when(() => mockitoGoogleSignIn.disconnect()).thenThrow(Exception());
         when(() => mockitoFirebaseAuth.signOut()).thenAnswer((_) {
           return Future.value();

@@ -69,10 +69,5 @@ flutter:
     - assets/icons/
     - assets/animations/
 
-  fonts:
-    - family: SocialIcons
-      fonts:
-        - asset: packages/firebase_ui_auth/fonts/SocialIcons.ttf
-
 flutter_icons: flutter_icons_gen.yaml
 scripts: derry.yaml
