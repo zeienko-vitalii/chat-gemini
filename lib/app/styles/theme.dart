@@ -5,7 +5,7 @@ const borderRadius32 = BorderRadius.all(Radius.circular(32));
 const borderRadius16 = BorderRadius.all(Radius.circular(16));
 
 const lightTextColorStyle = Color(0xFF1d1d1d);
-const darkTextColorStyle = Colors.white;
+const Color darkTextColorStyle = Colors.white;
 
 const _border = OutlineInputBorder(
   borderRadius: borderRadius32,
@@ -45,7 +45,7 @@ final themeData = ThemeData(
       ),
     ),
   ),
-  cardTheme: const CardTheme(
+  cardTheme: const CardThemeData(
     elevation: 0,
     color: Colors.white,
   ),
@@ -131,7 +131,7 @@ final themeDataDark = ThemeData(
     elevation: 0,
     backgroundColor: Color(0xFF1d1d1d),
   ),
-  cardTheme: const CardTheme(
+  cardTheme: const CardThemeData(
     elevation: 0,
     color: Color(0xFF1d1d1d),
   ),

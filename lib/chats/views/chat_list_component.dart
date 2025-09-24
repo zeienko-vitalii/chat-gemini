@@ -31,7 +31,7 @@ class _ChatListComponentState extends State<ChatListComponent> {
   @override
   void initState() {
     super.initState();
-    _chatsCubit.loadChats();
+    unawaited(_chatsCubit.loadChats());
   }
 
   @override
@@ -103,12 +103,10 @@ class _ChatListComponentState extends State<ChatListComponent> {
   }) async {
     context.read<ChatsCubit>().updateSelectedChatIndex(index);
 
-    unawaited(context.router.pop());
-    unawaited(
-      context.router.replace(
-        ChatScreenRoute(
-          chat: chat ?? const Chat(),
-        ),
+    context.router.pop();
+    await context.router.replace(
+      ChatScreenRoute(
+        chat: chat ?? const Chat(),
       ),
     );
   }

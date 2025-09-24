@@ -5,7 +5,7 @@ part 'media.freezed.dart';
 part 'media.g.dart';
 
 @freezed
-class Media with _$Media {
+abstract class Media with _$Media {
   const factory Media({
     required String url,
     required String mimeType,

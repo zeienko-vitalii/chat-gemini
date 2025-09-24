@@ -1,0 +1,58 @@
+icons_gen: 
+  (description): Generates app icons for all platforms
+  (scripts):
+    - dart run flutter_launcher_icons -f flutter_icons_gen.yaml
+
+build:
+  (description): Alias for build_runner
+  (scripts):
+    - derry clean_and_call_build_runner
+
+clean_and_call_build_runner:
+  (description): Builds and validates from scratch
+  (scripts): >
+    flutter --version &&
+    flutter clean &&
+    flutter pub get &&
+    dart run build_runner build --delete-conflicting-outputs
+
+validate:
+  (description): Builds and validates from scratch
+  (scripts): >
+    derry clean_and_call_build_runner &&
+    derry analyze &&
+    dart pub global activate very_good_cli &&
+    very_good test --no-optimization --coverage --min-coverage 60 --test-randomize-ordering-seed random <<< `echo n`
+
+analyze:
+  (description): Analyzes the code
+  (scripts): >
+    dart format --set-exit-if-changed $(find lib test -name '*.dart' -not -name 'job.dart' -not -name 'part.dart' -and -not -name '*.freezed.dart') &&
+    flutter analyze . --no-pub &&
+    dart run dart_code_metrics:metrics analyze lib test --fatal-style --fatal-performance --fatal-warnings &&
+    dart run dart_code_metrics:metrics check-unused-files lib test --fatal-unused --exclude="{/**.g.dart,/**.template.dart,.dart_tool/**}" &&
+    dart run dart_code_metrics:metrics check-unused-l10n lib test --fatal-unused
+
+test:
+  (description): Runs tests with coverage
+  (scripts):
+    - very_good test --no-optimization --coverage --min-coverage 60 --test-randomize-ordering-seed random <<< `echo n`
+
+functions_check:
+  (description): Builds and validates from scratch
+  (scripts): >
+    cd functions &&
+    npx prettier --check . &&
+    ./node_modules/.bin/jest --coverage
+    cd ..
+
+coverage:
+  (description): To be run by CI
+  (scripts):
+    - lcov --remove coverage/lcov.info 'lib/*/*.g.dart' -o coverage/lcov.info
+    - genhtml -o coverage coverage/lcov.info
+
+sort_arb:
+  (description): Sorts arb file
+  (scripts):
+    sh sort_all_arb.sh lib/l10n/arb/

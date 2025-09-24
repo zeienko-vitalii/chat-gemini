@@ -1,3 +1,0 @@
-scripts:
-  generator: dart run build_runner build --delete-conflicting-outputs
-  icons_gen: dart run flutter_launcher_icons -f flutter_icons_gen.yaml

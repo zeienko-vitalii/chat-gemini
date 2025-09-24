@@ -6,7 +6,7 @@ part 'chat.freezed.dart';
 part 'chat.g.dart';
 
 @freezed
-class Chat with _$Chat {
+abstract class Chat with _$Chat {
   const factory Chat({
     @Default('')
     // ignore: invalid_annotation_target

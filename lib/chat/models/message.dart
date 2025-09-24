@@ -8,7 +8,7 @@ part 'message.g.dart';
 const String botAuthorId = 'ai-bot';
 
 @freezed
-class Message with _$Message {
+abstract class Message with _$Message {
   const factory Message({
     required String text,
     @Default(botAuthorId) String authorId,

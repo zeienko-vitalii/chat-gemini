@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -9,78 +10,20 @@
 
 part of 'app_router.dart';
 
-abstract class _$AppRouter extends RootStackRouter {
-  // ignore: unused_element
-  _$AppRouter({super.navigatorKey});
-
-  @override
-  final Map<String, PageFactory> pagesMap = {
-    AuthScreenRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const AuthScreen(),
-      );
-    },
-    ChatScreenRoute.name: (routeData) {
-      final args = routeData.argsAs<ChatScreenRouteArgs>(
-          orElse: () => const ChatScreenRouteArgs());
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: ChatScreen(
-          key: args.key,
-          chat: args.chat,
-        ),
-      );
-    },
-    Privacy.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const PrivacyPolicyView(),
-      );
-    },
-    ProfileScreenRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      final args = routeData.argsAs<ProfileScreenRouteArgs>(
-          orElse: () => ProfileScreenRouteArgs(
-                  toCompleteProfile: pathParams.getBool(
-                'complete-profile',
-                false,
-              )));
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: ProfileScreen(
-          key: args.key,
-          toCompleteProfile: args.toCompleteProfile,
-        ),
-      );
-    },
-    SplashViewRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SplashView(),
-      );
-    },
-    Terms.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const TermsOfUseView(),
-      );
-    },
-  };
-}
-
 /// generated route for
 /// [AuthScreen]
 class AuthScreenRoute extends PageRouteInfo<void> {
   const AuthScreenRoute({List<PageRouteInfo>? children})
-      : super(
-          AuthScreenRoute.name,
-          initialChildren: children,
-        );
+      : super(AuthScreenRoute.name, initialChildren: children);
 
   static const String name = 'AuthScreenRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const AuthScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -92,24 +35,25 @@ class ChatScreenRoute extends PageRouteInfo<ChatScreenRouteArgs> {
     List<PageRouteInfo>? children,
   }) : super(
           ChatScreenRoute.name,
-          args: ChatScreenRouteArgs(
-            key: key,
-            chat: chat,
-          ),
+          args: ChatScreenRouteArgs(key: key, chat: chat),
           initialChildren: children,
         );
 
   static const String name = 'ChatScreenRoute';
 
-  static const PageInfo<ChatScreenRouteArgs> page =
-      PageInfo<ChatScreenRouteArgs>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<ChatScreenRouteArgs>(
+        orElse: () => const ChatScreenRouteArgs(),
+      );
+      return ChatScreen(key: args.key, chat: args.chat);
+    },
+  );
 }
 
 class ChatScreenRouteArgs {
-  const ChatScreenRouteArgs({
-    this.key,
-    this.chat = const Chat(),
-  });
+  const ChatScreenRouteArgs({this.key, this.chat = const Chat()});
 
   final Key? key;
 
@@ -119,20 +63,32 @@ class ChatScreenRouteArgs {
   String toString() {
     return 'ChatScreenRouteArgs{key: $key, chat: $chat}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ChatScreenRouteArgs) return false;
+    return key == other.key && chat == other.chat;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ chat.hashCode;
 }
 
 /// generated route for
 /// [PrivacyPolicyView]
 class Privacy extends PageRouteInfo<void> {
   const Privacy({List<PageRouteInfo>? children})
-      : super(
-          Privacy.name,
-          initialChildren: children,
-        );
+      : super(Privacy.name, initialChildren: children);
 
   static const String name = 'Privacy';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const PrivacyPolicyView();
+    },
+  );
 }
 
 /// generated route for
@@ -154,15 +110,25 @@ class ProfileScreenRoute extends PageRouteInfo<ProfileScreenRouteArgs> {
 
   static const String name = 'ProfileScreenRoute';
 
-  static const PageInfo<ProfileScreenRouteArgs> page =
-      PageInfo<ProfileScreenRouteArgs>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final pathParams = data.inheritedPathParams;
+      final args = data.argsAs<ProfileScreenRouteArgs>(
+        orElse: () => ProfileScreenRouteArgs(
+          toCompleteProfile: pathParams.getBool('complete-profile', false),
+        ),
+      );
+      return ProfileScreen(
+        key: args.key,
+        toCompleteProfile: args.toCompleteProfile,
+      );
+    },
+  );
 }
 
 class ProfileScreenRouteArgs {
-  const ProfileScreenRouteArgs({
-    this.key,
-    this.toCompleteProfile = false,
-  });
+  const ProfileScreenRouteArgs({this.key, this.toCompleteProfile = false});
 
   final Key? key;
 
@@ -172,32 +138,46 @@ class ProfileScreenRouteArgs {
   String toString() {
     return 'ProfileScreenRouteArgs{key: $key, toCompleteProfile: $toCompleteProfile}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ProfileScreenRouteArgs) return false;
+    return key == other.key && toCompleteProfile == other.toCompleteProfile;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ toCompleteProfile.hashCode;
 }
 
 /// generated route for
 /// [SplashView]
 class SplashViewRoute extends PageRouteInfo<void> {
   const SplashViewRoute({List<PageRouteInfo>? children})
-      : super(
-          SplashViewRoute.name,
-          initialChildren: children,
-        );
+      : super(SplashViewRoute.name, initialChildren: children);
 
   static const String name = 'SplashViewRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SplashView();
+    },
+  );
 }
 
 /// generated route for
 /// [TermsOfUseView]
 class Terms extends PageRouteInfo<void> {
   const Terms({List<PageRouteInfo>? children})
-      : super(
-          Terms.name,
-          initialChildren: children,
-        );
+      : super(Terms.name, initialChildren: children);
 
   static const String name = 'Terms';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const TermsOfUseView();
+    },
+  );
 }

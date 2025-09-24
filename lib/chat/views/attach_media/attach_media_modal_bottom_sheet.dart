@@ -94,7 +94,7 @@ class AttachMediaModalBottomSheet extends StatelessWidget {
       showSnackbarMessage(context, message: '$e');
     } finally {
       if (context.mounted) {
-        unawaited(context.router.pop());
+        context.router.pop();
       }
     }
   }

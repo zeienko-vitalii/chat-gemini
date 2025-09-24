@@ -6,13 +6,12 @@ part of 'media.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MediaImpl _$$MediaImplFromJson(Map<String, dynamic> json) => _$MediaImpl(
+_Media _$MediaFromJson(Map<String, dynamic> json) => _Media(
       url: json['url'] as String,
       mimeType: json['mimeType'] as String,
     );
 
-Map<String, dynamic> _$$MediaImplToJson(_$MediaImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MediaToJson(_Media instance) => <String, dynamic>{
       'url': instance.url,
       'mimeType': instance.mimeType,
     };

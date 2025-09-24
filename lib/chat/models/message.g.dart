@@ -6,8 +6,7 @@ part of 'message.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
-    _$MessageImpl(
+_Message _$MessageFromJson(Map<String, dynamic> json) => _Message(
       text: json['text'] as String,
       authorId: json['authorId'] as String? ?? botAuthorId,
       createdAt: json['createdAt'] == null
@@ -18,8 +17,7 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
           : Media.fromJson(json['media'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MessageToJson(_Message instance) => <String, dynamic>{
       'text': instance.text,
       'authorId': instance.authorId,
       'createdAt': instance.createdAt?.toIso8601String(),
