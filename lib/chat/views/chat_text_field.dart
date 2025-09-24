@@ -34,7 +34,6 @@ class ChatTextField extends StatelessWidget {
             enabled: !isLoading,
             controller: _controller,
             cursorColor: Colors.grey.shade500,
-            
             decoration: InputDecoration(
               hintText: 'Type a message',
               contentPadding: const EdgeInsets.all(12),
@@ -60,7 +59,7 @@ class ChatTextField extends StatelessWidget {
             ),
             onSubmitted: (text) {
               if (isLoading) return;
-    
+
               if (text.trim().isNotEmpty) {
                 onSend?.call(text);
                 _controller.clear();
@@ -68,11 +67,12 @@ class ChatTextField extends StatelessWidget {
             },
           ),
         ),
-        if(!kIsWeb) AttachButton(
-          files: files,
-          onRemovePressed: onRemovePressed,
-          onAttachFilePressed: onAttachFilePressed,
-        ),
+        if (!kIsWeb)
+          AttachButton(
+            files: files,
+            onRemovePressed: onRemovePressed,
+            onAttachFilePressed: onAttachFilePressed,
+          ),
       ],
     );
   }

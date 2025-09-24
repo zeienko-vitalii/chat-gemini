@@ -9,7 +9,7 @@ abstract class Env {
 
   @EnviedField(varName: 'OPENAI_API_KEY')
   static const String openaiApiKey = _Env.openaiApiKey;
-  
+
   @EnviedField(varName: 'OPENAI_ORGANISATION_ID')
   static const String openaiOrganisationId = _Env.openaiOrganisationId;
 }

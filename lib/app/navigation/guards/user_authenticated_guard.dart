@@ -5,13 +5,16 @@ import 'package:chat_gemini/di/di.dart';
 
 class AuthGuard extends AutoRouteGuard {
   @override
-  void onNavigation(NavigationResolver resolver, StackRouter router) {
+  Future<void> onNavigation(
+    NavigationResolver resolver,
+    StackRouter router,
+  ) async {
     if (getIt<AuthService>().isAuthenticated) {
       resolver.next();
     } else {
       resolver
         ..next(false)
-        ..redirect(const AuthScreenRoute());
+        ..redirectUntil(const AuthScreenRoute());
     }
   }
 }

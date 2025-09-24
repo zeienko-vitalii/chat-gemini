@@ -12,8 +12,8 @@ class SplashCubit extends Cubit<SplashState> {
     this._userRepository,
   ) : super(SplashLoading());
 
-  final AuthService _authService;// = AuthService();
-  final UserRepository _userRepository;// = UserRepository();
+  final AuthService _authService; // = AuthService();
+  final UserRepository _userRepository; // = UserRepository();
 
   Future<void> checkUser() async {
     try {

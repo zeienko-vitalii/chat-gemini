@@ -44,24 +44,6 @@ class MockUserRepository extends Mock implements UserRepository {}
 
 class MockAuthService extends Mock implements AuthService {}
 
-class MockChatScreenRoute extends Mock implements ChatScreenRoute {}
-
-class MockUserMediaStorageRepository extends Mock
-    implements UserMediaStorageRepository {}
-
-class MockChatRepository extends Mock implements ChatRepository {}
-
-class MockMediaStorageRepository extends Mock
-    implements MediaStorageRepository {}
-
-class MockScaffoldMessengerState extends Mock
-    implements ScaffoldMessengerState {
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'MockScaffoldMessengerState;';
-  }
-}
-
 class MockAppRouter extends AppRouter {
   @override
   List<AutoRoute> get routes => [

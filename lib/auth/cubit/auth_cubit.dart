@@ -130,7 +130,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(const AuthState.loading());
       await _authService.signOut();
       emit(const AuthState.logOut());
-    } catch (e) {
+    } on Object catch (e) {
       emit(AuthState.error('$e'));
     }
   }
