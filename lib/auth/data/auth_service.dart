@@ -5,6 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 
+/// The scopes required by this application.
+// #docregion Initialize
+const List<String> scopes = <String>[
+  'email',
+  'https://www.googleapis.com/auth/contacts.readonly',
+];
+
 @singleton
 class AuthService {
   AuthService(this._auth, this._googleSignIn);
@@ -52,12 +59,11 @@ class AuthService {
 
   Future<User> silentSignInWithGoogle() async {
     try {
-      final googleUser = await _googleSignIn.signInSilently();
+      final googleUser = await _googleSignIn.attemptLightweightAuthentication();
       if (googleUser == null) throw Exception('User is null');
-      final googleAuth = await googleUser.authentication;
+      final googleAuth = googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
@@ -76,12 +82,11 @@ class AuthService {
 
   Future<User> signInWithGoogle() async {
     try {
-      final googleUser = await _googleSignIn.signIn();
-      final googleAuth = await googleUser?.authentication;
+      final googleUser = await _googleSignIn.authenticate();
+      final googleAuth = googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        idToken: googleAuth.idToken,
       );
 
       final userCreds = await _auth.signInWithCredential(
@@ -110,8 +115,9 @@ class AuthService {
   }
 
   Future<void> disconnectFromGoogleIfSignedIn() async {
-    final isSignedIn = await _googleSignIn.isSignedIn();
-    if (isSignedIn) await _googleSignIn.disconnect();
+    // In the new API, we just disconnect - GoogleSignIn handles checking
+    // if signed in
+    await _googleSignIn.disconnect();
   }
 
   Future<UserCredential> reauthenticateUserWithEmail(
@@ -136,12 +142,11 @@ class AuthService {
       throw const UserNotFoundException();
     }
 
-    final googleUser = await _googleSignIn.signIn();
-    final googleAuth = await googleUser?.authentication;
+    final googleUser = await _googleSignIn.authenticate();
+    final googleAuth = googleUser.authentication;
 
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
+      idToken: googleAuth.idToken,
     );
     return currentUser.reauthenticateWithCredential(credential);
   }
